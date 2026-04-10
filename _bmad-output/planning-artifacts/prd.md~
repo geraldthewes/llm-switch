@@ -1,0 +1,400 @@
+---
+stepsCompleted:
+  - step-01-init
+  - step-02-discovery
+  - step-02b-vision
+  - step-03-success
+  - step-04-journeys
+  - step-05-domain
+  - step-06-innovation
+  - step-07-project-type
+  - step-08-scoping
+  - step-09-functional
+  - step-10-nonfunctional
+  - step-11-polish
+  - step-12-complete
+documentCounts:
+  briefCount: 0
+  researchCount: 0
+  brainstormingCount: 2
+  projectDocsCount: 0
+classification:
+  projectType: api_backend
+  domain: scientific
+  complexity: medium
+  projectContext: greenfield
+inputDocuments:
+  - "/home/gerald/repos/llm-switch/_bmad-output/brainstorming/brainstorming-session-2026-04-07-19-35-02.md"
+  - "/home/gerald/repos/llm-switch/docs/brainstorm.md"
+workflowType: 'prd'
+---
+
+# Product Requirements Document - llm-switch
+
+**Author:** Gerald  
+**Date:** 2026-04-08
+
+## Executive Summary
+
+An intelligent LLM proxy system automating optimal model selection for AI applications while enabling privacy-preserving, cost-effective local model usage. Eliminates manual model selection complexity by dynamically choosing the best model per query based on real-time factors (complexity, latency, cost). Provides unified access through industry-standard OpenAI and Anthropic-compatible APIs.
+
+### What Makes This Special
+
+Unique value through minimal administration and continuous self-improvement. Features two-part architecture: real-time intelligent routing selecting optimal models per query, and offline self-learning refining performance overnight via automated testing. Delivers immediate usability while progressively improving accuracy, cost efficiency, and user experience without ongoing manual intervention.
+
+## Project Classification
+
+**Project Type:** api_backend  
+**Domain:** scientific  
+**Complexity:** medium  
+**Project Context:** greenfield
+
+## Success Criteria
+
+### User Success
+- Response time (including real-time decision latency): under 500ms
+- Reliability: Zero retries (no failed requests requiring resend to another model)
+- Cost efficiency: Only send requests to frontier models when no local model can solve the task
+- Administration: System runs autonomously once setup with minimal ongoing intervention
+
+### Business Success
+- Reduction in frontier model API costs through increased local model utilization
+- Increased developer productivity due to simplified model selection
+- Improved system reliability leading to fewer failed AI-assisted tasks
+- Adoption across multiple AI applications in the cluster environment
+
+### Technical Success
+- 100% system reliability and uptime
+- Designed to run in Nomad cluster environment
+- Simple setup and deployment (well packaged)
+- Easy integration of new LLM models as they become available
+
+### Measurable Outcomes
+- 95% of routing decisions completed in under 500ms
+- Zero request retries due to model failure
+- Local model utilization rate of 80% or higher (cost efficiency)
+- System uptime of 99.9% or better
+- Successful integration of at least 3 different LLM model types
+- Reduction in frontier model API usage by 60% or more
+
+## Product Scope
+
+### MVP - Minimum Viable Product
+- Real-time model selection based on basic task complexity
+- Support for OpenAI and Anthropic-compatible APIs
+- Basic local and frontier model routing (2-3 model types)
+- Simple deployment in Nomad cluster
+- Basic logging and metrics collection
+
+### Growth Features (Post-MVP)
+- Advanced model selection using multiple criteria (latency, cost, capability)
+- Self-learning system improving routing decisions overnight
+- Comprehensive metrics dashboard and alerting
+- Support for additional model types and APIs
+- Automated failover and fallback mechanisms
+- Integration with authentication and authorization systems
+
+### Vision (Future)
+- Fully autonomous self-optimizing LLM routing system
+- Predictive model selection based on historical patterns
+- Cross-cluster model sharing and load balancing
+- Advanced context handling with Recursive Language Models
+- Integration with broader AI agent ecosystems
+- Continuous improvement through automated research loops
+
+## Domain-Specific Requirements
+
+### Infrastructure Reliability & Performance
+- Deterministic model selection with explainable routing decisions for audit trails
+- Ability to capture and replay routing decisions for system analysis and optimization
+- Guaranteed response time SLA (under 500ms for 95% of requests)
+- Efficient computational resource utilization minimizing wasted cycles
+- Dynamic load balancing to prevent resource starvation or bottlenecks
+- Monitoring and reporting of computational efficiency metrics (local vs frontier usage)
+
+### API Compatibility & Integration
+- Full compatibility with OpenAI API format for seamless integration
+- Full compatibility with Anthropic Message API format for seamless integration
+- Support for batch processing modes common in AI workloads
+- Standardized interfaces compatible with AI/ML pipelines and orchestration systems
+- Metadata preservation and propagation for AI workflow lineage and tracking
+- Error handling and retry mechanisms appropriate for production AI services
+
+### Operational Excellence & Observability
+- Comprehensive health checks and metrics for monitoring in cluster environments
+- Clear logging and reporting for troubleshooting and system optimization
+- Experimental tracking capabilities for A/B testing of routing strategies and configurations
+- Sharing of learned optimization patterns across teams and systems
+- Easy integration of new LLM models without requiring application changes
+- Reliable operation with high uptime and fault tolerance suitable for production use
+
+## User Journeys
+
+### Developer Journey: Integrating and Using llm-switch
+
+Maya, a backend developer on an AI-powered code review tool, was frustrated that her team spent more time managing manual LLM model selection than building features. After discovering llm-switch, she integrated it by simply changing her application's endpoint from direct model APIs to llm-switch. During testing, she observed automatic routing: simple syntax checks to faster local models, complex architectural analysis to more capable models. During peak 300% traffic increase, llm-switch maintained consistent response times by dynamically adjusting routing based on real-time model utilization—zero configuration changes needed. Her team now spends zero time on model selection, benefits from continuous overnight self-learning that increases local model utilization and reduces costs, and has seen a 40% reduction in frontier model API costs while maintaining quality and response times.
+
+### Operations Journey: Deploying and Maintaining llm-switch
+
+Raj, a DevOps engineer managing AI infrastructure, struggled with the complexity of multiple LLM integrations requiring different API keys, endpoint configurations, and monitoring setups—adding new models meant coordinating with multiple application teams, leading to inconsistencies and significant operational overhead. Evaluating llm-switch, he found the Nomad deployment straightforward: a single job specification connecting to existing local models (Qwen, Nemotron) and frontier API credentials. Initial deployment was immediate with health check endpoints and built-in metrics integrating with existing monitoring. After two weeks, metrics showed one local model overutilized while another underused; llm-switch's self-learning system had already detected and corrected this imbalance overnight by adjusting routing thresholds, balancing utilization without manual intervention. Raj now spends minimal time on operations—primarily checking weekly self-learning reports and occasional model additions. Adding a new local model is as simple as updating configuration and restarting the job; llm-switch automatically learns optimal resource utilization through self-learning. The system reduced operational overhead by approximately 70% versus manual model management, freeing Raj's team for platform improvements rather than LLM integration maintenance.
+
+### Journey Requirements Summary
+
+Key capability areas revealed by user journeys:
+
+**Core Routing Capabilities**
+- Real-time model selection based on task complexity, latency, and cost
+- Load balancing across available models to prevent overutilization
+- Support for OpenAI and Anthropic-compatible API protocols
+- Automatic fallback to more capable models when initial selections fail
+- Seamless integration with existing AI applications through standard API endpoints
+
+**Self-Learning & Optimization**
+- Offline analysis system improving routing decisions overnight
+- Automated testing of routing hypotheses and measurement of outcomes
+- Adaptive threshold adjustment based on performance feedback
+- Generation of explainable logs showing tests performed and decisions made
+- Continuous improvement in cost efficiency and response times over time
+
+**Operational Excellence**
+- Simple deployment in Nomad cluster environment
+- Comprehensive health checks and metrics for monitoring
+- Easy integration of new LLM models without application changes
+- Minimal ongoing administration requirements
+- Clear logging and reporting for troubleshooting and optimization
+- Reliable operation with high uptime and fault tolerance
+
+**Developer Experience**
+- Simple API integration requiring minimal code changes
+- Consistent, reliable response times (specific SLA TBD based on metrics)
+- Transparent model selection logic available for debugging and auditing
+- Backward compatibility with existing OpenAI/Anthropic client libraries
+- Predictable behavior reducing cognitive overhead
+
+## Innovation & Novel Patterns
+
+### Detected Innovation Areas
+- **Two-Part Autonomous Learning Architecture**: Combines real-time intelligent model selection with offline self-learning system that improves routing decisions without human intervention, creating a closed-loop learning system that improves over time through automated experimentation.
+- **Infrastructure-First Approach**: Frames itself as AI infrastructure - a "token factory" focusing on reliability, scalability, and operational excellence rather than features, shifting value proposition to dependable performance at scale.
+- **Protocol-Native Intelligence**: Embeds intelligence directly into standard OpenAI and Anthropic-compatible endpoints, making intelligence transparent to existing codebases while delivering sophisticated routing capabilities.
+
+### Market Context & Competitive Landscape
+Current LLM proxy solutions fall into two categories: simple passthrough proxies (like LiteLLM) offering no intelligence, or complex frameworks requiring significant integration effort. llm-switch occupies a unique middle ground by providing sophisticated routing intelligence while maintaining zero-integration-cost compatibility with existing AI application code.
+
+### Validation Approach
+Innovation validated by measuring:
+1. Reduction in manual model configuration time (approaching zero)
+2. Improvement in cost efficiency over time through increased local model utilization
+3. Maintaining or improving response time SLA while reducing costs
+4. Successful integration with existing AI applications requiring zero code changes
+5. Demonstrated improvement in routing accuracy through the self-learning system
+
+### Risk Mitigation
+If self-learning component doesn't deliver expected improvements, system still provides value through:
+- Static intelligent routing based on predefined rules
+- Excellent observability for manual optimization
+- Reliable API compatibility and performance
+- Fallback to well-established routing algorithms while continuing to refine the learning approach
+
+## API Backend Specific Requirements
+
+### Endpoint Specifications
+- Primary endpoints: OpenAI-compatible API (/v1/chat/completions, /v1/completions, /v1/embeddings, etc.) and Anthropic Message API compatible endpoints (/v1/messages, etc.)
+- Prometheus metrics endpoint for monitoring and alerting
+- Health check endpoint for cluster orchestration systems
+- Administrative endpoints for system configuration and diagnostics
+
+### Authentication Model
+- API key/token based authentication (HTTP Bearer tokens)
+- HTTP-only communication within the cluster network
+- Support for multiple API keys to enable per-application tracking and usage metering
+- Integration with Vault for secure API key management and distribution
+- Consul integration for service discovery and configuration distribution
+
+### Data Schemas
+- Request/response formats strictly following OpenAPI and Anthropic Message API specifications
+- JSON as the primary data interchange format
+- Schema validation for all incoming and outgoing requests
+- Compatibility with existing OpenAI and Anthropic client libraries
+
+### Error Codes
+- Standard HTTP status codes for transport-level errors
+- OpenAI-compatible error formatting for API-level errors
+- Anthropic-compatible error formatting for Message API-level errors
+- Detailed error messages with routing decision context for debugging
+- Distinction between client errors (4xx) and service errors (5xx)
+
+### Rate Limits
+- Application-level rate limiting via API key tracking (out of scope for MVP)
+- Model-level rate limiting based on backend capacity and utilization
+- Request tracking and analytics per API key for usage metering
+- Integration with Consul/Vault for centralized API key management and distribution
+
+### API Documentation
+- OpenAPI specification documentation for all endpoints
+- Compatibility with standard OpenAPI tools (Swagger UI, Postman collections, etc.)
+- Clear documentation of OpenAI and Anthropic API compatibility
+- Examples showing zero-code-change migration from direct API calls to llm-switch
+
+## Project Scoping & Phased Development
+
+### MVP Strategy & Philosophy
+**MVP Approach:** Problem-solving MVP - focused on solving manual LLM model selection with measurable improvements in cost efficiency and reliability.
+**Resource Requirements:** Small team (2-3 engineers) with backend/API expertise, infrastructure/DevOps knowledge, and basic ML understanding.
+
+### MVP Feature Set (Phase 1)
+**Core User Journeys Supported:**
+- Developer Journey: Integrating and Using llm-switch
+- Operations Journey: Deploying and Maintaining llm-switch
+**Must-Have Capabilities:**
+- Real-time model selection based on basic task complexity (simple heuristics like keyword matching or request length)
+- Support for OpenAI and Anthropic-compatible APIs
+- Basic local and frontier model routing (2-3 model types: e.g., Qwen 7B, Nemotron 3 22B, and a frontier API)
+- Simple deployment in Nomad cluster
+- Basic logging and metrics collection (request counts, latency, model usage)
+- API key/token authentication
+- Prometheus metrics endpoint
+- Health check endpoint
+- Deterministic routing with explainable logs
+- Basic load balancing (round-robin or least-connections)
+
+### Post-MVP Features
+**Phase 2 (Post-MVP):**
+- Advanced model selection using multiple criteria (latency, cost, capability)
+- Self-learning system improving routing decisions overnight
+- Comprehensive metrics dashboard and alerting
+- Support for additional model types and APIs
+- Automated failover and fallback mechanisms
+- Integration with authentication and authorization systems
+- Enhanced observability with distributed tracing
+- A/B testing framework for routing strategies
+
+**Phase 3 (Expansion):**
+- Predictive model selection based on historical patterns
+- Cross-cluster model sharing and load balancing
+- Advanced context handling with Recursive Language Models
+- Integration with broader AI agent ecosystems
+- Continuous improvement through automated research loops
+- Multi-tenant support with isolated configurations
+- Advanced API features (webhooks, custom middleware, plugin system)
+
+### Risk Mitigation Strategy
+**Technical Risks:** Start with simple routing algorithms and gradually increase complexity. Use feature flags to enable/disable advanced features. Prioritize reliability and observability from day one.
+**Market Risks:** Validate early with developer feedback. Focus on solving a painful problem (manual model selection) before adding nice-to-haves. Measure adoption through API usage metrics.
+**Resource Risks:** Begin with a minimal feature set that delivers core value. Use existing libraries and frameworks rather than building from scratch. Consider phased hiring based on validated learning.
+
+## Functional Requirements
+
+### Core Routing Capabilities
+- FR1: Send LLM requests via OpenAI-compatible API
+- FR2: Send LLM requests via Anthropic Message API
+- FR3: Automatically select optimal model per request based on task complexity
+- FR4: Load balance requests across available models to prevent overutilization
+- FR5: Automatically fallback to more capable models when initial selections fail
+- FR6: Integrate seamlessly with existing AI applications requiring zero code changes
+
+### Self-Learning & Optimization
+- FR7: Analyze routing decisions and outcomes overnight to improve future selections
+- FR8: Automatically test routing hypotheses and measure effectiveness
+- FR9: Adjust routing thresholds and parameters based on performance feedback
+- FR10: Generate explainable logs detailing routing tests and decisions
+- FR11: Continuously improve cost efficiency and response times over time without manual intervention
+
+### Operational Excellence
+- FR12: Deploy llm-switch in Nomad cluster using simple job specification
+- FR13: Monitor llm-switch health and performance via standard metrics endpoints
+- FR14: Add new LLM models without requiring application changes
+- FR15: Administer system with minimal ongoing intervention after initial setup
+- FR16: Provide comprehensive health checks for cluster orchestration systems
+- FR17: Maintain high uptime and fault tolerance suitable for production use
+- FR18: Provide clear logging and sufficient detail for effective troubleshooting
+
+### Developer Experience
+- FR19: Integrate applications with llm-switch using minimal code changes
+- FR20: Benefit from consistent and reliable response times (specific SLA TBD based on metrics)
+- FR21: Provide explainable routing logs accessible for debugging and auditing
+- FR22: Rely on backward compatibility with existing OpenAI client libraries
+- FR23: Rely on backward compatibility with existing Anthropic client libraries
+- FR24: Benefit from predictable system behavior reducing cognitive overhead
+
+### API Compatibility & Integration
+- FR25: Validate all incoming requests against OpenAPI specification
+- FR26: Validate all incoming requests against Anthropic Message API specification
+- FR27: Format outgoing responses according to OpenAPI specification
+- FR28: Format outgoing responses according to Anthropic Message API specification
+- FR29: Implement standard OpenAPI/Anthropic API request/response handling
+- FR30: Support batch processing modes commonly used in AI workloads
+- FR31: Preserve and propagate metadata for AI workflow lineage and tracking
+- FR32: Provide error handling and retry mechanisms appropriate for production AI services
+
+### Observability & Analytics
+- FR34: Provide Prometheus-compatible metrics endpoint for monitoring and alerting
+- FR35: Provide health check endpoint for cluster orchestration systems
+- FR36: Provide administrative endpoints for system configuration and diagnostics
+- FR37: Track and analyze request volume and latency per API key
+- FR38: Monitor and report computational efficiency metrics (local vs frontier model usage)
+- FR39: Enable A/B testing of routing strategies through configuration
+- FR40: Share learned optimization patterns across teams and systems
+- FR41: Monitor request distribution across models to ensure effective load balancing
+
+### Security & Access Control
+- FR42: Authenticate requests using API key/token (HTTP Bearer tokens)
+- FR43: Enforce HTTP-only communication within the cluster network
+- FR44: Support multiple API keys for per-application tracking and usage metering
+- FR45: Integrate with Vault for secure API key management and distribution
+- FR46: Integrate with Consul for service discovery and configuration distribution
+
+## Non-Functional Requirements
+
+### Performance
+- Response time for routing decisions (excluding actual model inference): Target under 500ms for 95% of requests
+- System capable of handling concurrent requests from multiple AI applications
+- Consistent performance under varying load conditions
+- Efficient resource utilization to minimize computational waste
+
+### Reliability
+- High availability design targeting 99.9% uptime
+- Graceful degradation when individual backend models are unavailable
+- Automatic failover between available models when primary selections fail
+- Data durability for routing logs and decision audit trails
+- Self-healing capabilities to recover from transient failures
+
+### Scalability
+- Horizontal scaling capability in Nomad cluster environment
+- Ability to handle increasing request volumes through additional instances
+- Efficient resource utilization that scales with demand
+- Load distribution mechanisms that prevent hotspots
+- Support for adding new backend models without system downtime
+
+### Security
+- API key/token authentication for request validation
+- Encryption of sensitive data at rest (API keys, configuration)
+- Network security enforcement (HTTP-only within cluster)
+- Secure integration with Vault for secret management
+- Audit trails for security-relevant events (authentication failures, configuration changes)
+- Input validation to prevent injection attacks
+
+### Observability
+- Prometheus-compatible metrics endpoint for monitoring key performance indicators
+- Health check endpoints for cluster orchestration systems
+- Structured logging with sufficient detail for debugging and auditing
+- Distributed tracing capabilities for request flow visibility
+- Alerting capabilities for anomaly detection and system issues
+- Dashboard-ready metrics for operational visibility
+
+### Integrations
+- Native compatibility with OpenAPI specification for seamless integration
+- Native compatibility with Anthropic Message API specification
+- Integration with Prometheus for metrics collection and alerting
+- Integration with Consul for service discovery and configuration distribution
+- Integration with Vault for secure secret management
+- Compatibility with standard AI/ML orchestration and pipeline systems
+- Support for batch processing modes commonly used in AI workloads
+
+### Operability
+- Simple deployment and configuration in Nomad cluster environment
+- Minimal ongoing administrative intervention after initial setup
+- Clear error messages and diagnostic information for troubleshooting
+- Backward compatibility to enable smooth upgrades
+- Configuration flexibility to adapt to changing requirements
+- Comprehensive health checks for system status monitoring

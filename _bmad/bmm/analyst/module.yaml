@@ -1,0 +1,25 @@
+code: analyst
+name: "Analyst Module"
+description: "Configuration for the BMad Analyst agent (Mary) capabilities"
+header: "BMad Analyst Configuration"
+subheader: "Configure the analyst agent capabilities for market research, domain expertise, and requirements elicitation."
+
+market_research_enabled:
+  prompt: "Enable market research capabilities?"
+  default: true
+  result: "{value}"
+
+domain_research_enabled:
+  prompt: "Enable domain research capabilities?"
+  default: true
+  result: "{value}"
+
+requirements_elicitation_enabled:
+  prompt: "Enable requirements elicitation capabilities?"
+  default: true
+  result: "{value}"
+
+technical_research_enabled:
+  prompt: "Enable technical research capabilities?"
+  default: true
+  result: "{value}"

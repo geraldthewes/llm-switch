@@ -36,7 +36,7 @@ workflowType: 'prd'
 
 ## Executive Summary
 
-An intelligent LLM proxy system automating optimal model selection for AI applications while encoraging privacy-preserving, cost-effective local model usage. Eliminates manual model selection complexity by dynamically choosing the best model per query based on real-time factors (complexity, latency, cost). Provides unified access through industry-standard OpenAI and Anthropic-compatible APIs.
+Users waste X time/cost on manual selection; existing proxies offer no intelligence. An intelligent LLM proxy system automating optimal model selection for AI applications while encoraging privacy-preserving, cost-effective local model usage. Eliminates manual model selection complexity by dynamically choosing the best model per query based on real-time factors (complexity, latency, cost). Provides unified access through industry-standard OpenAI and Anthropic-compatible APIs.
 
 ### What Makes This Special
 

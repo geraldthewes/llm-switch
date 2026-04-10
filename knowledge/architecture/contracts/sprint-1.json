@@ -1,0 +1,59 @@
+{
+  "sprint_number": 1,
+  "sprint_name": "C1 System Context",
+  "files_to_produce": [
+    "c1-context.md"
+  ],
+  "criteria": [
+    {
+      "name": "mermaid_validity",
+      "description": "The C1 diagram in c1-context.md must be valid Mermaid syntax, verifiable by the official Mermaid CLI (version >= 10.0) without errors. The diagram must render successfully in a browser-based Mermaid live editor without warnings.",
+      "threshold": 10.0
+    },
+    {
+      "name": "central_system",
+      "description": "The diagram must contain exactly one container labeled 'llm-switch' representing the system, positioned centrally with a rectangular border and clearly distinguished from external elements.",
+      "threshold": 10.0
+    },
+    {
+      "name": "user_types",
+      "description": "The diagram must include exactly three distinct user types: (1) Developer, (2) Operations Engineer, and (3) AI Application Service. Each user type must be represented as a distinct actor symbol with explicit labels and distinct connection lines to llm-switch.",
+      "threshold": 10.0
+    },
+    {
+      "name": "external_dependencies",
+      "description": "The diagram must include exactly four external dependencies: (1) OpenAI API (labeled 'OpenAI REST API'), (2) Anthropic API (labeled 'Anthropic REST API'), (3) Nomad cluster (labeled 'Nomad Cluster'), and (4) local model repository (labeled 'Local Model Repository'). Each dependency must show directional arrows indicating data flow.",
+      "threshold": 10.0
+    },
+    {
+      "name": "narrative_completeness",
+      "description": "The narrative must explicitly describe all six entities shown in the diagram (1 system + 3 users + 4 dependencies, noting that dependencies may be grouped), including their specific interactions. A checklist mapping each diagram element to its narrative description must be included in a separate section.",
+      "threshold": 10.0
+    },
+    {
+      "name": "prd_consistency",
+      "description": "The narrative must explicitly mention: (a) Nomad cluster as the orchestration platform, (b) OpenAI API integration, (c) Anthropic API integration, and (d) local model repository access. Any deviation from the PRD specification requires explicit documentation of the change and its rationale.",
+      "threshold": 10.0
+    },
+    {
+      "name": "relationship_documentation",
+      "description": "The narrative must explain all seven connection types between llm-switch and external elements: (1) Developer API requests, (2) Operations monitoring/configuration, (3) AI Application service calls, (4) OpenAI API requests, (5) Anthropic API requests, (6) Nomad cluster deployment/config, and (7) Local model repository access. Each connection must specify protocol/transport method.",
+      "threshold": 10.0
+    },
+    {
+      "name": "no_ambiguity",
+      "description": "All components must use standard C1 notation with clear labels. No generic terms like 'API', 'Service', or 'Database' without specific identification. All symbols must conform to C1 conventions (containers for systems, actors for users, boundary boxes for external dependencies).",
+      "threshold": 10.0
+    },
+    {
+      "name": "edge_case_coverage",
+      "description": "The diagram must show error handling paths: (1) API failure fallback flows, (2) Nomad cluster health check connections, and (3) model repository availability checks. These must be visually distinguished from primary data flows.",
+      "threshold": 10.0
+    },
+    {
+      "name": "security_boundaries",
+      "description": "The diagram must explicitly show network boundaries/security zones (e.g., DMZ, internal network, external internet) indicating where llm-switch sits relative to external APIs and internal resources.",
+      "threshold": 10.0
+    }
+  ]
+}
