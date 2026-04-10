@@ -17,11 +17,10 @@ C4Context
     Boundary(b1, "External Network (Internet)", top=true, right=true) {
         System_Ext(OpenAI_API, "OpenAI REST API", "Frontier LLM API access (GPT-4, etc.)")
         System_Ext(Anthropic_API, "Anthropic REST API", "Frontier LLM API access (Claude, etc.)")
-        System_Ext(AIApplicationService, "AI Application Service", "External AI-powered services consuming LLMs")
+        Person_Ext(Developer, "Developer", "Builds and maintains AI applications")
+        Person_Ext(OperationsEngineer, "Operations Engineer", "Deploys and maintains infrastructure")
+        Person_Ext(AIApplicationService, "AI Application Service", "External AI-powered services consuming LLMs")
     }
-
-    Person_Ext(Developer, "Developer", "Builds and maintains AI applications")
-    Person_Ext(OperationsEngineer, "Operations Engineer", "Deploys and maintains infrastructure")
 
     Rel(Developer, llm-switch, "API requests (HTTPS/JSON)", "HTTPS")
     Rel(OperationsEngineer, llm-switch, "Monitoring and configuration (HTTPS/JSON)", "HTTPS")
@@ -32,9 +31,9 @@ C4Context
     Rel(llm-switch, LocalModelRepository, "Inference requests (HTTPS/JSON)", "HTTPS")
     Rel(NomadCluster, llm-switch, "Health check probes (HTTPS/JSON)", "HTTPS")
     
-    linkStyle 3 stroke-dasharray: 5 5
     linkStyle 4 stroke-dasharray: 5 5
-    linkStyle 7 stroke-dasharray: 5 5
+    linkStyle 5 stroke-dasharray: 5 5
+    linkStyle 8 stroke-dasharray: 5 5
 
 UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
@@ -43,14 +42,14 @@ UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 
 | Connection | Protocol/Transport | Description |
 |------------|-------------------|-------------|
-| Developer → llm-switch | HTTPS/JSON | API requests for LLM inference |
-| Operations Engineer → llm-switch | HTTPS/JSON | Monitoring, configuration, and administrative tasks |
-| AI Application Service → llm-switch | HTTPS/JSON | Service calls consuming LLM capabilities |
-| llm-switch → Local Model Repository | HTTPS/JSON | Inference requests to locally hosted models (Qwen, Nemotron) |
-| llm-switch → Nomad Cluster | HTTPS/JSON | Deployment updates and configuration |
-| Nomad Cluster → llm-switch | HTTPS/JSON | Health check probes for liveness and readiness monitoring |
-| llm-switch → OpenAI API | HTTPS/JSON | Request forwarding to frontier models when selected (primary) or as fallback when local models fail |
-| llm-switch → Anthropic API | HTTPS/JSON | Request forwarding to frontier models when selected (primary) or as fallback when local models fail |
+| Developer → llm-switch | HTTPS/JSON | API requests for LLM inference (primary path) |
+| Operations Engineer → llm-switch | HTTPS/JSON | Monitoring, configuration, and administrative tasks (primary path) |
+| AI Application Service → llm-switch | HTTPS/JSON | Service calls consuming LLM capabilities (primary path) |
+| llm-switch → Local Model Repository | HTTPS/JSON | Inference requests to locally hosted models (Qwen, Nemotron) (primary path) |
+| llm-switch → Nomad Cluster | HTTPS/JSON | Deployment updates and configuration (primary path) |
+| Nomad Cluster → llm-switch | HTTPS/JSON | Health check probes for liveness and readiness monitoring (error handling path) |
+| llm-switch → OpenAI API | HTTPS/JSON | Request forwarding to frontier models (fallback path when local models are insufficient or fail) |
+| llm-switch → Anthropic API | HTTPS/JSON | Request forwarding to frontier models (fallback path when local models are insufficient or fail) |
 
 ## Narrative Completeness Checklist
 
@@ -75,3 +74,5 @@ UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 - [x] OpenAI API integration shown with request forwarding (crossing boundary to external)
 - [x] Anthropic API integration shown with request forwarding (crossing boundary to external)  
 - [x] Local model repository access shown for inference requests and health checks (inside internal network)
+
+**Note on AI Application Service Placement**: The AI Application Service is shown in the External Network boundary as a Person_Ext actor to accurately represent it as an external user of the system, rather than a system providing services to llm-switch. This follows C4 conventions for representing external users/consumers of a system.

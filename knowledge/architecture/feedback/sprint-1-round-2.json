@@ -1,0 +1,79 @@
+{
+  "scores": {
+    "mermaid_validity": 7.0,
+    "central_system": 10.0,
+    "user_types": 2.0,
+    "external_dependencies": 8.0,
+    "narrative_completeness": 8.0,
+    "prd_consistency": 8.0,
+    "relationship_documentation": 7.0,
+    "no_ambiguity": 6.0,
+    "edge_case_coverage": 4.0,
+    "security_boundaries": 8.0
+  },
+  "feedback": [
+    {
+      "criterion": "mermaid_validity",
+      "score": 7.0,
+      "severity": "Medium",
+      "details": "Syntax is valid but `linkStyle` references use 1-based indexing that assumes link ordering matches Rel() declaration order (c1-context.md:35-37). However, C4Context may reorder links internally, making the dashed line styling (linkStyle 3,4,7) unreliable and potentially misaligned with intended visual distinction."
+    },
+    {
+      "criterion": "central_system",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Exactly one container 'llm-switch' present at c1-context.md:12, centrally positioned, rectangular border via System() call, clearly distinguished from external elements."
+    },
+    {
+      "criterion": "user_types",
+      "score": 2.0,
+      "severity": "Critical",
+      "details": "CRITICAL FAILURE: AI Application Service is defined as `System_Ext` (c1-context.md:20) instead of `Person_Ext` or `Person` actor symbol. Criterion requires exactly three user types as 'distinct actor symbols'. Only Developer (c1-context.md:23) and Operations Engineer (c1-context.md:24) use actor notation. AI Application Service is incorrectly typed as a system rather than a user/actor, violating the explicit requirement that each user type 'must be represented as a distinct actor symbol'."
+    },
+    {
+      "criterion": "external_dependencies",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "Four dependencies present but two are System_Ext (OpenAI/Anthropic) while two are also System_Ext (Nomad, Local Repository) inside Internal Network boundary. Directional arrows present (c1-context.md:29-32). Issue: All shown as System_Ext which blurs distinction between true external dependencies (internet-facing) vs internal dependencies (cluster-internal), though visually distinguished via boundaries."
+    },
+    {
+      "criterion": "narrative_completeness",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "Narrative describes all entities (c1-context.md:42-69). Checklist present (c1-context.md:55-70). Missing: explicit description of error handling paths in narrative text (only mentioned in checklist at c1-context.md:69). Connection between AI Application Service as both 'user type' and 'external dependency' is not clarified."
+    },
+    {
+      "criterion": "prd_consistency",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "All four PRD requirements mentioned: (a) Nomad cluster orchestration (c1-context.md:74), (b) OpenAI API (c1-context.md:75), (c) Anthropic API (c1-context.md:76), (d) local model repository (c1-context.md:77). Deviation: No explicit documentation of change/rationale for positioning AI Application Service in External Network boundary when it acts as a user/consumer."
+    },
+    {
+      "criterion": "relationship_documentation",
+      "score": 7.0,
+      "severity": "Medium",
+      "details": "Seven connections listed in table (c1-context.md:44-53) with protocols. Missing explicit distinction: API failure fallback flows (criterion requires 'visually distinguished from primary data flows') are not explicitly separated in relationship table. The table conflates 'primary' and 'fallback' uses of OpenAI/Anthropic connections without distinguishing the fallback nature in the Connection column."
+    },
+    {
+      "criterion": "no_ambiguity",
+      "score": 6.0,
+      "severity": "High",
+      "details": "HIGH SEVERITY: AI Application Service violates C1 conventions by being represented as System_Ext (c1-context.md:20) when it represents a user/actor of the system, not an external system providing services TO llm-switch. Additionally, 'AI Application Service' label is ambiguous—unclear if referring to the external service consuming llm-switch or a generic 'AI Service' component. Generic term 'Service' used without specific identification of what this service is."
+    },
+    {
+      "criterion": "edge_case_coverage",
+      "score": 4.0,
+      "severity": "High",
+      "details": "HIGH SEVERITY: CRITICAL MISALIGNMENT. Dashed lines applied to wrong connections: (1) linkStyle 3 marks AIApplicationService→llm-switch (c1-context.md:28) as dashed—this is NOT an error handling path; (2) linkStyle 7 marks llm-switch→LocalModelRepository (c1-context.md:32) as dashed—this is a primary inference path, not error handling. Actual fallback flows (llm-switch→OpenAI/Anthropic at c1-context.md:29-30) are NOT marked as dashed. Missing: No explicit model repository availability check shown (only Nomad health check at c1-context.md:33). Error handling paths are visually distinguished but incorrectly, creating misleading diagram."
+    },
+    {
+      "criterion": "security_boundaries",
+      "score": 8.0,
+      "severity": "Low",
+      "details": "Two boundaries shown: 'Internal Network' (c1-context.md:11) and 'External Network (Internet)' (c1-context.md:17). llm-switch positioned in Internal Network. Missing: DMZ not explicitly shown. Internet boundary wraps External Network but does not explicitly label the zone as 'Internet' vs just 'External Network', though narrative clarifies at c1-context.md:70."
+    }
+  ],
+  "overall_summary": "Architecture fails critically on two major criteria: (1) user_types (score: 2.0) because AI Application Service is incorrectly modeled as System_Ext instead of an actor symbol (Person_Ext), violating the explicit contract requirement for 'distinct actor symbols' for all three user types; (2) edge_case_coverage (score: 4.0) because dashed lines marking error handling paths are applied to incorrect connections—AI Application Service and Local Model Repository connections are dashed while the actual fallback flows (OpenAI/Anthropic) remain solid lines, creating a misleading and potentially production-fatal diagram. Secondary issues include ambiguous 'Service' terminology, unreliable linkStyle indexing, and conflation of primary/fallback relationships in documentation. The diagram will cause developers to misunderstand which paths represent failure modes vs normal operation.",
+  "average_score": 6.8,
+  "passed": false
+}
