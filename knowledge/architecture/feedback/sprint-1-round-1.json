@@ -1,79 +1,72 @@
 {
   "scores": {
-    "mermaid_validity": 6.0,
-    "central_system": 9.0,
-    "user_types": 8.0,
-    "external_dependencies": 8.0,
-    "narrative_completeness": 9.0,
-    "prd_consistency": 9.0,
-    "relationship_documentation": 7.0,
-    "no_ambiguity": 7.0,
-    "edge_case_coverage": 4.0,
-    "security_boundaries": 5.0
+    "Mermaid Syntax Validity": 10.0,
+    "C4 Level 1 Completeness": 3.0,
+    "PRD Bidirectional Traceability": 4.0,
+    "Narrative Structure and Depth": 4.0,
+    "Relationship Specification": 5.0,
+    "Edge Case: Hallucination Prevention": 1.0,
+    "Edge Case: Boundary Integrity": 10.0,
+    "C4 Naming and Styling Compliance": 1.0,
+    "Version Control Readiness": 4.0
   },
   "feedback": [
     {
-      "criterion": "mermaid_validity",
-      "score": 6.0,
-      "severity": "High",
-      "details": "Duplicate relationship definitions between identical entity pairs (c1-context.md:lines 27-28 and 33-34) would cause rendering issues or undefined behavior. Lines 27-28 define primary relationships, then lines 33-34 redefine them with different labels. Mermaid/C4 does not support multiple relationships between the same pair; the second overrides the first. Remove duplicates and use UpdateElement style to create visual variants."
-    },
-    {
-      "criterion": "central_system",
-      "score": 9.0,
+      "criterion": "Mermaid Syntax Validity",
+      "score": 10.0,
       "severity": "Low",
-      "details": "System correctly positioned centrally with rectangular border (c1-context.md:line 12). Clear label 'llm-switch' and description. Minor improvement: could add explicit styling to ensure it stands out from external systems."
+      "details": "Diagram syntax is valid. C4Context block structure is correct. UpdateLayoutConfig (c1-context.md:52) is properly placed at the end. All arrows use valid syntax (->, <->). No parsing errors detected."
     },
     {
-      "criterion": "user_types",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "Three distinct user types present (c1-context.md:lines 17-19), but AIApplicationService incorrectly uses Person_Ext notation (line 19). An AI Application Service is a system, not a human actor. Should use System_Ext. Also, explicit labels exist but distinct connection lines are standard Rel arrows only."
+      "criterion": "C4 Level 1 Completeness",
+      "score": 3.0,
+      "severity": "Critical",
+      "details": "Major structural flaw: Contains 7 Container_Ext elements when only external dependencies should be present. OpenAPI_Spec (c1-context.md:33) and Anthropic_Spec (c1-context.md:34) are API specifications/standards, not external systems. Batch_Support (c1-context.md:39) is an internal capability, not an external dependency. This violates the requirement for exactly one container per external dependency."
     },
     {
-      "criterion": "external_dependencies",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "Four external dependencies correctly identified (c1-context.md:lines 13-14, 21-22). Directional arrows present via Rel statements (lines 24-36). Note: Nomad Cluster and Local Model Repository are placed inside the Internal Network boundary (line 11) but also marked as System_Ext—this creates conceptual confusion between 'internal' and 'external' placement."
-    },
-    {
-      "criterion": "narrative_completeness",
-      "score": 9.0,
-      "severity": "Low",
-      "details": "Comprehensive narrative present (lines 41-56) with explicit checklist (lines 57-71). All entities mapped. Minor gap: checklist references 'dashed lines' (line 70) which are not actually rendered as dashed in the Mermaid diagram."
-    },
-    {
-      "criterion": "prd_consistency",
-      "score": 9.0,
-      "severity": "Low",
-      "details": "All PRD requirements explicitly mentioned: Nomad cluster as orchestration platform (line 14, 75), OpenAI API (line 21, 76), Anthropic API (line 22, 77), local model repository (line 13, 78). Verification section present (lines 73-78)."
-    },
-    {
-      "criterion": "relationship_documentation",
-      "score": 7.0,
-      "severity": "Medium",
-      "details": "Table present (lines 43-55) with protocols. Critical gap: All connections use HTTPS/JSON, but Nomad Cluster interactions (lines 30, 51) typically use RPC or Nomad-specific APIs, not generic HTTPS. Also, duplicate relationships in Mermaid code (lines 33-36) contradict the table entries."
-    },
-    {
-      "criterion": "no_ambiguity",
-      "score": 7.0,
-      "severity": "Medium",
-      "details": "Standard C4 notation used, but AIApplicationService uses Person_Ext (line 19) for a non-human entity—violates C4 conventions. Nomad Cluster labeled as System_Ext (line 14) but placed inside 'Internal Network' boundary (line 11)—contradicts the 'Ext' designation."
-    },
-    {
-      "criterion": "edge_case_coverage",
+      "criterion": "PRD Bidirectional Traceability",
       "score": 4.0,
       "severity": "Critical",
-      "details": "Critical failure: Error handling paths are NOT visually distinguished. Lines 32-36 attempt to show fallback flows but (1) duplicate existing relationships causing undefined behavior, (2) cannot appear as 'dashed lines' as claimed in line 70 because C4Context does not support dashed Rel statements without special styling. The diagram shows identical arrows for primary and fallback flows, making them indistinguishable. Fallback to frontier models on local failure (lines 33-34) overrides the primary API relationships (lines 27-28)."
+      "details": "Missing the mandatory table mapping each diagram element (Developer, Operations, llm-switch, each Container_Ext) to its purpose and PRD section. Only a relationship table exists (c1-context.md:57-67), not an element mapping table. Hallucinated elements (OpenAPI_Spec, Anthropic_Spec, Batch_Support) cannot be traced to actual PRD Integrations requirements."
     },
     {
-      "criterion": "security_boundaries",
-      "score": 5.0,
+      "criterion": "Narrative Structure and Depth",
+      "score": 4.0,
       "severity": "Critical",
-      "details": "Critical gap: Only shows 'Internal Network (Nomad Cluster)' boundary (line 11). Missing explicit security zones: (1) No DMZ boundary showing where llm-switch exposes APIs, (2) No external internet boundary showing OpenAI/Anthropic APIs location, (3) llm-switch sits in internal network but consumes external APIs without showing the network perimeter traversal. Diagram fails to show where the system sits relative to external APIs as required by PRD."
+      "details": "Missing the required table mapping each diagram element to its purpose and PRD section. Word count exceeds 200 (satisfied). Dedicated paragraphs for dependencies exist (c1-context.md:71-83), but the mandatory element-to-PRD mapping table is absent, failing this criterion."
+    },
+    {
+      "criterion": "Relationship Specification",
+      "score": 5.0,
+      "severity": "High",
+      "details": "Semantic errors in relationship definitions: llm-switch -> OpenAPI_Spec (c1-context.md:44) claims 'Implements OpenAPI specification' - you implement standards, you do not have runtime relationships with them. Same invalid pattern for Anthropic_Spec (c1-context.md:45) and Batch_Support (c1-context.md:50). Table lists protocol as 'N/A' for these (c1-context.md:61-62, 67), which is incorrect - they are not valid relationships."
+    },
+    {
+      "criterion": "Edge Case: Hallucination Prevention",
+      "score": 1.0,
+      "severity": "Critical",
+      "details": "Automatic failure criterion triggered. Three hallucinated external dependencies not in PRD Integrations: (1) OpenAPI Specification is a standard, not an external container (c1-context.md:33); (2) Anthropic Message API is a protocol specification, not a system (c1-context.md:34); (3) Batch Processing is an internal capability/feature, not an external dependency (c1-context.md:39). Each extra container constitutes failure."
+    },
+    {
+      "criterion": "Edge Case: Boundary Integrity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Correctly implemented. llm-switch is the sole System element (c1-context.md:31). All external systems use Container_Ext (c1-context.md:33-39), correctly placing them outside the system boundary. No external dependencies drawn inside boundary."
+    },
+    {
+      "criterion": "C4 Naming and Styling Compliance",
+      "score": 1.0,
+      "severity": "Critical",
+      "details": "Severe violations of <=25 character label rule: (1) Person_Ext description 'Integrates and uses llm-switch via OpenAPI/Anthropic-compatible APIs [PRD 5]' is 83 characters (c1-context.md:28); (2) System description 'Intelligent LLM Proxy System providing dynamic model selection [PRD 1]' is 66 characters (c1-context.md:31); (3) Multiple Container_Ext descriptions exceed 50 characters. System ID 'llm-switch' uses lowercase with hyphen instead of PascalCase (c1-context.md:31), violating C4 naming conventions."
+    },
+    {
+      "criterion": "Version Control Readiness",
+      "score": 4.0,
+      "severity": "High",
+      "details": "MD013 violations: Line 10 is 144 characters (>120 limit). Line 73 is 158 characters. Line 75 is 187 characters. Frontmatter present with sprint_number and sprint_name (c1-context.md:1-4). No inline HTML detected. No tabs detected. Fails MD013 line length requirement."
     }
   ],
-  "overall_summary": "The architecture contains fundamental structural issues preventing production readiness. Primary blocker: duplicate relationship definitions (lines 27-28 vs 33-36) create undefined Mermaid behavior and make error handling paths visually indistinguishable from primary flows—direct violation of edge_case_coverage criterion. Critical gap: incomplete security boundaries showing only 'Internal Network' without DMZ or external internet zones. Medium severity: AIApplicationService misclassified as Person_Ext when it is a System; ambiguous placement of Nomad Cluster as System_Ext inside Internal boundary. The Mermaid syntax would likely fail or render ambiguously in production documentation. Narrative completeness is strong but references features (dashed lines) not actually present in the diagram.",
-  "average_score": 7.2,
+  "overall_summary": "This architecture document is fundamentally broken and cannot proceed to production. It fails the automatic failure criterion for hallucination prevention by including three elements that are not external dependencies: OpenAPI Specification and Anthropic Message API are API standards/protocols, not systems; Batch Processing is an internal capability. The C4 naming violations are severe with labels up to 83 characters when the limit is 25. The mandatory element-to-PRD mapping table is completely absent. Line lengths violate MD013 throughout. The only passing criteria are Mermaid syntax validity and boundary integrity. This represents a fundamental misunderstanding of C4 notation (confusing specifications with systems) and basic formatting requirements.",
+  "average_score": 4.666666666666667,
   "passed": false
 }
