@@ -62,12 +62,12 @@ C4Context
     Container_Ext(Vault, "Vault", "Secrets", "Secure API key storage")
     Container_Ext(Orchestration, "Orchestration", "Orchestration", "Job scheduling")
 
-    Developer -> LlmSwitch : "Sends LLM requests via APIs"
-    Operations -> LlmSwitch : "Deploys, monitors, maintains system"
+    Developer -> LlmSwitch : "Sends LLM requests"
+    Operations -> LlmSwitch : "Deploys & manages system"
 
     LlmSwitch -> Prometheus : "Exports metrics via HTTP"
-    LlmSwitch <-> Consul : "Service discovery via DNS/HTTP"
-    LlmSwitch -> Vault : "Retrieves secrets via AppRole"
+    LlmSwitch <-> Consul : "DNS/HTTP service discovery"
+    LlmSwitch -> Vault : "Gets secrets via AppRole"
     LlmSwitch -> Orchestration : "Deployed as job via API"
 
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

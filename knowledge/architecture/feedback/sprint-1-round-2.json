@@ -1,79 +1,72 @@
 {
   "scores": {
-    "mermaid_validity": 7.0,
-    "central_system": 10.0,
-    "user_types": 2.0,
-    "external_dependencies": 8.0,
-    "narrative_completeness": 8.0,
-    "prd_consistency": 8.0,
-    "relationship_documentation": 7.0,
-    "no_ambiguity": 6.0,
-    "edge_case_coverage": 4.0,
-    "security_boundaries": 8.0
+    "Mermaid Syntax Validity": 9.0,
+    "C4 Level 1 Completeness": 8.0,
+    "PRD Bidirectional Traceability": 8.0,
+    "Narrative Structure and Depth": 9.0,
+    "Relationship Specification": 9.0,
+    "Edge Case: Hallucination Prevention": 10.0,
+    "Edge Case: Boundary Integrity": 10.0,
+    "C4 Naming and Styling Compliance": 6.0,
+    "Version Control Readiness": 9.0
   },
   "feedback": [
     {
-      "criterion": "mermaid_validity",
-      "score": 7.0,
+      "criterion": "Mermaid Syntax Validity",
+      "score": 9.0,
       "severity": "Medium",
-      "details": "Syntax is valid but `linkStyle` references use 1-based indexing that assumes link ordering matches Rel() declaration order (c1-context.md:35-37). However, C4Context may reorder links internally, making the dashed line styling (linkStyle 3,4,7) unreliable and potentially misaligned with intended visual distinction."
+      "details": "Syntax appears valid, but requires validation against Mermaid CLI v10.2.0+ with both light and dark themes. UpdateLayoutConfig on line 73 is correctly formatted. No obvious syntax errors detected."
     },
     {
-      "criterion": "central_system",
+      "criterion": "C4 Level 1 Completeness",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "Contains exactly 1 System (line 58), 2 Persons (lines 55-56), and 4 Container_Ext elements (lines 60-63). File claims these match PRD Integrations, but verification against actual PRD content required. Note: Line 27-28 explicitly excludes LLM services claiming they are not in PRD Integrations."
+    },
+    {
+      "criterion": "PRD Bidirectional Traceability",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "Components cite PRD sections (lines 78-97). However, cannot verify that every PRD 'Integrations' requirement is represented without access to the PRD. References [PRD 10.1], [PRD 6.2], [PRD 12], [PRD 5], [PRD 1] are cited throughout."
+    },
+    {
+      "criterion": "Narrative Structure and Depth",
+      "score": 9.0,
+      "severity": "Low",
+      "details": "Element-to-PRD table present (lines 89-97). Word count exceeds 200 words. Dedicated paragraphs explaining 'why' each dependency is necessary appear at lines 35-48 and 101-127. Meets all structural requirements."
+    },
+    {
+      "criterion": "Relationship Specification",
+      "score": 9.0,
+      "severity": "Low",
+      "details": "Relationship Details table (lines 78-85) specifies Direction, Protocol, and Authentication for all connections. Diagram arrows match table directions: Developer→LlmSwitch (line 65), LlmSwitch→Prometheus (line 68), LlmSwitch↔Consul (line 69), LlmSwitch→Vault (line 70), LlmSwitch→Orchestration (line 71)."
+    },
+    {
+      "criterion": "Edge Case: Hallucination Prevention",
       "score": 10.0,
       "severity": "Low",
-      "details": "Exactly one container 'llm-switch' present at c1-context.md:12, centrally positioned, rectangular border via System() call, clearly distinguished from external elements."
+      "details": "Demonstrates awareness of hallucination prevention. Lines 27-33 explicitly explain why LLM services, OpenAPI compatibility, and Anthropic compatibility are not shown as external containers. Only includes containers explicitly claimed to be in PRD 'Integrations'. No extra containers detected."
     },
     {
-      "criterion": "user_types",
-      "score": 2.0,
-      "severity": "Critical",
-      "details": "CRITICAL FAILURE: AI Application Service is defined as `System_Ext` (c1-context.md:20) instead of `Person_Ext` or `Person` actor symbol. Criterion requires exactly three user types as 'distinct actor symbols'. Only Developer (c1-context.md:23) and Operations Engineer (c1-context.md:24) use actor notation. AI Application Service is incorrectly typed as a system rather than a user/actor, violating the explicit requirement that each user type 'must be represented as a distinct actor symbol'."
+      "criterion": "Edge Case: Boundary Integrity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "System boundary correctly encloses only LlmSwitch (line 58). All external dependencies (Prometheus, Consul, Vault, Orchestration) use Container_Ext and are outside the boundary. No external containers drawn inside system boundary."
     },
     {
-      "criterion": "external_dependencies",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "Four dependencies present but two are System_Ext (OpenAI/Anthropic) while two are also System_Ext (Nomad, Local Repository) inside Internal Network boundary. Directional arrows present (c1-context.md:29-32). Issue: All shown as System_Ext which blurs distinction between true external dependencies (internet-facing) vs internal dependencies (cluster-internal), though visually distinguished via boundaries."
-    },
-    {
-      "criterion": "narrative_completeness",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "Narrative describes all entities (c1-context.md:42-69). Checklist present (c1-context.md:55-70). Missing: explicit description of error handling paths in narrative text (only mentioned in checklist at c1-context.md:69). Connection between AI Application Service as both 'user type' and 'external dependency' is not clarified."
-    },
-    {
-      "criterion": "prd_consistency",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "All four PRD requirements mentioned: (a) Nomad cluster orchestration (c1-context.md:74), (b) OpenAI API (c1-context.md:75), (c) Anthropic API (c1-context.md:76), (d) local model repository (c1-context.md:77). Deviation: No explicit documentation of change/rationale for positioning AI Application Service in External Network boundary when it acts as a user/consumer."
-    },
-    {
-      "criterion": "relationship_documentation",
-      "score": 7.0,
-      "severity": "Medium",
-      "details": "Seven connections listed in table (c1-context.md:44-53) with protocols. Missing explicit distinction: API failure fallback flows (criterion requires 'visually distinguished from primary data flows') are not explicitly separated in relationship table. The table conflates 'primary' and 'fallback' uses of OpenAI/Anthropic connections without distinguishing the fallback nature in the Connection column."
-    },
-    {
-      "criterion": "no_ambiguity",
+      "criterion": "C4 Naming and Styling Compliance",
       "score": 6.0,
       "severity": "High",
-      "details": "HIGH SEVERITY: AI Application Service violates C1 conventions by being represented as System_Ext (c1-context.md:20) when it represents a user/actor of the system, not an external system providing services TO llm-switch. Additionally, 'AI Application Service' label is ambiguous—unclear if referring to the external service consuming llm-switch or a generic 'AI Service' component. Generic term 'Service' used without specific identification of what this service is."
+      "details": "Three relationship labels exceed 25 character limit: line 66 'Deploys, monitors, maintains system' (35 chars), line 69 'Service discovery via DNS/HTTP' (28 chars), line 70 'Retrieves secrets via AppRole' (27 chars). All must be <= 25. Person names use correct Sentence case (lines 55-56). Containers use correct PascalCase (lines 58-63)."
     },
     {
-      "criterion": "edge_case_coverage",
-      "score": 4.0,
-      "severity": "High",
-      "details": "HIGH SEVERITY: CRITICAL MISALIGNMENT. Dashed lines applied to wrong connections: (1) linkStyle 3 marks AIApplicationService→llm-switch (c1-context.md:28) as dashed—this is NOT an error handling path; (2) linkStyle 7 marks llm-switch→LocalModelRepository (c1-context.md:32) as dashed—this is a primary inference path, not error handling. Actual fallback flows (llm-switch→OpenAI/Anthropic at c1-context.md:29-30) are NOT marked as dashed. Missing: No explicit model repository availability check shown (only Nomad health check at c1-context.md:33). Error handling paths are visually distinguished but incorrectly, creating misleading diagram."
-    },
-    {
-      "criterion": "security_boundaries",
-      "score": 8.0,
+      "criterion": "Version Control Readiness",
+      "score": 9.0,
       "severity": "Low",
-      "details": "Two boundaries shown: 'Internal Network' (c1-context.md:11) and 'External Network (Internet)' (c1-context.md:17). llm-switch positioned in Internal Network. Missing: DMZ not explicitly shown. Internet boundary wraps External Network but does not explicitly label the zone as 'Internet' vs just 'External Network', though narrative clarifies at c1-context.md:70."
+      "details": "Frontmatter includes sprint_number: 1 (line 2) and sprint_name (line 3). No inline HTML detected. No tabs detected (appears to use spaces). All lines appear to be <= 120 characters (longest table row at line 87 is 114 chars)."
     }
   ],
-  "overall_summary": "Architecture fails critically on two major criteria: (1) user_types (score: 2.0) because AI Application Service is incorrectly modeled as System_Ext instead of an actor symbol (Person_Ext), violating the explicit contract requirement for 'distinct actor symbols' for all three user types; (2) edge_case_coverage (score: 4.0) because dashed lines marking error handling paths are applied to incorrect connections—AI Application Service and Local Model Repository connections are dashed while the actual fallback flows (OpenAI/Anthropic) remain solid lines, creating a misleading and potentially production-fatal diagram. Secondary issues include ambiguous 'Service' terminology, unreliable linkStyle indexing, and conflation of primary/fallback relationships in documentation. The diagram will cause developers to misunderstand which paths represent failure modes vs normal operation.",
-  "average_score": 6.8,
+  "overall_summary": "The architecture file demonstrates solid C4 Level 1 structure with proper boundary integrity and careful avoidance of hallucinated elements. The narrative meets depth requirements with comprehensive 'why' explanations for dependencies. However, three relationship labels violate the 25-character maximum limit (lines 66, 69, 70), constituting a High severity issue. The file makes accurate claims about PRD traceability but requires verification against the actual PRD 'Integrations' section to confirm completeness. Mermaid syntax requires CLI validation but appears structurally sound.",
+  "average_score": 8.666666666666666,
   "passed": false
 }
