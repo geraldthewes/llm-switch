@@ -64,11 +64,10 @@ C4Context
 
     Developer -> LlmSwitch : "Sends LLM requests"
     Operations -> LlmSwitch : "Deploys & manages system"
-
     LlmSwitch -> Prometheus : "Exports metrics via HTTP"
     LlmSwitch <-> Consul : "DNS/HTTP service discovery"
     LlmSwitch -> Vault : "Gets secrets via AppRole"
-    LlmSwitch -> Orchestration : "Deployed as job via API"
+    Orchestration -> LlmSwitch : "Health check requests"
 
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
@@ -82,7 +81,7 @@ C4Context
 | LlmSwitch → Prometheus | System to monitoring | HTTP | None (public metrics endpoint) | [PRD 10.1] |
 | LlmSwitch ↔ Consul | Bidirectional | HTTP/DNS | None (Consul agent communication) | [PRD 10.1] |
 | LlmSwitch → Vault | System to secret manager | HTTP/HTTPS | AppRole role ID/secret ID | [PRD 10.1] |
-| LlmSwitch → Orchestration | System to orchestration | HTTP/HTTPS | Nomad token or TLS | [PRD 10.1, 12] |
+| Orchestration → LlmSwitch | Orchestration to system | HTTP/HTTPS | Nomad token or TLS | [PRD 10.1, 12] |
 
 ## Element-to-PRD Mapping Table
 

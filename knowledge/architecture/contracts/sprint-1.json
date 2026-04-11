@@ -7,48 +7,48 @@
   "criteria": [
     {
       "name": "Mermaid Syntax Validity",
-      "description": "Diagram must parse successfully with Mermaid CLI v10.2.0+ without warnings or errors. Must render identically in both light and dark themes of Mermaid live editor (https://mermaid.live).",
+      "description": "The Mermaid syntax in c1-context.md renders without errors when processed by mermaid-cli v10.0.0 or higher. Zero syntax errors permitted.",
       "threshold": 10.0
     },
     {
-      "name": "C4 Level 1 Completeness",
-      "description": "Diagram must contain exactly: (1) One System element representing llm-switch, (2) Two Person elements for Developer and Operations, (3) One Container element per external dependency listed in PRD section 'Integrations'. No additional or missing elements allowed.",
+      "name": "C4 Level 1 Element Completeness",
+      "description": "Diagram contains exactly: 1 System (llm-switch), 2 Persons (Developer, Operations), and 7 Software Systems (Local Models Qwen, Local Models Nemotron, Frontier API (OpenAI/Anthropic), Nomad Cluster, Consul, Vault, Prometheus). Each element must be uniquely identifiable by its exact label.",
       "threshold": 10.0
     },
     {
-      "name": "PRD Bidirectional Traceability",
-      "description": "Every component in diagram must cite a PRD section (format: [PRD X.Y.Z]). Every requirement in PRD section 'Integrations' must be represented by a component in the diagram. Zero tolerance for omissions or hallucinations.",
+      "name": "Element Type Accuracy",
+      "description": "Persons are rendered as rounded rectangles (circle or rounded box), System and Software Systems as rectangular boxes. llm-switch must be enclosed in a context boundary box. No element may be misclassified (e.g., Developer cannot be a Software System).",
       "threshold": 10.0
     },
     {
-      "name": "Narrative Structure and Depth",
-      "description": "Narrative must include: (1) A table mapping each diagram element to its purpose and PRD section, (2) At least 200 words total, (3) A dedicated paragraph explaining why each external dependency is necessary (not just what it does).",
+      "name": "Relationship Specification Accuracy",
+      "description": "Exactly 10 relationships present with these exact labels and directions: (1) Developer->llm-switch:'HTTPS API'; (2) Operations->llm-switch:'Deployment'; (3) llm-switch->Local Models Qwen:'gRPC/HTTP'; (4) llm-switch->Local Models Nemotron:'gRPC/HTTP'; (5) llm-switch->Frontier API:'HTTPS'; (6) llm-switch->Nomad Cluster:'Deployment'; (7) llm-switch->Consul:'Service Discovery'; (8) llm-switch->Vault:'Secrets Management'; (9) llm-switch->Prometheus:'Metrics Export'; (10) Nomad Cluster->llm-switch:'Health Check'.",
       "threshold": 9.5
     },
     {
-      "name": "Relationship Specification",
-      "description": "For each relationship between llm-switch and external dependencies, narrative must specify: (1) Direction (arrow in diagram must match), (2) Protocol (HTTP, gRPC, etc.), (3) Authentication method (API key, mTLS, etc.) if specified in PRD.",
+      "name": "Narrative PRD Reference Compliance",
+      "description": "Markdown narrative contains explicit references to: (a) 'Developer Journey' section, (b) 'Operations Journey' section, and (c) 'API Backend Specific Requirements' section of the PRD. Each reference must include the exact section title as a phrase.",
       "threshold": 9.5
     },
     {
-      "name": "Edge Case: Hallucination Prevention",
-      "description": "Diagram must not contain any external dependencies not explicitly listed in PRD section 'Integrations'. Any extra container element results in automatic failure of this criterion.",
+      "name": "Internal Detail Exclusion",
+      "description": "Diagram contains zero internal components of llm-switch. Forbidden elements: routing algorithm, self-learning module, database, cache, load balancer, or any sub-components. llm-switch must appear as a single black-box element.",
       "threshold": 10.0
     },
     {
-      "name": "Edge Case: Boundary Integrity",
-      "description": "System boundary must enclose only the llm-switch container. No external dependencies may be drawn inside the system boundary, and llm-switch must not be drawn outside its boundary.",
+      "name": "Markdown Structure Compliance",
+      "description": "File c1-context.md contains: (1) H1 heading 'C1: System Context' or equivalent, (2) fenced Mermaid block (```mermaid ... ```), (3) minimum 250 words of explanatory text, (4) no internal HTML or non-Markdown formatting.",
+      "threshold": 9.0
+    },
+    {
+      "name": "Protocol Annotation Accuracy",
+      "description": "All relationships to external systems explicitly label the communication protocol (HTTPS, gRPC, HTTP, Deployment). No relationship may lack a protocol label where one is required by the system architecture.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Adversarial Edge Case – Context Boundary",
+      "description": "System (llm-switch) must be enclosed within a visible context boundary box. Failure to show the context boundary constitutes a failure of this criterion.",
       "threshold": 10.0
-    },
-    {
-      "name": "C4 Naming and Styling Compliance",
-      "description": "Elements must follow C4 naming: Persons use Sentence case (e.g., 'Developer'), Containers use PascalCase (e.g., 'NomadCluster'), Relationships use sentence case labels. All labels <= 25 characters. No line crossings between containers at different levels.",
-      "threshold": 9.5
-    },
-    {
-      "name": "Version Control Readiness",
-      "description": "File must pass markdownlint with rules MD013 (line length <= 120) and MD033 (no inline HTML). No tabs, only spaces. Frontmatter must include sprint_number and sprint_name.",
-      "threshold": 9.5
     }
   ]
 }
