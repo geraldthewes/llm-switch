@@ -6,49 +6,49 @@
   ],
   "criteria": [
     {
-      "name": "Mermaid Syntax Validity",
-      "description": "The Mermaid syntax in c1-context.md renders without errors when processed by mermaid-cli v10.0.0 or higher. Zero syntax errors permitted.",
+      "name": "Mermaid Syntax Validation",
+      "description": "Diagram must pass `mermaid -v 10.6.0 -c c1-context.md --validate` with exit code 0 and zero warnings. No deprecated C4 syntax (e.g., `]`) allowed.",
       "threshold": 10.0
     },
     {
-      "name": "C4 Level 1 Element Completeness",
-      "description": "Diagram contains exactly: 1 System (llm-switch), 2 Persons (Developer, Operations), and 7 Software Systems (Local Models Qwen, Local Models Nemotron, Frontier API (OpenAI/Anthropic), Nomad Cluster, Consul, Vault, Prometheus). Each element must be uniquely identifiable by its exact label.",
+      "name": "C4 Level 1 Component Completeness",
+      "description": "Must include exactly: (1) System boundary 'llm-switch' with <<System>> container, (2) User roles 'Developer' and 'Operations', (3) System components 'Nomad orchestrator', 'Consul service discovery', 'Vault secret management', (4) Local models: 'Qwen 7B GGUF', 'Nemotron-3-22B', (5) Frontier API: 'OpenAI gpt-4-turbo', (6) Internal systems: 'Orchestrator Model (1B)', 'Statistical Routing'. All 8 components required for pass.",
       "threshold": 10.0
     },
     {
-      "name": "Element Type Accuracy",
-      "description": "Persons are rendered as rounded rectangles (circle or rounded box), System and Software Systems as rectangular boxes. llm-switch must be enclosed in a context boundary box. No element may be misclassified (e.g., Developer cannot be a Software System).",
-      "threshold": 10.0
-    },
-    {
-      "name": "Relationship Specification Accuracy",
-      "description": "Exactly 10 relationships present with these exact labels and directions: (1) Developer->llm-switch:'HTTPS API'; (2) Operations->llm-switch:'Deployment'; (3) llm-switch->Local Models Qwen:'gRPC/HTTP'; (4) llm-switch->Local Models Nemotron:'gRPC/HTTP'; (5) llm-switch->Frontier API:'HTTPS'; (6) llm-switch->Nomad Cluster:'Deployment'; (7) llm-switch->Consul:'Service Discovery'; (8) llm-switch->Vault:'Secrets Management'; (9) llm-switch->Prometheus:'Metrics Export'; (10) Nomad Cluster->llm-switch:'Health Check'.",
-      "threshold": 9.5
-    },
-    {
-      "name": "Narrative PRD Reference Compliance",
-      "description": "Markdown narrative contains explicit references to: (a) 'Developer Journey' section, (b) 'Operations Journey' section, and (c) 'API Backend Specific Requirements' section of the PRD. Each reference must include the exact section title as a phrase.",
-      "threshold": 9.5
-    },
-    {
-      "name": "Internal Detail Exclusion",
-      "description": "Diagram contains zero internal components of llm-switch. Forbidden elements: routing algorithm, self-learning module, database, cache, load balancer, or any sub-components. llm-switch must appear as a single black-box element.",
-      "threshold": 10.0
-    },
-    {
-      "name": "Markdown Structure Compliance",
-      "description": "File c1-context.md contains: (1) H1 heading 'C1: System Context' or equivalent, (2) fenced Mermaid block (```mermaid ... ```), (3) minimum 250 words of explanatory text, (4) no internal HTML or non-Markdown formatting.",
+      "name": "Narrative Quality Metrics",
+      "description": "Narrative must contain exactly 300 words (±10%), zero Grammarly API errors (score ≥95), and ≥85% active voice sentences as measured by NLTK passive voice detection. Must explicitly reference PRD Section 4.2 User Journeys.",
       "threshold": 9.0
     },
     {
-      "name": "Protocol Annotation Accuracy",
-      "description": "All relationships to external systems explicitly label the communication protocol (HTTPS, gRPC, HTTP, Deployment). No relationship may lack a protocol label where one is required by the system architecture.",
-      "threshold": 9.5
+      "name": "PRD Traceability Matrix",
+      "description": "Must include markdown table mapping each of the 8 diagram components to specific PRD section (format: 'Section X.Y, Page Z'). All User Journey steps from PRD Sections 4.2.1-4.2.3 must be explicitly linked to diagram elements.",
+      "threshold": 9.0
     },
     {
-      "name": "Adversarial Edge Case – Context Boundary",
-      "description": "System (llm-switch) must be enclosed within a visible context boundary box. Failure to show the context boundary constitutes a failure of this criterion.",
+      "name": "Relationship Label Specificity",
+      "description": "All connection labels must be ≥25 characters, follow format 'Protocol: <Source> performs <Action> on <Destination>' (e.g., 'HTTPS: Developers send OpenAPI requests to llm-switch'), and include latency bounds (e.g., '<50ms'). Generic labels ('uses', 'connects to') are rejected.",
+      "threshold": 9.0
+    },
+    {
+      "name": "Technology Version Compliance",
+      "description": "Must specify exact versions: Golang 1.21+, Docker 24.0+, Nomad 1.7.0+, Consul 1.16.0+, Vault 1.15.0+. Internal systems must be labeled as <<System>> containers. No generic 'Docker container' without image tag.",
       "threshold": 10.0
+    },
+    {
+      "name": "Model Routing Edge Cases",
+      "description": "Must show dashed fallback lines for: (a) Local model unavailability → Frontier API with label 'Failover on latency >100ms', (b) Vault token expiry → Auto-refresh with label '401 → Token Refresh'. Must include latency annotations for all model paths.",
+      "threshold": 9.0
+    },
+    {
+      "name": "Security Boundary Delineation",
+      "description": "Must draw dashed <<Boundary>> container around 'Vault' and 'Consul' labeled 'Trusted Zone (mTLS Required)'. Must draw solid <<Boundary>> around 'Public Internet' with annotation 'TLS 1.3 Termination'. No internal service exposed to Public Internet boundary.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Cluster Environment Specificity",
+      "description": "Narrative must reference: Prometheus metrics endpoint '/metrics', Grafana dashboard ID 'llm-switch-overview', hardware-aware routing strategy 'memory-priority' from supplementary context Section 3.1, and Kubernetes Node Affinity constraints for GPU scheduling.",
+      "threshold": 9.0
     }
   ]
 }
