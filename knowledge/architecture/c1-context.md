@@ -1,78 +1,85 @@
-# C1 System Context
+---
+sprint_number: 1
+sprint_name: "C1 System Context"
+---
 
-llm-switch is an intelligent LLM proxy system that automates optimal model selection for AI applications. It provides unified access through industry-standard OpenAI and Anthropic-compatible APIs while encouraging privacy-preserving, cost-effective local model usage.
+# C1 System Context: llm-switch
+
+## Narrative
+
+The llm-switch system functions as an intelligent LLM proxy that dynamically selects optimal language models for AI applications. At the System Context level (C1), we define the boundary of llm-switch and its interactions with external actors and systems. The system serves two primary human roles: Developers who integrate and utilize the proxy, and Operations personnel who deploy and maintain it in the Nomad cluster environment.
+
+llm-switch provides OpenAPI and Anthropic Message API-compatible endpoints, enabling seamless integration with existing AI applications without code changes. For observability, it exports metrics to Prometheus for monitoring and alerting. Service discovery and configuration distribution are handled through Consul, while secure secret management (including API keys) is integrated with Vault. The system also connects to standard AI/ML orchestration platforms for deployment and lifecycle management, and supports batch processing modes common in AI workloads.
+
+Each external dependency is essential: 
+- **OpenAPI/Anthropic Specifications**: Necessary for protocol compatibility, allowing llm-switch to act as a drop-in replacement for direct model APIs.
+- **Prometheus**: Critical for operational visibility, enabling metrics collection on request latency, model usage, and system health.
+- **Consul**: Required for dynamic service discovery in the Nomad cluster, allowing llm-switch to locate backend models and configuration services.
+- **Vault**: Mandatory for secure storage and rotation of sensitive credentials like frontier model API keys.
+- **AI/ML Orchestration Systems**: Needed for deployment integration, allowing llm-switch to run as a job in platforms like Nomad or Kubernetes.
+- **Batch Processing Support**: Required to handle high-throughput AI workloads efficiently without requiring application-level changes.
 
 ## Diagram
 
 ```mermaid
 C4Context
-    title System Context diagram for llm-switch
+    title System Context: llm-switch
 
-    Boundary(b0, "Internal Network") {
-        System(llm-switch, "llm-switch", "Intelligent LLM proxy system for automatic model selection")
-        System_Ext(NomadCluster, "Nomad Cluster", "Orchestration platform for deployment and management")
-        System_Ext(LocalModelRepository, "Local Model Repository", "Storage and serving infrastructure for open-source LLMs (Qwen, Nemotron)")
-    }
+    Person_Ext(Developer, "Developer", "Integrates and uses llm-switch via OpenAPI/Anthropic-compatible APIs [PRD 5]")
+    Person_Ext(Operations, "Operations", "Deploys, monitors, and maintains llm-switch in Nomad cluster [PRD 5]")
 
-    Boundary(b1, "External Network (Internet)", top=true, right=true) {
-        System_Ext(OpenAI_API, "OpenAI REST API", "Frontier LLM API access (GPT-4, etc.)")
-        System_Ext(Anthropic_API, "Anthropic REST API", "Frontier LLM API access (Claude, etc.)")
-        Person_Ext(Developer, "Developer", "Builds and maintains AI applications")
-        Person_Ext(OperationsEngineer, "Operations Engineer", "Deploys and maintains infrastructure")
-        Person_Ext(AIApplicationService, "AI Application Service", "External AI-powered services consuming LLMs")
-    }
+    System(llm-switch, "llm-switch", "Intelligent LLM Proxy System providing dynamic model selection [PRD 1]")
 
-    Rel(Developer, llm-switch, "API requests (HTTPS/JSON)", "HTTPS")
-    Rel(OperationsEngineer, llm-switch, "Monitoring and configuration (HTTPS/JSON)", "HTTPS")
-    Rel(AIApplicationService, llm-switch, "Service calls (HTTPS/JSON)", "HTTPS")
-    Rel(llm-switch, OpenAI_API, "Request forwarding (HTTPS/JSON)", "HTTPS")
-    Rel(llm-switch, Anthropic_API, "Request forwarding (HTTPS/JSON)", "HTTPS")
-    Rel(llm-switch, NomadCluster, "Deployment updates (HTTPS/JSON)", "HTTPS")
-    Rel(llm-switch, LocalModelRepository, "Inference requests (HTTPS/JSON)", "HTTPS")
-    Rel(NomadCluster, llm-switch, "Health check probes (HTTPS/JSON)", "HTTPS")
-    
-    linkStyle 4 stroke-dasharray: 5 5
-    linkStyle 5 stroke-dasharray: 5 5
-    linkStyle 8 stroke-dasharray: 5 5
+    Container_Ext(OpenAPI_Spec, "OpenAPI Specification", "Specification", "OpenAPI API compatibility for seamless integration [PRD 10.1]")
+    Container_Ext(Anthropic_Spec, "Anthropic Message API", "Specification", "Anthropic Message API compatibility [PRD 10.1]")
+    Container_Ext(Prometheus, "Prometheus", "Monitoring System", "Metrics collection and alerting [PRD 10.1]")
+    Container_Ext(Consul, "Consul", "Service Discovery", "Service discovery and configuration distribution [PRD 10.1]")
+    Container_Ext(Vault, "Vault", "Secret Management", "Secure secret management for API keys [PRD 10.1]")
+    Container_Ext(AIML_Orch, "AI/ML Orchestration", "Orchestration System", "Standard AI/ML orchestration and pipeline systems [PRD 10.1]")
+    Container_Ext(Batch_Support, "Batch Processing", "Feature", "Support for batch processing modes in AI workloads [PRD 10.1]")
 
-UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    Developer -> llm-switch : "Sends LLM requests via OpenAPI/Anthropic APIs [PRD 6.2]"
+    Operations -> llm-switch : "Deploys, monitors, and maintains system [PRD 6.2]"
+
+    llm-switch -> OpenAPI_Spec : "Implements OpenAPI specification [PRD 10.1]"
+    llm-switch -> Anthropic_Spec : "Implements Anthropic Message API specification [PRD 10.1]"
+    llm-switch -> Prometheus : "Exports metrics via HTTP [PRD 10.1]"
+    llm-switch <-> Consul : "Service discovery via DNS/HTTP, configuration via KV store [PRD 10.1]"
+    llm-switch -> Vault : "Retrieves secrets using AppRole authentication [PRD 10.1]"
+    llm-switch <-> AIML_Orch : "Integrates via job specifications and API [PRD 10.1]"
+    llm-switch -> Batch_Support : "Complies with batch processing standards [PRD 10.1]"
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
-## Relationship Description
+## Relationship Details
 
-| Connection | Protocol/Transport | Description |
-|------------|-------------------|-------------|
-| Developer → llm-switch | HTTPS/JSON | API requests for LLM inference (primary path) |
-| Operations Engineer → llm-switch | HTTPS/JSON | Monitoring, configuration, and administrative tasks (primary path) |
-| AI Application Service → llm-switch | HTTPS/JSON | Service calls consuming LLM capabilities (primary path) |
-| llm-switch → Local Model Repository | HTTPS/JSON | Inference requests to locally hosted models (Qwen, Nemotron) (primary path) |
-| llm-switch → Nomad Cluster | HTTPS/JSON | Deployment updates and configuration (primary path) |
-| Nomad Cluster → llm-switch | HTTPS/JSON | Health check probes for liveness and readiness monitoring (error handling path) |
-| llm-switch → OpenAI API | HTTPS/JSON | Request forwarding to frontier models (fallback path when local models are insufficient or fail) |
-| llm-switch → Anthropic API | HTTPS/JSON | Request forwarding to frontier models (fallback path when local models are insufficient or fail) |
+| Relationship | Direction | Protocol | Authentication/Details | PRD Reference |
+|--------------|-----------|----------|------------------------|---------------|
+| Developer → llm-switch | Developer to system | HTTP/HTTPS | Bearer token (API key) in Authorization header | [PRD 6.2] |
+| Operations → llm-switch | Operations to system | HTTP/HTTPS | API key for administrative endpoints | [PRD 6.2] |
+| llm-switch → OpenAPI_Spec | System to specification | N/A | N/A (implementation) | [PRD 10.1] |
+| llm-switch → Anthropic_Spec | System to specification | N/A | N/A (implementation) | [PRD 10.1] |
+| llm-switch → Prometheus | System to monitoring | HTTP | None (metrics endpoint is public) | [PRD 10.1] |
+| llm-switch ↔ Consul | Bidirectional | HTTP/DNS | None (Consul agent communication) | [PRD 10.1] |
+| llm-switch → Vault | System to secret manager | HTTP | AppRole role ID/secret ID | [PRD 10.1] |
+| llm-switch ↔ AIML_Orch | Bidirectional | HTTP/HTTPS | API key or service token | [PRD 10.1] |
+| llm-switch → Batch_Support | System to feature | N/A | N/A (internal capability) | [PRD 10.1] |
 
-## Narrative Completeness Checklist
+## Rationale for External Dependencies
 
-- [x] **System**: llm-switch - Intelligent LLM proxy system for automatic model selection
-- [x] **User Types**: 
-  - Developer - Builds and maintains AI applications
-  - Operations Engineer - Deploys and maintains infrastructure  
-  - AI Application Service - External AI-powered services consuming LLMs
-- [x] **External Dependencies**:
-  - OpenAI REST API - Frontier LLM API access (GPT-4, etc.)
-  - Anthropic REST API - Frontier LLM API access (Claude, etc.)
-  - Nomad Cluster - Orchestration platform for deployment and management
-  - Local Model Repository - Storage and serving infrastructure for open-source LLMs
-- [x] **Network Boundary**: Internal Network boundary showing llm-switch and internal dependencies (Nomad Cluster, Local Model Repository)
-- [x] **External Systems**: OpenAPI and Anthropic APIs located in External Network (Internet) boundary
-- [x] **Error Handling Paths**: Dashed lines indicating fallback to frontier models (llm-switch → OpenAI/Anthropic) and health checks (Nomad Cluster → llm-switch)
-- [x] **Security Boundaries**: Clear separation between internal cluster network and external services (OpenAI/Anthropic APIs) with Internet boundary
+Each external dependency is critical to llm-switch's core value proposition:
 
-## PRD Consistency Verification
+1. **OpenAPI/Anthropic Specifications**: These are foundational to llm-switch's ability to provide zero-integration-cost compatibility. By implementing these standards, llm-switch can replace direct model API calls without requiring application modifications, directly enabling the Developer Journey's seamless integration.
 
-- [x] Nomad cluster explicitly mentioned as orchestration platform (inside internal network boundary)
-- [x] OpenAI API integration shown with request forwarding (crossing boundary to external)
-- [x] Anthropic API integration shown with request forwarding (crossing boundary to external)  
-- [x] Local model repository access shown for inference requests and health checks (inside internal network)
+2. **Prometheus**: Essential for operational excellence in the cluster environment. Without metrics collection, Operations cannot monitor SLA compliance (sub-500ms routing decisions), track cost efficiency metrics, or set up alerts for anomalous behavior, violating the Non-Functional Requirement for observability.
 
-**Note on AI Application Service Placement**: The AI Application Service is shown in the External Network boundary as a Person_Ext actor to accurately represent it as an external user of the system, rather than a system providing services to llm-switch. This follows C4 conventions for representing external users/consumers of a system.
+3. **Consul**: Required for dynamic service discovery in Nomad. llm-switch must locate backend models (both local and frontier) and distribute configuration changes across instances. Manual configuration would introduce operational overhead, contradicting the Goal of minimal administration.
+
+4. **Vault**: Mandatory for security compliance. Storing frontier model API keys in plaintext would violate cluster security policies. Vault integration enables secure credential rotation and fine-grained access control, satisfying the Security requirement for secret management.
+
+5. **AI/ML Orchestration Systems**: Necessary for deployment flexibility. llm-switch must run as a managed service in the target infrastructure (Nomad/Kubernetes). Direct integration with orchestration platforms enables automated scaling, health checks, and lifecycle management, supporting the Requirement for simple Nomad deployment.
+
+6. **Batch Processing Support**: Critical for handling real-world AI workloads. Many AI applications process requests in batches (e.g., embedding generation for document collections). Without native batch support, llm-switch would force applications to implement batching logic, increasing integration complexity and undermining the zero-code-change goal.
+
+These dependencies collectively enable llm-switch to deliver on its promise: an intelligent, observable, secure, and operationally simple LLM proxy that reduces manual model selection overhead while improving cost efficiency through intelligent routing.

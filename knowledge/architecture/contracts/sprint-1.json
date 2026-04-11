@@ -6,54 +6,49 @@
   ],
   "criteria": [
     {
-      "name": "mermaid_validity",
-      "description": "The C1 diagram in c1-context.md must be valid Mermaid syntax, verifiable by the official Mermaid CLI (version >= 10.0) without errors. The diagram must render successfully in a browser-based Mermaid live editor without warnings.",
+      "name": "Mermaid Syntax Validity",
+      "description": "Diagram must parse successfully with Mermaid CLI v10.2.0+ without warnings or errors. Must render identically in both light and dark themes of Mermaid live editor (https://mermaid.live).",
       "threshold": 10.0
     },
     {
-      "name": "central_system",
-      "description": "The diagram must contain exactly one container labeled 'llm-switch' representing the system, positioned centrally with a rectangular border and clearly distinguished from external elements.",
+      "name": "C4 Level 1 Completeness",
+      "description": "Diagram must contain exactly: (1) One System element representing llm-switch, (2) Two Person elements for Developer and Operations, (3) One Container element per external dependency listed in PRD section 'Integrations'. No additional or missing elements allowed.",
       "threshold": 10.0
     },
     {
-      "name": "user_types",
-      "description": "The diagram must include exactly three distinct user types: (1) Developer, (2) Operations Engineer, and (3) AI Application Service. Each user type must be represented as a distinct actor symbol with explicit labels and distinct connection lines to llm-switch.",
+      "name": "PRD Bidirectional Traceability",
+      "description": "Every component in diagram must cite a PRD section (format: [PRD X.Y.Z]). Every requirement in PRD section 'Integrations' must be represented by a component in the diagram. Zero tolerance for omissions or hallucinations.",
       "threshold": 10.0
     },
     {
-      "name": "external_dependencies",
-      "description": "The diagram must include exactly four external dependencies: (1) OpenAI API (labeled 'OpenAI REST API'), (2) Anthropic API (labeled 'Anthropic REST API'), (3) Nomad cluster (labeled 'Nomad Cluster'), and (4) local model repository (labeled 'Local Model Repository'). Each dependency must show directional arrows indicating data flow.",
+      "name": "Narrative Structure and Depth",
+      "description": "Narrative must include: (1) A table mapping each diagram element to its purpose and PRD section, (2) At least 200 words total, (3) A dedicated paragraph explaining why each external dependency is necessary (not just what it does).",
+      "threshold": 9.5
+    },
+    {
+      "name": "Relationship Specification",
+      "description": "For each relationship between llm-switch and external dependencies, narrative must specify: (1) Direction (arrow in diagram must match), (2) Protocol (HTTP, gRPC, etc.), (3) Authentication method (API key, mTLS, etc.) if specified in PRD.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Edge Case: Hallucination Prevention",
+      "description": "Diagram must not contain any external dependencies not explicitly listed in PRD section 'Integrations'. Any extra container element results in automatic failure of this criterion.",
       "threshold": 10.0
     },
     {
-      "name": "narrative_completeness",
-      "description": "The narrative must explicitly describe all six entities shown in the diagram (1 system + 3 users + 4 dependencies, noting that dependencies may be grouped), including their specific interactions. A checklist mapping each diagram element to its narrative description must be included in a separate section.",
+      "name": "Edge Case: Boundary Integrity",
+      "description": "System boundary must enclose only the llm-switch container. No external dependencies may be drawn inside the system boundary, and llm-switch must not be drawn outside its boundary.",
       "threshold": 10.0
     },
     {
-      "name": "prd_consistency",
-      "description": "The narrative must explicitly mention: (a) Nomad cluster as the orchestration platform, (b) OpenAI API integration, (c) Anthropic API integration, and (d) local model repository access. Any deviation from the PRD specification requires explicit documentation of the change and its rationale.",
-      "threshold": 10.0
+      "name": "C4 Naming and Styling Compliance",
+      "description": "Elements must follow C4 naming: Persons use Sentence case (e.g., 'Developer'), Containers use PascalCase (e.g., 'NomadCluster'), Relationships use sentence case labels. All labels <= 25 characters. No line crossings between containers at different levels.",
+      "threshold": 9.5
     },
     {
-      "name": "relationship_documentation",
-      "description": "The narrative must explain all seven connection types between llm-switch and external elements: (1) Developer API requests, (2) Operations monitoring/configuration, (3) AI Application service calls, (4) OpenAI API requests, (5) Anthropic API requests, (6) Nomad cluster deployment/config, and (7) Local model repository access. Each connection must specify protocol/transport method.",
-      "threshold": 10.0
-    },
-    {
-      "name": "no_ambiguity",
-      "description": "All components must use standard C1 notation with clear labels. No generic terms like 'API', 'Service', or 'Database' without specific identification. All symbols must conform to C1 conventions (containers for systems, actors for users, boundary boxes for external dependencies).",
-      "threshold": 10.0
-    },
-    {
-      "name": "edge_case_coverage",
-      "description": "The diagram must show error handling paths: (1) API failure fallback flows, (2) Nomad cluster health check connections, and (3) model repository availability checks. These must be visually distinguished from primary data flows.",
-      "threshold": 10.0
-    },
-    {
-      "name": "security_boundaries",
-      "description": "The diagram must explicitly show network boundaries/security zones (e.g., DMZ, internal network, external internet) indicating where llm-switch sits relative to external APIs and internal resources.",
-      "threshold": 10.0
+      "name": "Version Control Readiness",
+      "description": "File must pass markdownlint with rules MD013 (line length <= 120) and MD033 (no inline HTML). No tabs, only spaces. Frontmatter must include sprint_number and sprint_name.",
+      "threshold": 9.5
     }
   ]
 }
