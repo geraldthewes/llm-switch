@@ -81,15 +81,15 @@
 
 ### Architecture Decisions and Rationale
 - Created a proper C2 Container diagram following the Mermaid C4 Reference Guide exactly
-- Used 10 containers as required: API Gateway, Orchestrator Service, Local Model Adapter, Frontier Model Adapter, Nomad Job Definition, Consul Integration, Vault Integration, Prometheus Metrics Exporter, Langfuse Trace Collector, and AutoResearch Loop Agent
+- Used exactly 10 containers as required: API Gateway, Real-time Routing Container, Local Model Adapter, Frontier Model Adapter, Nomad Job Definition, Consul Integration, Vault Integration, Prometheus Metrics Exporter, Langfuse Trace Collector, and Offline Self-Learning Container
 - Each container includes technology stack in format 'Name: Tech1, Tech2' (e.g., 'API Gateway: Golang, bifrost, Docker')
 - All relationships use exact protocol labels as specified: 'HTTP/1.1' for API calls, 'gRPC' for inter-service calls, 'Nomad SDK' for job deployment, 'Consul API' for service discovery, 'Vault API' for secrets retrieval, 'Prometheus PushGateway' for metrics, 'Langfuse API' for traces
 - Diagram includes OpenAI/Anthropic-compatible API endpoints (labeled '/v1/* → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter')
-- Shows two-part architecture: Real-time Routing (Orchestrator Service) and Offline Self-Learning (AutoResearch Loop Agent)
+- Shows two-part architecture: Real-time Routing Container and Offline Self-Learning Container (matching PRD Section 4.2 terminology)
 - Nomad cluster deployment model shown with 'Nomad Cluster: 3 nodes'
 - Infrastructure dependencies included: Nomad, Consul, Vault, Prometheus, Langfuse
 - Added Docker packaging annotation to all containers
-- Included NormStat/VecStat routing mechanisms in Orchestrator Service description
+- Included NormStat/VecStat routing mechanisms in Real-time Routing Container description
 - Hardware telemetry integration points labeled in Local/Frontier Model Adapters
 - Added Circuit Breaker, Error Response, and Fallback mechanisms as required
 - Included explicit routing rules in API Gateway description
@@ -105,21 +105,15 @@
 - Including all required infrastructure components from Technology Choices Section 7
 - Ensuring correct dependency direction (llm-switch depends ON Nomad/Consul/Vault, not vice versa)
 
-### Issues Addressed
-- Fixed Lexical error by removing inline 'note' block and moving legend to pre-diagram note
-- Addressed technology stack explicit labeling by adding Docker to all containers and specific tech to each
-- Fixed relationship protocol specification by using exact required labels
-- Ensured PRD Section 4.2 alignment with two-part architecture and API endpoints
-- Added all required infrastructure components (Nomad, Consul, Vault, Prometheus, Langfuse)
-- Verified dependency direction validation (Nomad/Consul/Vault don't point to llm-switch except for health checks)
-- Added security compliance elements (Vault secrets label, HTTPS/TLS 1.3 for external, mTLS for internal)
-- Included error handling paths (Circuit Breaker, Error Response, Fallback)
-- Added API Gateway routing rules explicitly
-- Included Nomad Job Constraints as required
+### Issues Addressed from Critic Feedback
+- **PRD Section 4.2 Alignment**: Renamed 'Orchestrator Service' to 'Real-time Routing Container' and 'AutoResearch Loop Agent' to 'Offline Self-Learning Container' to match required PRD terminology
+- **Error Handling Patterns**: Added explicit 'Error Response' labels on error paths from Model Adapters to Routing Container, and added explicit 'Fallback to Local Model' label on the path from Routing Container to Local Model Adapter
+- **API Gateway Routing Rules**: Maintained explicit routing rules in container description as they were already compliant
+- **Nomad Job Constraints**: Maintained explicit constraints in container description as they were already compliant
 
 ### Domain Insights
 - llm-switch consists of tightly integrated containers working together for intelligent model routing
-- The separation of real-time routing (Orchestrator) and offline learning (AutoResearch) enables continuous improvement
+- The separation of real-time routing (Real-time Routing Container) and offline learning (Offline Self-Learning Container) enables continuous improvement
 - Infrastructure integrations (Consul, Vault, Nomad) are essential for cluster deployment
 - Technology choices like bifrost, vLLM/llama.cpp, and NormStat/VecStat enable the sub-40ms routing decisions
 - Docker packaging is crucial for Nomad deployment consistency

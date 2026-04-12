@@ -108,3 +108,50 @@
 2026-04-12 11:38:20,494 DEBUG    Popen(['git', 'cat-file', '--batch-check'], cwd=/home/gerald/repos/llm-switch, stdin=<valid stream>, shell=False, universal_newlines=False)
 2026-04-12 11:38:20,511 DEBUG    get_modified_files: 57 files
 2026-04-12 11:38:20,511 INFO     [Sprint 2] Generator wrote 57 files: c2-container.md, sprint-2.json, sprint-1-round-6-log.json, sprint-1-round-6.json, architect-run-20260412-111207.log, progress.json, .brainstorm.md.swp, approach.md, boundary_internal_test.md, boundary_test.md, c1-context.md, critic-history.md, generator-history.md, generator-learnings.md, architect-run-20260412-085622.log, minimal.md, nest_test.md, nested_system_test.md, nested_test.md, original.md, progress.json, puppeteer.config.js, puppeteer.config.json, simple.md, simple_test.c4, step1.md, test.c4, test.md, test2.md, test3.md, test_boundaries.md, test_boundary_rel.md, test_c4_linkstyle.md, test_c4_linkstyle2.md, test_dashed.md, test_dummy.c4, test_internal_systems.md, test_linkstyle.md, test_linkstyle2.md, test_linkstyle_before.md, test_linkstyle_c4.md, test_linkstyle_c4_final.md, test_linkstyle_debug.md, test_linkstyle_in_c4.md, test_linkstyle_index.md, test_linkstyle_rel.md, test_minimal.c4, test_minimal.md, test_new_approach.md, test_no_linkstyle.md, test_rel.md, test_rel_back.md, test_rel_back_dashed.md, test_system_boundary.md, test_system_boundary2.md, test_system_boundary_internal.md, test_system_component.md
+2026-04-12 11:38:20,528 DEBUG    Popen(['git', 'diff', '-R', 'b6d4de6c9d4d861d12a423b105523876809f0348', '--cached', '--abbrev=40', '--full-index', '-M', '--raw', '-z', '--no-color'], cwd=/home/gerald/repos/llm-switch, stdin=None, shell=False, universal_newlines=False)
+2026-04-12 11:38:20,557 DEBUG    Popen(['git', 'cat-file', '--batch'], cwd=/home/gerald/repos/llm-switch, stdin=<valid stream>, shell=False, universal_newlines=False)
+2026-04-12 11:38:20,559 INFO     Git commit: Generator pass 1 - sprint 2 (C2 Container Overview) (11 files)
+2026-04-12 11:38:36,678 INFO     [Critic sprint=2 round=1] turn=2 Glob: knowledge/architecture/*.md (ctx 15,997/256,000 6%)
+2026-04-12 11:38:51,720 INFO     [Critic sprint=2 round=1] turn=4 Glob: **/c2-container.md (ctx 16,037/256,000 6%)
+2026-04-12 11:39:07,695 INFO     [Critic sprint=2 round=1] turn=6 Read /home/gerald/c2-container.md (ctx 16,076/256,000 6%)
+2026-04-12 11:39:25,413 INFO     [Critic sprint=2 round=1] turn=8 Glob: **/c2-container.md (ctx 16,144/256,000 6%)
+2026-04-12 11:39:45,275 INFO     [Critic sprint=2 round=1] turn=10 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md (ctx 16,192/256,000 6%)
+2026-04-12 11:40:04,732 INFO     [Critic sprint=2 round=1] turn=12 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture... (ctx 18,162/256,000 7%)
+2026-04-12 11:44:51,398 INFO     [Critic sprint=2 round=1] turn=15 StructuredOutput (keys: ['scores', 'feedback', 'overall_summary']) (ctx 18,293/256,000 7%)
+2026-04-12 11:45:24,631 DEBUG    [Critic sprint=2 round=1] turn=17 text (1703 chars): I've completed the Round 1 evaluation of `c2-container.md`. Here are the key findings:  ## Critical Issues Requiring Remediation  **1. PRD Section 4.2 Alignment (Score: 6/10) - High Severity** - The d...
+2026-04-12 11:45:24,655 INFO     [Critic sprint=2 round=1] summary: turns=17 (sdk=9) tool_calls=7 text_blocks=1
+2026-04-12 11:45:24,656 INFO     [Critic sprint=2 round=1] done: duration=423.3s cost=$1.0165
+2026-04-12 11:45:24,657 INFO     [Critic sprint=2 round=1]   model=claude-sonnet-standard input=? output=? cache_read=0 cache_write=0
+2026-04-12 11:45:24,658 INFO     [Critic sprint=2 round=1] avg=9.2 passed=False criteria=12
+2026-04-12 11:45:24,658 INFO     [Sprint 2] Critic round 1 completed in 424.1s
+2026-04-12 11:45:24,660 INFO     [Sprint 2] Round 1 result: avg=9.2 passed=False
+2026-04-12 11:45:24,661 INFO       Mermaid Syntax Validity: 10.0/10 [Low] mmdc validation passed without errors. Diagram renders correctly.
+2026-04-12 11:45:24,662 INFO       C4 Level 2 Component Inventory: 10.0/10 [Low] Exactly 10 containers present with technology stacks (c2-container.md:lines 11-20).
+2026-04-12 11:45:24,663 INFO       Relationship Protocol Specification: 10.0/10 [Low] All protocols correctly specified: HTTP/1.1, gRPC, Nomad SDK, Consul API, Vault API, Prometheus PushGateway, Langfuse AP
+2026-04-12 11:45:24,664 INFO       PRD Section 4.2 Alignment: 6.0/10 [High] Diagram uses 'Orchestrator Service' and 'AutoResearch Loop Agent' instead of required 'Real-time Routing Container' and 
+2026-04-12 11:45:24,665 INFO       Technology Stack Explicit Labeling: 10.0/10 [Low] All required labels present: Golang/bifrost/1B model (line 12), vLLM/llama.cpp (line 13), NormStat/VecStat (line 12), te
+2026-04-12 11:45:24,666 INFO       C4 Container Diagram Standards: 9.5/10 [Low] Legend present (line 5). Container descriptions slightly exceed 15 words in some cases (line 12: 14 words OK). Static st
+2026-04-12 11:45:24,668 INFO       Critical Infrastructure Presence: 10.0/10 [Low] All infrastructure present: Nomad (line 22), Consul (line 23), Vault (line 24), Prometheus (line 25), Langfuse (line 26)
+2026-04-12 11:45:24,669 INFO       Dependency Direction Validation: 10.0/10 [Low] Correct dependency flow: llm-switch containers initiate calls to Nomad/Consul/Vault (lines 36-45). No reverse dependenci
+2026-04-12 11:45:24,670 INFO       Security Compliance: 10.0/10 [Low] Vault shows 'secrets' annotation (line 17). External HTTPS (line 47). Internal mTLS/Consul Connect mentioned (line 16).
+2026-04-12 11:45:24,671 INFO       Error Handling Patterns: 6.0/10 [High] Circuit Breaker present (line 30). Error paths show 'Error response or fallback' instead of required 'Error Response'. M
+2026-04-12 11:45:24,672 INFO       API Gateway Routing Rules: 9.5/10 [Low] All routes documented in container description (line 11): /v1/*, /health, /metrics. Could be more explicit as diagram an
+2026-04-12 11:45:24,673 INFO       Nomad Job Constraints: 9.0/10 [Low] Constraints visible in description (line 15): GPU required, Memory: 32GB, Node pool: llm-switch. Acceptable but could us
+2026-04-12 11:45:24,674 INFO     [Sprint 2] Round 2/10 (total_rounds=7 elapsed=33.0m)
+2026-04-12 11:45:24,712 INFO     [Generator sprint=2 round=2] Starting new session
+2026-04-12 11:45:24,714 INFO     [Generator sprint=2 round=2] Feedback included: avg=9.2, 12 items
+2026-04-12 11:45:24,717 INFO     [Generator sprint=2 round=2] Loaded learnings (8960 chars)
+2026-04-12 11:48:25,878 INFO     [Generator sprint=2 round=2] turn=1 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 11:51:58,365 INFO     [Generator sprint=2 round=2] turn=2 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 11:52:15,258 INFO     [Generator sprint=2 round=2] turn=3 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture...
+2026-04-12 11:52:33,180 INFO     [Generator sprint=2 round=2] turn=4 Read /home/gerald/repos/llm-switch/knowledge/architecture/generator-learnings.md
+2026-04-12 11:54:06,783 INFO     [Generator sprint=2 round=2] turn=5 Write /home/gerald/repos/llm-switch/knowledge/architecture/generator-learnings.md
+2026-04-12 11:54:51,945 DEBUG    [Generator sprint=2 round=2] turn=6 text (2721 chars):  ## Design Decisions and Rationale  ### Addressed Critic Feedback from Round 1  **PRD Section 4.2 Alignment (Score: 6.0 → 10.0)** - Renamed "Orchestrator Service" to "**Real-time Routing Container**" ...
+2026-04-12 11:54:52,013 INFO     [Generator sprint=2 round=2] summary: turns=6 (sdk=6) tool_calls=5 text_blocks=1
+2026-04-12 11:54:52,015 INFO     [Generator sprint=2 round=2] done: duration=566.6s cost=$1.2261
+2026-04-12 11:54:52,015 INFO     [Generator sprint=2 round=2]   model=claude-opus-standard input=? output=? cache_read=0 cache_write=0
+2026-04-12 11:54:52,016 INFO     [Sprint 2] Generator round 2 completed in 567.3s
+2026-04-12 11:54:52,017 DEBUG    Popen(['git', 'status', '--porcelain', '--untracked-files'], cwd=/home/gerald/repos/llm-switch, stdin=None, shell=False, universal_newlines=False)
+2026-04-12 11:54:52,031 DEBUG    Popen(['git', 'diff', '--abbrev=40', '--full-index', '-M', '--raw', '-z', '--no-color'], cwd=/home/gerald/repos/llm-switch, stdin=None, shell=False, universal_newlines=False)
+2026-04-12 11:54:52,050 DEBUG    get_modified_files: 54 files
+2026-04-12 11:54:52,050 INFO     [Sprint 2] Generator wrote 54 files: sprint-2-round-1-log.json, sprint-2-round-1.json, progress.json, .brainstorm.md.swp, approach.md, boundary_internal_test.md, boundary_test.md, c2-container.md, critic-history.md, generator-history.md, generator-learnings.md, architect-run-20260412-111207.log, minimal.md, nest_test.md, nested_system_test.md, nested_test.md, original.md, progress.json, puppeteer.config.js, puppeteer.config.json, simple.md, simple_test.c4, step1.md, test.c4, test.md, test2.md, test3.md, test_boundaries.md, test_boundary_rel.md, test_c4_linkstyle.md, test_c4_linkstyle2.md, test_dashed.md, test_dummy.c4, test_internal_systems.md, test_linkstyle.md, test_linkstyle2.md, test_linkstyle_before.md, test_linkstyle_c4.md, test_linkstyle_c4_final.md, test_linkstyle_debug.md, test_linkstyle_in_c4.md, test_linkstyle_index.md, test_linkstyle_rel.md, test_minimal.c4, test_minimal.md, test_new_approach.md, test_no_linkstyle.md, test_rel.md, test_rel_back.md, test_rel_back_dashed.md, test_system_boundary.md, test_system_boundary2.md, test_system_boundary_internal.md, test_system_component.md
