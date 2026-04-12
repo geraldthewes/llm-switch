@@ -306,3 +306,178 @@
 2026-04-12 13:12:27,923 DEBUG    Popen(['git', 'diff', '--abbrev=40', '--full-index', '-M', '--raw', '-z', '--no-color'], cwd=/home/gerald/repos/llm-switch, stdin=None, shell=False, universal_newlines=False)
 2026-04-12 13:12:27,942 DEBUG    get_modified_files: 54 files
 2026-04-12 13:12:27,942 INFO     [Sprint 2] Generator wrote 54 files: sprint-2-round-3-log.json, sprint-2-round-3.json, progress.json, .brainstorm.md.swp, approach.md, boundary_internal_test.md, boundary_test.md, c2-container.md, critic-history.md, generator-history.md, generator-learnings.md, architect-run-20260412-111207.log, minimal.md, nest_test.md, nested_system_test.md, nested_test.md, original.md, progress.json, puppeteer.config.js, puppeteer.config.json, simple.md, simple_test.c4, step1.md, test.c4, test.md, test2.md, test3.md, test_boundaries.md, test_boundary_rel.md, test_c4_linkstyle.md, test_c4_linkstyle2.md, test_dashed.md, test_dummy.c4, test_internal_systems.md, test_linkstyle.md, test_linkstyle2.md, test_linkstyle_before.md, test_linkstyle_c4.md, test_linkstyle_c4_final.md, test_linkstyle_debug.md, test_linkstyle_in_c4.md, test_linkstyle_index.md, test_linkstyle_rel.md, test_minimal.c4, test_minimal.md, test_new_approach.md, test_no_linkstyle.md, test_rel.md, test_rel_back.md, test_rel_back_dashed.md, test_system_boundary.md, test_system_boundary2.md, test_system_boundary_internal.md, test_system_component.md
+2026-04-12 13:12:27,957 DEBUG    Popen(['git', 'diff', '-R', '64080efa7e0230f72f05f533c8d3dd3023ba8746', '--cached', '--abbrev=40', '--full-index', '-M', '--raw', '-z', '--no-color'], cwd=/home/gerald/repos/llm-switch, stdin=None, shell=False, universal_newlines=False)
+2026-04-12 13:12:27,983 INFO     Git commit: Generator pass 4 - sprint 2 (C2 Container Overview) (8 files)
+2026-04-12 13:12:46,212 INFO     [Critic sprint=2 round=4] turn=2 Read /home/gerald/knowledge/architecture/c2-container.md (ctx 15,997/256,000 6%)
+2026-04-12 13:13:02,701 INFO     [Critic sprint=2 round=4] turn=4 Glob: **/*.md (ctx 16,067/256,000 6%)
+2026-04-12 13:13:19,595 INFO     [Critic sprint=2 round=4] turn=6 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md (ctx 16,141/256,000 6%)
+2026-04-12 13:13:37,833 INFO     [Critic sprint=2 round=4] turn=8 Read /home/gerald/repos/llm-switch/knowledge/architecture/critic-history.md (ctx 18,215/256,000 7%)
+2026-04-12 13:14:24,732 INFO     [Critic sprint=2 round=4] turn=10 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture... (ctx 26,092/256,000 10%)
+2026-04-12 13:18:48,755 INFO     [Critic sprint=2 round=4] turn=12 StructuredOutput (keys: ['scores', 'feedback', 'overall_summary', 'average_score', 'passed']) (ctx 26,202/256,000 10%)
+2026-04-12 13:19:21,703 DEBUG    [Critic sprint=2 round=4] turn=14 text (189 chars): Looking at this Sprint 2 Round 4 evaluation, I'll analyze the c2-container.md architecture against the contract criteria, check for recurring issues from prior rounds, and provide scores.  
+2026-04-12 13:19:21,704 INFO     [Critic sprint=2 round=4] turn=15 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md (ctx 27,715/256,000 11%)
+2026-04-12 13:21:26,928 DEBUG    [Critic sprint=2 round=4] turn=17 text (388 chars): Now I have a complete picture. Let me score each criterion:  **Critical Finding**: The diagram uses "Orchestrator Service" and "AutoResearch Loop Agent" instead of the PRD-mandated "Real-time Routing ...
+2026-04-12 13:21:26,929 INFO     [Critic sprint=2 round=4] turn=18 StructuredOutput (keys: ['scores', 'feedback', 'overall_summary', 'average_score', 'passed']) (ctx 27,832/256,000 11%)
+2026-04-12 13:22:21,709 INFO     [Critic sprint=2 round=4] turn=20 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md (ctx 29,352/256,000 11%)
+2026-04-12 13:23:31,437 INFO     [Critic sprint=2 round=4] turn=22 Read /home/gerald/repos/llm-switch/knowledge/architecture/critic-history.md (ctx 29,431/256,000 11%)
+2026-04-12 13:24:05,028 INFO     [Critic sprint=2 round=4] turn=24 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture... (ctx 29,510/256,000 12%)
+2026-04-12 13:26:36,176 INFO     [Critic sprint=2 round=4] turn=26 StructuredOutput (keys: ['scores', 'feedback', 'overall_summary', 'average_score', 'passed']) (ctx 29,619/256,000 12%)
+2026-04-12 13:27:20,100 DEBUG    [Critic sprint=2 round=4] turn=28 text (1470 chars): I have completed the evaluation of `c2-container.md` for Sprint 2, Round 4.  ## Key Findings  **Critical Issue - PRD Section 4.2 Alignment (Score: 4/10)** The diagram fundamentally misrepresents the t...
+2026-04-12 13:27:20,130 INFO     [Critic sprint=2 round=4] summary: turns=28 (sdk=13) tool_calls=12 text_blocks=3
+2026-04-12 13:27:20,131 INFO     [Critic sprint=2 round=4] done: duration=891.1s cost=$2.0094
+2026-04-12 13:27:20,131 INFO     [Critic sprint=2 round=4]   model=claude-sonnet-standard input=? output=? cache_read=0 cache_write=0
+2026-04-12 13:27:20,132 INFO     [Critic sprint=2 round=4] avg=9.1 passed=False criteria=12
+2026-04-12 13:27:20,133 INFO     [Sprint 2] Critic round 4 completed in 892.1s
+2026-04-12 13:27:20,135 INFO     [Sprint 2] Round 4 result: avg=9.1 passed=False
+2026-04-12 13:27:20,136 INFO       Mermaid Syntax Validity: 10.0/10 [Low] Diagram validates successfully with mmdc (exit code 0). No syntax errors detected.
+2026-04-12 13:27:20,137 INFO       C4 Level 2 Component Inventory: 10.0/10 [Low] All 10 required containers present with technology stacks: API Gateway (line 12), Orchestrator Service (line 13), Local 
+2026-04-12 13:27:20,138 INFO       Relationship Protocol Specification: 10.0/10 [Low] All protocols correctly specified: HTTP/1.1 (lines 31, 35-37), gRPC (lines 32-34), Nomad SDK (line 47), Consul API (line
+2026-04-12 13:27:20,139 INFO       PRD Section 4.2 Alignment: 4.0/10 [Critical] CRITICAL misalignment: Diagram uses 'Orchestrator Service' (line 13) and 'AutoResearch Loop Agent' (line 21) instead of 
+2026-04-12 13:27:20,140 INFO       Technology Stack Explicit Labeling: 9.0/10 [Medium] Line 13 Orchestrator Service shows '1B' but criterion explicitly requires '1B parameter model'. The descriptive text is 
+2026-04-12 13:27:20,140 INFO       C4 Container Diagram Standards: 6.0/10 [High] Line 13 contains 'Telemetry: GPU/CPU metrics' which is 4 words, significantly exceeding the 'max 2 words per line' const
+2026-04-12 13:27:20,141 INFO       Critical Infrastructure Presence: 10.0/10 [Low] All infrastructure components present: Nomad labeled 'Nomad Manager/Client' (line 23), Consul labeled 'Consul Service Me
+2026-04-12 13:27:20,142 INFO       Dependency Direction Validation: 10.0/10 [Low] Correct dependency flow: llm-switch containers initiate calls to external infrastructure (Nomad line 47, Consul lines 38
+2026-04-12 13:27:20,143 INFO       Security Compliance: 10.0/10 [Low] Vault Integration shows 'secrets' annotation (line 18). External connections show 'HTTPS' (line 49). Internal mesh shows
+2026-04-12 13:27:20,144 INFO       Error Handling Paths: 10.0/10 [Low] All required patterns present: Circuit Breaker (line 31), Error Response paths (lines 35, 36), Fallback to Local Model (
+2026-04-12 13:27:20,145 INFO       API Gateway Routing Rules: 10.0/10 [Low] All routes documented in embedded note (line 6) and container description (line 12): '/v1/chat/completions → Orchestrato
+2026-04-12 13:27:20,146 INFO       Nomad Job Constraints: 10.0/10 [Low] All constraints visible: 'GPU required' (line 15), 'Memory: 32GB' (line 14), 'Node pool: llm-switch' (line 16).
+2026-04-12 13:27:20,147 INFO     [Sprint 2] Score trajectory: 9.4 -> 9.1 (-0.3, regressed)
+2026-04-12 13:27:20,170 DEBUG    Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': Timeout(connect=5.0, read=600, write=600, pool=600), 'files': None, 'idempotency_key': 'stainless-python-retry-7d416d31-8f00-43bf-aa01-2bad65c592b9', 'content': None, 'json_data': {'max_tokens': 4096, 'messages': [{'role': 'user', 'content': '# Ping-Pong Detection Prompt\n<!-- Bootstrap: PRD §5.4 ping-pong criteria -->\n\nCompare these two rounds of critic feedback and estimate their semantic similarity.\nA score of 0.0 means the issues are completely different; 1.0 means they are identical.\n\nHigh similarity (> 0.85) combined with minimal score improvement indicates the generator\nand critic are stuck in a loop with no meaningful progress.\n\n## Previous Round Feedback\nThe c2-container.md architecture is production-ready with valid Mermaid syntax and complete C4 Level 2 composition. Critical gaps exist in Relationship Protocol Specification (using \'Circuit Breaker\' as a protocol label instead of \'HTTP/1.1\' on line 31, and \'HTTPS\' instead of \'HTTP/1.1\' on line 49). PRD Section 4.2 Alignment is missing explicit endpoint labels \'/v1/chat/completions\' and \'/v1/embeddings\' on the diagram and the \'3 nodes\' specification for Nomad. Technology Stack labeling uses PRD-correct terminology (\'Real-time Routing Container\') but deviates from criterion\'s explicit naming. Nomad Job Constraints missing \'Memory: 32GB\' on Local Model Adapter (line 14). Security compliance, dependency direction, error handling paths, and critical infrastructure presence are all correctly implemented. The diagram is functionally complete but requires protocol label corrections and constraint relocations to meet all thresholds.\n\n## Current Round Feedback\nThe c2-container.md architecture demonstrates strong technical implementation with valid Mermaid syntax, complete container inventory, correct protocol specifications, and comprehensive error handling. However, it contains a CRITICAL regression from Round 3: the diagram uses \'Orchestrator Service\' and \'AutoResearch Loop Agent\' instead of the PRD-mandated \'Real-time Routing Container\' and \'Offline Self-Learning Container\', fundamentally misrepresenting the two-part architecture (PRD Section 4.2). Additionally, container labels violate the C4 standard\'s \'max 2 words per line\' rule (\'Telemetry: GPU/CPU metrics\' is 4 words), lacks a proper legend, and the technology stack lacks the required \'1B parameter model\' full labeling. This architecture fails primarily due to fundamental terminology misalignment with the PRD.\n\nOutput a JSON object only:\n```json\n{"similarity_score": <float 0.0-1.0>, "reasoning": "<one sentence explanation>"}\n```\n'}], 'model': 'claude-sonnet-standard', 'system': '# Critic System Prompt\n<!-- Bootstrap: PRD §5.1 + adversarial-dev EVALUATOR_SYSTEM_PROMPT (adapted code→architecture) -->\n\nYou are Boris, a hostile senior architect with decades of battle scars from systems that failed in production. Ruthlessly try to kill this design before it reaches production. Be exhaustive and specific.\n\n## Scoring Guidelines\n\n- 9–10: Exceptional. Handles all edge cases, complete, no gaps.\n- 7–8: Good. Minor issues only.\n- 5–6: Partial. Significant gaps.\n- 3–4: Poor. Fundamental issues.\n- 1–2: Failed. Not implemented or broken.\n\n## Severity Rules\n\n- **Critical**: Fundamental flaw causing production failures or misrepresents the system\n- **High**: Significant gap causing serious problems or missing key relationships\n- **Medium**: Notable issue that should be addressed\n- **Low**: Minor improvement opportunity\n\n## Evaluation Rules\n\n- Do NOT be generous. Resist the urge to praise mediocre work.\n- Include `file:line` references in feedback where possible.\n- Test EVERY criterion in the sprint contract — no skipping.\n- Mermaid syntax errors → Critical.\n- Missing relationships between containers → High.\n- Vague or generic descriptions → Medium.\n\n## Inspection Method\n\n- Use the **Read** tool to examine each architecture file before scoring it.\n- Use **Glob** to discover all files in the working directory.\n- Use **Grep** to search for specific patterns (e.g. missing relationships, diagram keywords).\n- Include exact `file:line` references in your feedback details.\n- When a `## Critic History` section appears in your prompt, use Read or Grep on that file to\n  check for recurring concerns across rounds. **Do NOT write to this file.**\n\n## Diagram Validation\n\nFor every architecture file that contains a Mermaid diagram, validate it with:\n\n```bash\nmmdc -i <absolute-path-to-file> -o /tmp/validate.svg\n```\n\n`mmdc` is the correct binary — do NOT use `mermaid`. It is available on the PATH.\nA successful run exits 0. A parse error exits non-zero with the line and token that failed.\nAny file that fails `mmdc` validation must be scored as **Critical** for Mermaid syntax.\n\nDo NOT attempt to install or configure mmdc, puppeteer, or chromium — the environment is already set up.\n\n## Response Format\n\nReturn a `CriticResult` JSON object:\n```json\n{\n  "scores": {"criterion_name": score, ...},\n  "feedback": [\n    {\n      "criterion": "name",\n      "score": 7.5,\n      "severity": "High",\n      "details": "Specific issue with file:line reference"\n    }\n  ],\n  "overall_summary": "One-paragraph summary of the main issues"\n}\n```\n\n## Available Tools\n\nYou may ONLY use these tools: Read, Bash, Glob, Grep.\nDo NOT use any other tools (e.g., TodoWrite, Agent, WebSearch, Write, Edit). Using unlisted tools will cause a fatal error.\n\n\n## Output Format\n\nRespond with ONLY a valid JSON object matching this schema — no markdown, no explanation, no code fences:\n\n{\n  "properties": {\n    "similarity_score": {\n      "maximum": 1.0,\n      "minimum": 0.0,\n      "title": "Similarity Score",\n      "type": "number"\n    },\n    "reasoning": {\n      "title": "Reasoning",\n      "type": "string"\n    }\n  },\n  "required": [\n    "similarity_score",\n    "reasoning"\n  ],\n  "title": "PingPongResult",\n  "type": "object"\n}'}}
+2026-04-12 13:27:20,170 DEBUG    Sending HTTP Request: POST http://litellm.cluster:9999/v1/messages
+2026-04-12 13:27:20,170 DEBUG    connect_tcp.started host='litellm.cluster' port=9999 local_address=None timeout=5.0 socket_options=[(1, 9, True), (6, 5, 60), (6, 6, 5), (6, 4, 60)]
+2026-04-12 13:27:20,234 DEBUG    connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x708a882dbce0>
+2026-04-12 13:27:20,235 DEBUG    send_request_headers.started request=<Request [b'POST']>
+2026-04-12 13:27:20,235 DEBUG    send_request_headers.complete
+2026-04-12 13:27:20,235 DEBUG    send_request_body.started request=<Request [b'POST']>
+2026-04-12 13:27:20,236 DEBUG    send_request_body.complete
+2026-04-12 13:27:20,236 DEBUG    receive_response_headers.started request=<Request [b'POST']>
+2026-04-12 13:27:57,280 DEBUG    receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Length', b'9130'), (b'Content-Type', b'application/json'), (b'Date', b'Sun, 12 Apr 2026 17:27:19 GMT'), (b'Server', b'uvicorn'), (b'X-Litellm-Call-Id', b'3f311e11-d712-43a5-b592-ae0331ef54c7'), (b'X-Litellm-Key-Spend', b'0.0'), (b'X-Litellm-Model-Id', b'c90eba17b92065fbbedecfdbd2dae71fdf8e0a5d4562b65ee0658a6be7da33cb'), (b'X-Litellm-Response-Cost-Discount-Amount', b'0.0'), (b'X-Litellm-Response-Cost-Margin-Amount', b'0.0'), (b'X-Litellm-Response-Cost-Margin-Percent', b'0.0'), (b'X-Litellm-Response-Cost-Original', b'0.0'), (b'X-Litellm-Version', b'1.81.12')])
+2026-04-12 13:27:57,281 INFO     HTTP Request: POST http://litellm.cluster:9999/v1/messages "HTTP/1.1 200 OK"
+2026-04-12 13:27:57,283 DEBUG    receive_response_body.started request=<Request [b'POST']>
+2026-04-12 13:27:57,283 DEBUG    receive_response_body.complete
+2026-04-12 13:27:57,283 DEBUG    response_closed.started
+2026-04-12 13:27:57,284 DEBUG    response_closed.complete
+2026-04-12 13:27:57,284 DEBUG    HTTP Response: POST http://litellm.cluster:9999/v1/messages "200 OK" Headers({'content-length': '9130', 'content-type': 'application/json', 'date': 'Sun, 12 Apr 2026 17:27:19 GMT', 'server': 'uvicorn', 'x-litellm-call-id': '3f311e11-d712-43a5-b592-ae0331ef54c7', 'x-litellm-key-spend': '0.0', 'x-litellm-model-id': 'c90eba17b92065fbbedecfdbd2dae71fdf8e0a5d4562b65ee0658a6be7da33cb', 'x-litellm-response-cost-discount-amount': '0.0', 'x-litellm-response-cost-margin-amount': '0.0', 'x-litellm-response-cost-margin-percent': '0.0', 'x-litellm-response-cost-original': '0.0', 'x-litellm-version': '1.81.12'})
+2026-04-12 13:27:57,284 DEBUG    request_id: None
+2026-04-12 13:27:57,286 INFO     [Critic ping-pong-check] done: duration=37.1s input=1378 output=1882 requests=1 model=claude-sonnet-standard
+2026-04-12 13:27:57,290 DEBUG    [Sprint 2] Ping-pong check clear (similarity=0.35 threshold=0.85)
+2026-04-12 13:27:57,290 INFO     [Sprint 2] Round 5/10 (total_rounds=10 elapsed=135.6m)
+2026-04-12 13:27:57,294 INFO     [Generator sprint=2 round=5] Starting new session
+2026-04-12 13:27:57,297 INFO     [Generator sprint=2 round=5] Feedback included: avg=9.1, 12 items
+2026-04-12 13:27:57,299 INFO     [Generator sprint=2 round=5] Loaded learnings (9917 chars)
+2026-04-12 13:36:05,493 INFO     [Generator sprint=2 round=5] turn=1 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+</parameter=parameter=content>
+# C2 Container Overview - llm-switch
+
+**Narrative**: This diagram shows the static structure of the llm-switch system at the container level, detailing the 10 containers that implement the real-time routing and offline self-learning architecture. The system is designed for deployment in a Nomad cluster with integrations to Consul for service discovery, Vault for secrets management, and observability tools like Prometheus and Langfuse. The two-part architecture separates real-time decision-making (Real-time Routing Container) from continuous improvement (Offline Self-Learning Container).
+
+```mermaid
+C4Container
+    title llm-switch Container Architecture
+    %% Legend: solid arrows = synchronous communication, dashed arrows = asynchronous communication
+    note right of apiGateway
+        Solid arrows = Synchronous (HTTP/1.1, gRPC)
+        Dashed arrows = Asynchronous (Nomad SDK, Consul API, Vault API, Prometheus PushGateway, Langfuse API)
+    end
+
+    %% External systems (infrastructure and dependencies)
+    System_Ext(nomad, "Nomad Manager/Client", "Orchestration platform for container deployment [PRD §4.2]")
+    System_Ext(consul, "Consul Service Mesh", "Service discovery and configuration [PRD §4.6]")
+    System_Ext(vault, "Vault Secrets Store", "Secure secret management for API keys [PRD §4.6]")
+    System_Ext(prometheus, "Prometheus Server", "Metrics collection and alerting [PRD §4.4]")
+    System_Ext(langfuse, "Langfuse Backend", "Trace collection for model performance analysis [Tech Choices §4]")
+    System_Ext(localModels, "Local Model Servers", "Local LLMs (e.g., Qwen 7B, Nemotron 3 22B) [Tech Choices §1]")
+    System_Ext(frontierAPIs, "Frontier API Providers", "External LLM APIs (OpenAI, Anthropic) [PRD §4.1]")
+
+    %% Boundary for the llm-switch system
+    System_Boundary(llmSwitchBoundary, "llm-switch System") {
+        %% Containers
+        Container(apiGateway, "API Gateway:<br>Golang, bifrost<br>Docker", "Golang, bifrost, Docker", "Handles OpenAI/Anthropic API requests, routing, and auth [PRD §4.1]")
+        Container(realtimeRouter, "Real-time Routing Container:<br>Golang, bifrost<br>1B parameter<br>model", "Golang, bifrost, 1B parameter model", "Routes requests based on complexity using NormStat/VecStat [Tech Choices §2]")
+        Container(localAdapter, "Local Model<br>Adapter:<br>vLLM/llama.cpp<br>Docker", "vLLM/llama.cpp, Docker", "Adapts requests for local models like Qwen, Nemotron [Tech Choices §1]")
+        Container(frontierAdapter, "Frontier Model<br>Adapter:<br>HTTP client<br>Docker", "HTTP client, Docker", "Connects to frontier APIs like OpenAI, Anthropic [PRD §4.1]")
+        Container(nomadJob, "Nomad Job<br>Definition:<br>Nomad SDK<br>Docker", "Nomad SDK, Docker", "Defines Nomad job for deployment and scaling [PRD §4.2]")
+        Container(consulIntegration, "Consul Integration:<br>Consul API<br>Docker", "Consul API, Docker", "Registers services and discovers dependencies via Consul [PRD §4.6]")
+        Container(vaultIntegration, "Vault Integration:<br>Vault API<br>Docker", "Vault API, Docker", "Retrieves API keys and secrets from Vault [PRD §4.6]")
+        Container(prometheusExporter, "Prometheus Metrics<br>Exporter:<br>Prometheus PushGateway<br>Docker", "Prometheus PushGateway, Docker", "Exports llm-switch metrics to Prometheus server [PRD §4.4]")
+        Container(langfuseCollector, "Langfuse Trace<br>Collector:<br>Langfuse API<br>Docker", "Langfuse API, Docker", "Sends request/response traces to Langfuse for analysis [Tech Choices §4]")
+        Container(offlineLearner, "Offline Self-Learning<br>Container:<br>background<br>agent<br>Docker", "background agent, Docker", "Performs overnight training to improve routing decisions [Tech Choices §5]")
+    }
+
+    %% Relationships
+    %% API Gateway to internal containers
+    Rel(apiGateway, realtimeRouter, "HTTP/1.1", "OpenAI/Anthropic API requests (/v1/*) [PRD §4.1]")
+    Rel(apiGateway, prometheusExporter, "HTTP/1.1", "Metrics endpoint (/metrics) [PRD §4.4]")
+    Rel(apiGateway, offlineLearner, "HTTP/1.1", "Health check endpoint (/health) [PRD §4.3]")
+
+    %% Real-time routing container interactions
+    Rel(realtimeRouter, localAdapter, "gRPC", "Request local model inference [Tech Choices §1]")
+    Rel(realtimeRouter, frontierAdapter, "gRPC", "Request frontier model inference [PRD §4.1]")
+    Rel(realtimeRouter, apiGateway, "HTTP/1.1", "Error response or fallback [PRD §4.3]")
+    Rel(realtimeRouter, localAdapter, "HTTP/1.1", "Fallback to local model on frontier failure [PRD §4.3]")
+
+    %% Infrastructure integrations
+    Rel(nomadJob, nomad, "Nomad SDK", "Deploy and manage Nomad job [PRD §4.2]")
+    Rel(consulIntegration, consul, "Consul API", "Service registration and discovery [PRD §4.6]")
+    Rel(vaultIntegration, vault, "Vault API", "Retrieve secrets for API keys [PRD §4.6]")
+    Rel(prometheusExporter, prometheus, "Prometheus PushGateway", "Push metrics for scraping [PRD §4.4]")
+    Rel(langfuseCollector, langfuse, "Langfuse API", "Send traces for analysis [Tech Choices §4]")
+
+    %% Model adapter to external model servers
+    Rel(localAdapter, localModels, "HTTP/1.1", "Inference requests to local models [Tech Choices §1]")
+    Rel(frontierAdapter, frontierAPIs, "HTTP/1.1", "API requests to frontier providers [PRD §4.1] [HTTPS]")
+
+    %% Offline self-learning container interactions
+    Rel(offlineLearner, langfuse, "Langfuse API", "Fetch traces for analysis [Tech Choices §5]")
+    Rel(offlineLearner, realtimeRouter, "HTTP/1.1", "Update routing parameters [Tech Choices §5]")
+    Rel(offlineLearner, nomadJob, "Nomad SDK", "Trigger job reconfiguration [Tech Choices §5]")
+
+    %% Update layout configuration
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+```
+
+**Relationships Description**:
+- **API Gateway**: Receives OpenAI/Anthropic-compatible API requests and routes them to the Real-time Routing Container. Exposes `/metrics` for Prometheus and `/health` for health checks.
+- **Real-time Routing Container**: Makes synchronous gRPC calls to Local/Frontier Model Adapters for inference. Sends error responses or fallback triggers back to API Gateway. Uses HTTP/1.1 for health check endpoint.
+- **Local Model Adapter**: Converts requests to format expected by local models (vLLM/llama.cpp) and sends inference requests to Local Model Servers. Receives fallback requests from Real-time Routing Container.
+- **Frontier Model Adapter**: Converts requests to format expected by frontier APIs (OpenAI/Anthropic) and sends HTTPS requests to Frontier API Providers.
+- **Nomad Job Definition**: Uses Nomad SDK to deploy and manage the llm-switch job in the Nomad cluster.
+- **Consul Integration**: Registers llm-switch services with Consul and discovers dependencies (like local models) via Consul API.
+- **Vault Integration**: Retrieves API keys and secrets from Vault using Vault API for secure authentication.
+- **Prometheus Metrics Exporter**: Exposes llm-switch metrics in Prometheus format and pushes them to Prometheus PushGateway for scraping.
+- **Langfuse Trace Collector**: Sends request/response traces and metadata to Langfuse Backend for offline analysis.
+- **Offline Self-Learning Container**: Fetches traces from Langfuse, analyzes them to improve routing parameters, updates the Real-time Routing Container via HTTP/1.1, and triggers Nomad job reconfiguration for scaling.
+- **Error Handling**: Includes explicit error responses from Model Adapters to Real-time Routing Container and fallback paths to Local Model Adapter.
+2026-04-12 13:36:05,519 DEBUG    close.started
+2026-04-12 13:36:05,520 DEBUG    close.complete
+2026-04-12 13:37:39,930 INFO     [Generator sprint=2 round=5] turn=2 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:38:28,773 INFO     [Generator sprint=2 round=5] turn=3 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:44:29,334 INFO     [Generator sprint=2 round=5] turn=4 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:44:49,202 INFO     [Generator sprint=2 round=5] turn=5 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture...
+2026-04-12 13:45:19,070 INFO     [Generator sprint=2 round=5] turn=6 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:47:39,094 INFO     [Generator sprint=2 round=5] turn=7 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:47:59,863 INFO     [Generator sprint=2 round=5] turn=8 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture...
+2026-04-12 13:48:21,265 INFO     [Generator sprint=2 round=5] turn=9 Glob: generator-learnings.md
+2026-04-12 13:48:41,448 INFO     [Generator sprint=2 round=5] turn=10 Read /home/gerald/repos/llm-switch/knowledge/architecture/generator-learnings.md
+2026-04-12 13:50:35,618 INFO     [Generator sprint=2 round=5] turn=11 Edit /home/gerald/repos/llm-switch/knowledge/architecture/generator-learnings.md
+2026-04-12 13:51:14,631 INFO     [Generator sprint=2 round=5] turn=12 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:53:10,248 INFO     [Generator sprint=2 round=5] turn=13 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:53:35,206 INFO     [Generator sprint=2 round=5] turn=14 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture...
+2026-04-12 13:54:22,433 WARNING  [Generator sprint=2 round=5] turn=15 unexpected tool call: ExitPlanMode (input keys: [])
+2026-04-12 13:55:01,143 INFO     [Generator sprint=2 round=5] turn=16 Read /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:55:35,625 INFO     [Generator sprint=2 round=5] turn=17 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture...
+2026-04-12 13:57:46,112 INFO     [Generator sprint=2 round=5] turn=18 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 13:59:53,318 INFO     [Generator sprint=2 round=5] turn=19 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 14:01:19,996 INFO     [Generator sprint=2 round=5] turn=20 Write /home/gerald/repos/llm-switch/knowledge/architecture/design-summary.md
+2026-04-12 14:05:15,850 INFO     [Generator sprint=2 round=5] turn=21 Write /home/gerald/repos/llm-switch/knowledge/architecture/c2-container.md
+2026-04-12 14:05:46,673 INFO     [Generator sprint=2 round=5] turn=22 Bash: mmdc -i /home/gerald/repos/llm-switch/knowledge/architecture...
+2026-04-12 14:06:48,807 INFO     [Generator sprint=2 round=5] turn=23 Write /home/gerald/repos/llm-switch/knowledge/architecture/brief-summary.md
+2026-04-12 14:07:48,816 DEBUG    [Generator sprint=2 round=5] turn=24 text (3017 chars):  # Summary of Design Decisions and Rationale  ## Key Accomplishments Successfully created a C2 Container diagram for llm-switch that fully addresses all Round 4 critic feedback while maintaining techn...
+2026-04-12 14:07:48,892 INFO     [Generator sprint=2 round=5] summary: turns=24 (sdk=24) tool_calls=23 text_blocks=1
+2026-04-12 14:07:48,893 INFO     [Generator sprint=2 round=5] done: duration=2390.5s cost=$6.7040
+2026-04-12 14:07:48,894 INFO     [Generator sprint=2 round=5]   model=claude-opus-standard input=? output=? cache_read=0 cache_write=0
+2026-04-12 14:07:48,895 INFO     [Sprint 2] Generator round 5 completed in 2391.6s
+2026-04-12 14:07:48,896 DEBUG    Popen(['git', 'status', '--porcelain', '--untracked-files'], cwd=/home/gerald/repos/llm-switch, stdin=None, shell=False, universal_newlines=False)
+2026-04-12 14:07:48,914 DEBUG    Popen(['git', 'diff', '--abbrev=40', '--full-index', '-M', '--raw', '-z', '--no-color'], cwd=/home/gerald/repos/llm-switch, stdin=None, shell=False, universal_newlines=False)
+2026-04-12 14:07:48,932 DEBUG    get_modified_files: 56 files
+2026-04-12 14:07:48,932 INFO     [Sprint 2] Generator wrote 56 files: brief-summary.md, design-summary.md, sprint-2-round-4-log.json, sprint-2-round-4.json, progress.json, .brainstorm.md.swp, approach.md, boundary_internal_test.md, boundary_test.md, c2-container.md, critic-history.md, generator-history.md, generator-learnings.md, architect-run-20260412-111207.log, minimal.md, nest_test.md, nested_system_test.md, nested_test.md, original.md, progress.json, puppeteer.config.js, puppeteer.config.json, simple.md, simple_test.c4, step1.md, test.c4, test.md, test2.md, test3.md, test_boundaries.md, test_boundary_rel.md, test_c4_linkstyle.md, test_c4_linkstyle2.md, test_dashed.md, test_dummy.c4, test_internal_systems.md, test_linkstyle.md, test_linkstyle2.md, test_linkstyle_before.md, test_linkstyle_c4.md, test_linkstyle_c4_final.md, test_linkstyle_debug.md, test_linkstyle_in_c4.md, test_linkstyle_index.md, test_linkstyle_rel.md, test_minimal.c4, test_minimal.md, test_new_approach.md, test_no_linkstyle.md, test_rel.md, test_rel_back.md, test_rel_back_dashed.md, test_system_boundary.md, test_system_boundary2.md, test_system_boundary_internal.md, test_system_component.md

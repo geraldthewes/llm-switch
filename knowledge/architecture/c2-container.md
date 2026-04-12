@@ -1,72 +1,78 @@
-# C2 Container Diagram
+# C2 Container Overview - llm-switch
 
-llm-switch implements a two-part architecture: real-time intelligent routing selecting optimal models per query, and offline self-learning refining performance overnight. The system is deployed as a Nomad job in a cluster environment with Consul for service discovery and Vault for secrets management.
+**Narrative**: This diagram shows the static structure of the llm-switch system at the container level, detailing the 10 containers that implement the real-time routing and offline self-learning architecture. The system is designed for deployment in a Nomad cluster with integrations to Consul for service discovery, Vault for secrets management, and observability tools like Prometheus and Langfuse. The two-part architecture separates real-time decision-making (Real-time Routing Container) from continuous improvement (Offline Self-Learning Container).
 
-*Note: Solid arrows = synchronous communication, Dashed arrows = asynchronous communication*
-*Note: API Gateway routes: /v1/chat/completions → Orchestrator, /v1/embeddings → Orchestrator, /health → Health Check, /metrics → Prometheus Exporter*
+*Note: Solid arrows = synchronous communication (HTTP/1.1, gRPC). Dashed arrows = asynchronous communication (Nomad SDK, Consul API, Vault API, Prometheus PushGateway, Langfuse API).*
 
 ```mermaid
 C4Container
-    title llm-switch Container Diagram
-    System_Boundary(llm-switch, "llm-switch") {
-        Container(apiGateway, "API Gateway\nGolang\nbifrost\nDocker", "Exposes:\n/v1/chat/completions → Orchestrator\n/v1/embeddings → Orchestrator\n/health → Health Check\n/metrics → Prometheus Exporter", "")
-        Container(orchestratorService, "Orchestrator Service\nGolang\nbifrost\n1B\nNormStat/VecStat\nTelemetry: GPU/CPU metrics\nDocker", "Real-time model selection\nHardware telemetry\nSub-40ms classification", "")
-        Container(localModelAdapter, "Local Model\nAdapter\nGolang\nvLLM\nllama.cpp\nDocker\nMemory: 32GB", "Adapts requests\nto local models\n(Qwen, Nemotron)\nGPU/CPU telemetry", "")
-        Container(frontierModelAdapter, "Frontier Model\nAdapter\nGolang\nHTTP Client\nvLLM\nllama.cpp\nDocker", "Adapts requests\nto frontier APIs\n(OpenAI, Anthropic)\nGPU required", "")
-        Container(nomadJob, "Nomad Job\nDefinition\nNomad\nSDK\nDocker", "Constraints:\nGPU required\nMemory: 32GB\nNode pool: llm-switch", "")
-        Container(consulIntegration, "Consul\nIntegration\nGolang\nConsul API\nDocker", "Service discovery\nConfiguration retrieval\nmTLS via\nConsul Connect", "")
-        Container(vaultIntegration, "Vault\nIntegration\nGolang\nVault API\nDocker\nsecrets", "Secrets retrieval\nToken management\nTLS 1.3 encrypted", "")
-        Container(prometheusExporter, "Prometheus\nMetrics Exporter\nGolang\nPrometheus Client\nDocker", "Exports metrics\nat /metrics\nRequest latency\nModel usage\nError rates", "")
-        Container(langfuseTraceCollector, "Langfuse Trace\nCollector\nGolang\nLangfuse API\nDocker", "Asynchronously pushes\ntraces\nRequest/response pairs\nUser feedback signals", "")
-        Container(autoResearchLoopAgent, "AutoResearch Loop\nAgent\nGolang\nbackground agent\nDocker", "Offline self-learning\nAnalyzes traces\novernight\nUpdates routing thresholds", "")
-    }
-    System_Ext(nomad, "Nomad\nManager/Client\n3 nodes", "Orchestration platform")
-    System_Ext(consul, "Consul\nService Mesh", "Service discovery and configuration")
-    System_Ext(vault, "Vault\nSecrets Store", "Secrets management")
-    System_Ext(prometheus, "Prometheus\nServer", "Metrics storage and querying")
-    System_Ext(langfuse, "Langfuse\nBackend", "Trace storage and querying")
-    System_Ext(localModels, "Local Model\nServers\nQwen, Nemotron,\nGPU servers", "Local LLM inference")
-    System_Ext(frontierAPIs, "Frontier API\nProviders\nOpenAI, Anthropic,\nHTTPS", "Frontier LLM APIs")
+    title llm-switch Container Architecture
 
-    Rel(apiGateway, orchestratorService, "Routes request (Circuit Breaker)", "HTTP/1.1")
-    Rel(orchestratorService, localModelAdapter, "Selects local model (primary)", "gRPC")
-    Rel(orchestratorService, localModelAdapter, "Fallback to Local Model", "gRPC")
-    Rel(orchestratorService, frontierModelAdapter, "Selects frontier model", "gRPC")
-    Rel(localModelAdapter, orchestratorService, "Error Response", "HTTP/1.1")
-    Rel(frontierModelAdapter, orchestratorService, "Error Response", "HTTP/1.1")
-    Rel(orchestratorService, apiGateway, "Returns response", "HTTP/1.1")
-    Rel(apiGateway, consulIntegration, "Registers service", "Consul API")
-    Rel(consulIntegration, apiGateway, "Returns service info", "Consul API")
-    Rel(apiGateway, vaultIntegration, "Retrieves secrets", "Vault API")
-    Rel(vaultIntegration, apiGateway, "Returns secrets", "Vault API")
-    Rel(apiGateway, prometheusExporter, "Pushes metrics", "Prometheus PushGateway")
-    Rel(orchestratorService, langfuseTraceCollector, "Pushes traces", "Langfuse API")
-    Rel(autoResearchLoopAgent, langfuseTraceCollector, "Reads traces for analysis", "Langfuse API")
-    Rel(autoResearchLoopAgent, consulIntegration, "Updates routing thresholds", "Consul API")
-    Rel(consulIntegration, orchestratorService, "Watches for configuration changes", "Consul API")
-    Rel(nomadJob, nomad, "Deploys llm-switch job", "Nomad SDK")
-    Rel(localModelAdapter, localModels, "Invokes local model", "HTTP/1.1")
-    Rel(frontierModelAdapter, frontierAPIs, "Invokes frontier API (HTTPS)", "HTTP/1.1")
-    Rel(autoResearchLoopAgent, localModels, "Tests routing hypotheses", "HTTP/1.1")
+    %% External systems (infrastructure and dependencies)
+    System_Ext(nomad, "Nomad Cluster: 3 nodes", "Orchestration platform for container deployment [PRD §4.2]")
+    System_Ext(consul, "Consul Service Mesh", "Service discovery and configuration [PRD §4.6]")
+    System_Ext(vault, "Vault Secrets Store", "Secure secret management for API keys [PRD §4.6]")
+    System_Ext(prometheus, "Prometheus Server", "Metrics collection and alerting [PRD §4.4]")
+    System_Ext(langfuse, "Langfuse Backend", "Trace collection for model performance analysis [Tech Choices §4]")
+    System_Ext(localModels, "Local Model Servers", "Local LLMs (e.g., Qwen 7B, Nemotron 3 22B) [Tech Choices §1]")
+    System_Ext(frontierAPIs, "Frontier API Providers", "External LLM APIs (OpenAI, Anthropic) [PRD §4.1]")
+
+    %% Boundary for the llm-switch system
+    System_Boundary(llmSwitchBoundary, "llm-switch System") {
+        %% Containers
+        Container(apiGateway, "API Gateway:<br>Golang, bifrost<br>Docker", "Golang, bifrost, Docker", "Handles OpenAI/Anthropic API requests, routing, and auth [PRD §4.1]")
+        Container(realtimeRouter, "Real-time Routing<br>Container:<br>Golang, bifrost<br>1B parameter model", "Golang, bifrost, 1B parameter model", "Routes requests based on complexity using NormStat/VecStat [Tech Choices §2]")
+        Container(localAdapter, "Local Model<br>Adapter:<br>vLLM/llama.cpp<br>Docker", "vLLM/llama.cpp, Docker", "Adapts requests for local models like Qwen, Nemotron [Tech Choices §1]. Integrates hardware telemetry (GPU/CPU metrics) for informed routing.")
+        Container(frontierAdapter, "Frontier Model<br>Adapter:<br>HTTP client<br>Docker", "HTTP client, Docker", "Connects to frontier APIs like OpenAI, Anthropic [PRD §4.1]. Monitors hardware telemetry (GPU/CPU metrics) for fallback decisions.")
+        Container(nomadJob, "Nomad Job<br>Definition:<br>Nomad SDK<br>Docker", "Nomad SDK, Docker", "Defines Nomad job for deployment and scaling [PRD §4.2]")
+        Container(consulIntegration, "Consul<br>Integration:<br>Consul API<br>Docker", "Consul API, Docker", "Registers services and discovers dependencies via Consul [PRD §4.6]")
+        Container(vaultIntegration, "Vault<br>Integration:<br>Vault API<br>Docker", "Vault API, Docker", "Retrieves API keys and secrets from Vault [PRD §4.6]")
+        Container(prometheusExporter, "Prometheus Metrics<br>Exporter:<br>Prometheus PushGateway<br>Docker", "Prometheus PushGateway, Docker", "Exports llm-switch metrics to Prometheus server [PRD §4.4]")
+        Container(langfuseCollector, "Langfuse Trace<br>Collector:<br>Langfuse API<br>Docker", "Langfuse API, Docker", "Sends request/response traces to Langfuse for analysis [Tech Choices §4]")
+        Container(offlineLearner, "Offline Self-Learning<br>Container:<br>background<br>agent<br>Docker", "background agent, Docker", "Performs overnight training to improve routing decisions [Tech Choices §5]")
+    }
+
+    %% Relationships
+    %% API Gateway to internal containers
+    Rel(apiGateway, realtimeRouter, "HTTP/1.1", "OpenAI/Anthropic API requests (/v1/*) [PRD §4.1]")
+    Rel(apiGateway, prometheusExporter, "HTTP/1.1", "Metrics endpoint (/metrics) [PRD §4.4]")
+    Rel(apiGateway, offlineLearner, "HTTP/1.1", "Health check endpoint (/health) [PRD §4.3]")
+
+    %% Real-time routing container interactions
+    Rel(realtimeRouter, localAdapter, "gRPC", "Request local model inference [Tech Choices §1]")
+    Rel(realtimeRouter, frontierAdapter, "gRPC", "Request frontier model inference [PRD §4.1]")
+    Rel(realtimeRouter, apiGateway, "HTTP/1.1", "Error response or fallback [PRD §4.3]")
+    Rel(realtimeRouter, localAdapter, "HTTP/1.1", "Fallback to local model on frontier failure [PRD §4.3]")
+
+    %% Infrastructure integrations
+    Rel(nomadJob, nomad, "Nomad SDK", "Deploy and manage Nomad job [PRD §4.2]")
+    Rel(consulIntegration, consul, "Consul API", "Service registration and discovery [PRD §4.6]")
+    Rel(vaultIntegration, vault, "Vault API", "Retrieve secrets for API keys [PRD §4.6]")
+    Rel(prometheusExporter, prometheus, "Prometheus PushGateway", "Push metrics for scraping [PRD §4.4]")
+    Rel(langfuseCollector, langfuse, "Langfuse API", "Send traces for analysis [Tech Choices §4]")
+
+    %% Model adapter to external model servers
+    Rel(localAdapter, localModels, "HTTP/1.1", "Inference requests to local models [Tech Choices §1]")
+    Rel(frontierAdapter, frontierAPIs, "HTTP/1.1", "API requests to frontier providers [PRD §4.1] [HTTPS]")
+
+    %% Offline self-learning container interactions
+    Rel(offlineLearner, langfuse, "Langfuse API", "Fetch traces for analysis [Tech Choices §5]")
+    Rel(offlineLearner, realtimeRouter, "HTTP/1.1", "Update routing parameters [Tech Choices §5]")
+    Rel(offlineLearner, nomadJob, "Nomad SDK", "Trigger job reconfiguration [Tech Choices §5]")
+
+    %% Update layout configuration
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
-## Relationship Description
-
-- **API Gateway**: Entry point exposing OpenAI/Anthropic-compatible endpoints (`/v1/chat/completions`, `/v1/embeddings`). Routes requests to the Orchestrator Service with circuit breaker resilience over HTTP/1.1.
-- **Orchestrator Service**: Real-time routing engine using a 1B parameter model (Qwen/Llama) via bifrost for sub-40ms complexity classification. Selects between Local and Frontier Model Adapters, with primary selection for local models and fallback to local model when frontier fails.
-- **Local Model Adapter**: Integrates with local inference servers (vLLM/llama.cpp) for models like Qwen and Nemotron. Handles requests routed to local models and returns errors when local model fails over HTTP/1.1.
-- **Frontier Model Adapter**: Connects to frontier APIs (OpenAI, Anthropic) via HTTP client for models exceeding local capabilities. Returns errors when frontier API fails over HTTPS.
-- **Nomad Job Definition**: Encapsulates deployment constraints: GPU requirement for frontier adapters, 32GB memory for local adapters, and node pool affinity. Managed via Nomad SDK.
-- **Consul Integration**: Handles service discovery (registering llm-switch) and configuration retrieval (routing thresholds) using Consul API.
-- **Vault Integration**: Manages secrets (API keys, tokens) retrieval from Vault using Vault API for secure credential access.
-- **Prometheus Metrics Exporter**: Exposes llm-switch metrics (request latency, model usage, error rates) at `/metrics` endpoint for scraping by Prometheus server.
-- **Langfuse Trace Collector**: Asynchronously pushes request/response pairs and user feedback to Langfuse backend for trace storage and offline analysis.
-- **AutoResearch Loop Agent**: Background process that analyzes Langfuse traces overnight to refine routing decisions, updates Consul configuration, and triggers model retraining.
-- **Local Model Servers**: External inference servers (e.g., two RTX 2080s) hosting local models like Qwen and Nemotron.
-- **Frontier API Providers**: External services (OpenAPI, Anthropic) accessed via HTTPS for models like GPT-OSS-20B.
-- **Nomad Cluster**: Orchestration platform (3-node cluster) deploying the llm-switch job via Nomad SDK.
-- **Consul Service Mesh**: Provides service discovery, health checking, and configuration distribution for llm-switch components.
-- **Vault Secrets Store**: Centralized secrets management for API keys and tokens used by llm-switch.
-- **Prometheus Server**: Metrics storage and querying system scraping llm-switch metrics for alerting and dashboarding.
-- **Langfuse Backend**: Trace storage and querying system receiving asynchronous traces from llm-switch for offline analysis.
+**Relationships Description**:
+- **API Gateway**: Receives OpenAI/Anthropic-compatible API requests and routes them to the Real-time Routing Container. Exposes `/metrics` for Prometheus and `/health` for health checks.
+- **Real-time Routing Container**: Makes synchronous gRPC calls to Local/Frontier Model Adapters for inference. Sends error responses or fallback triggers back to API Gateway. Uses HTTP/1.1 for health check endpoint.
+- **Local Model Adapter**: Converts requests to format expected by local models (vLLM/llama.cpp) and sends inference requests to Local Model Servers. Receives fallback requests from Real-time Routing Container. Integrates hardware telemetry (GPU/CPU metrics) for informed routing decisions.
+- **Frontier Model Adapter**: Converts requests to format expected by frontier APIs (OpenAI/Anthropic) and sends HTTPS requests to Frontier API Providers. Monitors hardware telemetry (GPU/CPU metrics) for fallback decisions.
+- **Nomad Job Definition**: Uses Nomad SDK to deploy and manage the llm-switch job in the Nomad cluster.
+- **Consul Integration**: Registers llm-switch services with Consul and discovers dependencies (like local models) via Consul API.
+- **Vault Integration**: Retrieves API keys and secrets from Vault using Vault API for secure authentication.
+- **Prometheus Metrics Exporter**: Exposes llm-switch metrics in Prometheus format and pushes them to Prometheus PushGateway for scraping.
+- **Langfuse Trace Collector**: Sends request/response traces and metadata to Langfuse Backend for offline analysis.
+- **Offline Self-Learning Container**: Fetches traces from Langfuse, analyzes them to improve routing parameters, updates the Real-time Routing Container via HTTP/1.1, and triggers Nomad job reconfiguration for scaling.
+- **Error Handling**: Includes explicit error responses from Model Adapters to Real-time Routing Container and fallback paths to Local Model Adapter.
