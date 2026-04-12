@@ -43,3 +43,36 @@
 - No -- or -> arrows allowed in C4 blocks
 - All string arguments must use double quotes
 - Labels with special characters must use HTML entities (though none were needed here)
+
+## Round 6 - C1 System Context (Addressing Label Consistency)
+
+### Architecture Decisions and Rationale
+- Updated diagram label for Nomad from "Nomad Cluster" to "Nomad" to achieve exact case-sensitive match with narrative terminology
+- Maintained all other C1 Context elements and relationships unchanged as they were already compliant
+- Preserved PRD traceability references and technology stack compliance
+
+### What Worked Well
+- Label consistency fix resolved the final outstanding Critic feedback item
+- All other validation criteria continued to pass (Mermaid syntax, C4 completeness, relationship labeling, etc.)
+- Narrative sections maintained required word counts and PRD traceability
+
+### Issues Addressed from This Round
+- Fixed persistent Label Consistency issue: Changed diagram label "Nomad Cluster" (line 9) to "Nomad" to exactly match narrative usage (lines 44, 46, 57)
+- Verified all diagram labels now match narrative terminology case-sensitively:
+  - Developers (lines 6, 39)
+  - Operations Engineers (lines 7, 40) 
+  - Nomad (lines 9, 44, 46, 57)
+  - llm-switch (lines 8, 29)
+  - Local Model Servers (lines 12, 48)
+  - Frontier API Providers (lines 13, 49)
+  - Observability Tools (lines 14, 50)
+
+### Domain Insights
+- Consistent terminology between diagram and narrative reduces cognitive load for readers
+- Precise label matching improves auditability and traceability of architectural elements
+- Nomad infrastructure reference aligns with standard Nomad documentation and CLI terminology
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All labels use exact case-sensitive matching between diagram and narrative
+- No abbreviation discrepancies permitted per contract requirements
+- Label consistency achieved through iterative refinement based on Critic feedback

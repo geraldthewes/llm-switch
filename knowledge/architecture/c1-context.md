@@ -37,12 +37,12 @@ Network partition tolerance is designed into the Consul and Vault integrations, 
 
 ## User Roles
 Developers interact with llm-switch by integrating it into their AI-powered applications, replacing direct model API calls with llm-switch endpoints to benefit from automatic model selection without code changes (low severity impact on developer effort, high impact on productivity). [PRD-User Journeys]
-Operations Engineers are responsible for deploying, monitoring, and maintaining llm-switch within the Nomad cluster infrastructure. They configure job specifications, monitor health and performance metrics, and ensure seamless integration with Consul and Vault for service discovery and secret management. [PRD-Domain-Specific Requirements - Operational Excellence & Observability]
+Operations Engineers are responsible for deploying, monitoring, and maintaining llm-switch within the Nomad infrastructure. They configure job specifications, monitor health and performance metrics, and ensure seamless integration with Consul and Vault for service discovery and secret management. [PRD-Domain-Specific Requirements - Operational Excellence & Observability]
 Both roles benefit from the system's zero-code-change integration pattern (low severity: minimal disruption during upgrades, high impact: reduces integration errors and accelerates adoption), explainable routing logs for debugging, and autonomous self-learning that continuously improves cost efficiency and response times over time. [PRD-User Journeys] [PRD-Domain-Specific Requirements - Developer Experience]
 
 ## External Dependencies
 llm-switch depends on six external systems: 
-   Nomad Cluster for container orchestration and resource management (high severity: misconfiguration can lead to resource starvation or overload; impact: affects system stability and scalability), 
+   Nomad for container orchestration and resource management (high severity: misconfiguration can lead to resource starvation or overload; impact: affects system stability and scalability), 
    Consul for service discovery and configuration distribution, 
    Vault for secure API key storage and retrieval, 
    Local Model Servers hosting quantized LLMs (Qwen, Nemotron) via vLLM or llama.cpp for efficient inference (enables cost efficiency by allowing local model usage; impact: reduces reliance on expensive frontier APIs), 
