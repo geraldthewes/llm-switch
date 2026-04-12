@@ -7,6 +7,7 @@ This diagram shows the container-level architecture of the llm-switch system, il
 ```mermaid
 C4Container
     title C2 Container Overview - llm-switch
+    %% Legend: Solid arrows = Synchronous communication, Dashed arrows = Asynchronous communication
     System_Boundary(llm_switch, "llm-switch") {
         Container_Boundary(api_boundary, "API Boundary") {
             Container(apigw, "API Gateway:<br>Golang bifrost<br>Docker<br>Node pool:<br>llm-switch", "Golang, bifrost, Docker", "Handles incoming API requests, routes to orchestrator [FR1, FR2]")
