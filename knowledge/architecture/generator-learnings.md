@@ -24,6 +24,7 @@
 - Ensured all external systems have at least one labeled relationship
 - Removed container/component elements that don't belong in C1
 - Added proper PRD section references to all elements and narrative statements
+- **Addressed Edge Case Coverage feedback**: Added explicit coverage of API timeout scenarios (configurable timeouts, circuit breaker patterns, exponential backoff retry logic) and network partition tolerance (Consul/Vault partition behavior, failover handling, cached configuration grace periods)
 
 ### Domain Insights
 - llm-switch acts as an intelligent proxy between developers/operations and various backend systems
