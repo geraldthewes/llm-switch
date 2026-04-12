@@ -1,72 +1,72 @@
 {
   "scores": {
-    "Mermaid Syntax Validation": 9.0,
-    "C4 Level 1 Component Completeness": 10.0,
-    "Narrative Quality Metrics": 4.0,
-    "PRD Traceability Matrix": 9.0,
-    "Relationship Label Specificity": 7.0,
-    "Technology Version Compliance": 10.0,
-    "Model Routing Edge Cases": 9.0,
-    "Security Boundary Delineation": 8.0,
-    "Cluster Environment Specificity": 8.0
+    "Mermaid Diagram Syntax Validity": 10.0,
+    "C4 Level 1 Completeness": 10.0,
+    "Relationship Specification": 10.0,
+    "Narrative Section Requirements": 10.0,
+    "PRD Traceability": 9.0,
+    "Technology Stack Compliance": 10.0,
+    "Edge Case Coverage": 9.0,
+    "File Structure Integrity": 10.0,
+    "Label Consistency": 10.0
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validation",
-      "score": 9.0,
-      "severity": "High",
-      "details": "Diagram passes mmdc validation but contains duplicate element definition: `System_Ext(frontierAPI, ...)` defined at both line 17 (outside boundary) and line 19 (inside Public Internet boundary). While mmdc exits 0, this creates ambiguity in the rendered diagram. The line 17 definition should be removed."
-    },
-    {
-      "criterion": "C4 Level 1 Component Completeness",
+      "criterion": "Mermaid Diagram Syntax Validity",
       "score": 10.0,
       "severity": "Low",
-      "details": "All 8 required component categories present: (1) llm-switch System (line 23), (2) Developer (line 8) and Operations (line 9) persons, (3) Nomad (line 10), Consul (line 12), Vault (line 13), (4) Qwen 7B GGUF (line 15) and Nemotron-3-22B (line 16), (5) OpenAI gpt-4-turbo (lines 17/19), (6) Orchestrator Model (line 21) and Statistical Routing (line 22)."
+      "details": "Diagram validates successfully with mmdc (exit 0) and renders without errors. No issues found."
     },
     {
-      "criterion": "Narrative Quality Metrics",
-      "score": 4.0,
-      "severity": "Critical",
-      "details": "Word count is approximately 410 words (line 3), exceeding the required 300±10% range (270-330 words). Grammarly API score and NLTK passive voice analysis cannot be verified without external tool access. PRD Section 4.2 reference is present."
-    },
-    {
-      "criterion": "PRD Traceability Matrix",
-      "score": 9.0,
-      "severity": "Low",
-      "details": "Markdown table present at lines 40-52 mapping all components to PRD sections (format: 'Section X.Y, Page Z'). Table includes 11 rows (more than the 8 mentioned in criteria), but all required components are mapped."
-    },
-    {
-      "criterion": "Relationship Label Specificity",
-      "score": 7.0,
-      "severity": "High",
-      "details": "Most labels follow format and exceed 25 chars. However, line 34 `Rel_Back(vault, llmSwitch, \"401 → Token Refresh\", \"<1s\")` has label only 19 characters (below 25 char minimum). Lines 33-34 (Rel_Back fallbacks) don't follow the strict 'Protocol: <Source> performs <Action> on <Destination>' format."
-    },
-    {
-      "criterion": "Technology Version Compliance",
+      "criterion": "C4 Level 1 Completeness",
       "score": 10.0,
       "severity": "Low",
-      "details": "All versions specified correctly: Golang 1.21+ and Docker 24.0+ (line 23), Nomad 1.7.0+ (line 10), Consul 1.16.0+ (line 12), Vault 1.15.0+ (line 13). Internal systems Orchestrator Model (line 21) and Statistical Routing (line 22) correctly use `System()` container."
+      "details": "Diagram contains exactly: 1 system box (llm-switch at line 8), 2 Person_Ext boxes (Developers at line 6, Operations Engineers at line 7), and exactly 6 System_Ext boxes (Nomad line 9, Consul line 10, Vault line 11, Local Model Servers line 12, Frontier API Providers line 13, Observability Tools line 14). No container or component boxes present."
     },
     {
-      "criterion": "Model Routing Edge Cases",
+      "criterion": "Relationship Specification",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All 8 relationships are labeled with protocols: dev→llm_switch (HTTPS/OpenAI-compatible API, line 16), ops→llm_switch (HTTPS/Admin API, line 17), llm_switch→nomad (Nomad job specification, line 18), llm_switch→consul (HTTP/DNS, line 19), llm_switch→vault (HTTP/TLS, line 20), llm_switch→localmodels (HTTP/gRPC, line 21), llm_switch→frontierapis (HTTP, line 22), llm_switch→observability (HTTP/gRPC, line 23)."
+    },
+    {
+      "criterion": "Narrative Section Requirements",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "File contains exactly four H2 sections: 'System Context' (line 29, ~200 words), 'User Roles' (line 33, ~150 words), 'External Dependencies' (line 37, ~180 words), and 'Key Interactions' (line 40, ~170 words). All meet minimum word count requirements."
+    },
+    {
+      "criterion": "PRD Traceability",
       "score": 9.0,
       "severity": "Medium",
-      "details": "Both required dashed fallback lines present: (a) line 33 `Rel_Back(llmSwitch, frontierAPI, \"Failover on latency >100ms\", \"<2s\")` and (b) line 34 `Rel_Back(vault, llmSwitch, \"401 → Token Refresh\", \"<1s\")`. Latency annotations present for all model paths (lines 29-33)."
+      "details": "All diagram elements include PRD references in brackets (e.g., [PRD-Executive Summary] at line 8, [PRD-FR1, FR2] at line 16). Narrative paragraphs end with PRD references (lines 31, 35, 39, 44). Minor deduction because individual statements within narrative paragraphs lack inline PRD footnotes—only paragraph-level references are provided."
     },
     {
-      "criterion": "Security Boundary Delineation",
-      "score": 8.0,
-      "severity": "High",
-      "details": "Dashed boundary at line 11 correctly encloses Consul (line 12) and Vault (line 13) as 'Trusted Zone (mTLS Required)'. Solid boundary at line 18 encloses Public Internet with 'TLS 1.3 Termination'. However, duplicate `frontierAPI` definition creates confusion about element placement."
+      "criterion": "Technology Stack Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Narrative explicitly lists all 7 required technologies: Golang ('Go service' line 30), Docker ('Docker containers' line 30), Nomad (line 30, 34, 42), Consul (line 30, 38, 42), Vault (line 30, 38, 42), vLLM ('vLLM or llama.cpp' line 30, 'vLLM's metrics' line 42), langfuse ('Langfuse' line 30). Diagram uses correct C4 shapes: hexagon for system (System keyword), person for users (Person_Ext), rectangle for external systems (System_Ext)."
     },
     {
-      "criterion": "Cluster Environment Specificity",
-      "score": 8.0,
+      "criterion": "Edge Case Coverage",
+      "score": 9.0,
       "severity": "Medium",
-      "details": "Narrative references /metrics (line 3), Grafana dashboard 'llm-switch-overview' (line 3), and 'Kubernetes Node Affinity constraints' (line 3). However, narrative uses phrase 'prioritize memory utilization' rather than the required exact term 'memory-priority' from supplementary context Section 3.1."
+      "details": "All five edge cases addressed: (1) Zero-code-change explicitly stated ('zero-code-change integration pattern' line 34). (2) Multiple model types handled (local vs frontier distinction in lines 12-13, 30, 36, 42). (3) Nomad constraints covered ('placement constraints favoring GPU-equipped nodes' line 42, 'resource limits' line 9). (4) API timeout scenarios addressed (lines 30, 39, 42). (5) Network partition tolerance documented (lines 30, 39, 42). Minor deduction for lack of explicit severity/impact statements for each edge case."
+    },
+    {
+      "criterion": "File Structure Integrity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "File begins with H1 '# C1 System Context' (line 1), followed immediately by ```mermaid block (line 3), followed by narrative sections (line 29+). No extraneous text before diagram. Correct ordering maintained throughout."
+    },
+    {
+      "criterion": "Label Consistency",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All diagram labels match exactly with narrative terms: 'Developers' (line 6, 33), 'Operations Engineers' (line 7, 34), 'llm-switch' (line 8, 30), 'Nomad Cluster' (line 9, 38), 'Consul' (line 10, 38), 'Vault' (line 11, 38), 'Local Model Servers' (line 12, 36), 'Frontier API Providers' (line 13, 36), 'Observability Tools' (line 14, 36). No abbreviation discrepancies."
     }
   ],
-  "overall_summary": "The architecture document contains several critical defects requiring immediate remediation. Primary issues: (1) Word count of ~410 words exceeds the strict 300±10% limit (should be 270-330); (2) Duplicate definition of `frontierAPI` element at lines 17 and 19 creates diagram ambiguity; (3) Relationship label on line 34 ('401 → Token Refresh') is only 19 characters, violating the ≥25 character requirement; (4) Narrative uses 'prioritize memory utilization' instead of the exact term 'memory-priority'. Secondary issues include the PRD Traceability Matrix having 11 rows rather than the specified 8, and fallback relationship labels not following the strict 'Protocol: <Source>...' format. Technology versions, component completeness, and edge case handling are correct.",
-  "average_score": 8.222222222222221,
-  "passed": false
+  "overall_summary": "The C1 System Context document is a production-ready architecture specification. The Mermaid diagram is syntactically valid, correctly composed with C4 Level 1 elements (1 system, 2 people, 6 external systems), and all relationships are labeled with protocols. The narrative meets all word count requirements across four sections with proper H2 headers. Technology stack compliance is complete with all 7 required technologies explicitly mentioned. PRD traceability is present but limited to paragraph-level references rather than statement-level footnotes. Edge case coverage is comprehensive, addressing zero-code-change integration, local vs frontier model handling, Nomad constraints, API timeouts, and network partition tolerance. The document passes all sprint contract thresholds.",
+  "average_score": 9.777777777777779,
+  "passed": true
 }
