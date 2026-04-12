@@ -6,12 +6,12 @@ C4Context
     Person_Ext(dev, "Developers", "Develop and integrate applications using llm-switch [PRD-User Journeys]")
     Person_Ext(ops, "Operations Engineers", "Deploy, monitor, and maintain llm-switch in Nomad cluster [PRD-User Journeys]")
     System(llm_switch, "llm-switch", "Intelligent LLM proxy for optimal model selection [PRD-Executive Summary]")
-    System_Ext(nomad, "Nomad Cluster", "Orchestrates deployment with resource limits, placement constraints, and health checks [PRD-Domain-Specific Requirements - Operational Excellence & Observability]")
+    System_Ext(nomad, "Nomad", "Orchestrates deployment with resource limits, placement constraints, and health checks [PRD-Domain-Specific Requirements - Operational Excellence & Observability]")
     System_Ext(consul, "Consul", "Service discovery and configuration distribution [PRD-Domain-Specific Requirements - Operational Excellence & Observability]")
     System_Ext(vault, "Vault", "Secure API key management and distribution [PRD-Domain-Specific Requirements - Security & Access Control]")
     System_Ext(localmodels, "Local Model Servers", "Hosts local LLMs (Qwen, Nemotron) via vLLM/llama.cpp [PRD-Technology Choices]")
     System_Ext(frontierapis, "Frontier API Providers", "External LLM APIs (Anthropic, OpenAI) [PRD-Domain-Specific Requirements - API Compatibility & Integration]")
-    System_Ext(observability, "Observability Tools", "Monitoring and tracing (Prometheus, Langfuse, Jaeger) [PRD-Domain-Specific Requirements - Operational Excellence & Observability]"
+    System_Ext(observability, "Observability Tools", "Monitoring and tracing (Prometheus, Langfuse, Jaeger) [PRD-Domain-Specific Requirements - Operational Excellence & Observability]")
 
     Rel(dev, llm_switch, "Uses", "HTTPS/OpenAI-compatible API [PRD-FR1, FR2]")
     Rel(ops, llm_switch, "Manages", "HTTPS/Admin API [PRD-FR12, FR16]")

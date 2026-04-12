@@ -1,24 +1,72 @@
 {
   "scores": {
-    "Mermaid Syntax Validation": 10.0,
-    "C4 Level 1 Component Completeness": 10.0,
-    "Narrative Quality Metrics": 9.0,
-    "PRD Traceability Matrix": 8.0,
-    "Relationship Label Specificity": 10.0,
-    "Technology Version Compliance": 10.0,
-    "Model Routing Edge Cases": 8.0,
-    "Security Boundary Delineation": 10.0,
-    "Cluster Environment Specificity": 10.0
+    "Mermaid Diagram Syntax Validity": 8.0,
+    "C4 Level 1 Completeness": 10.0,
+    "Relationship Specification": 10.0,
+    "Narrative Section Requirements": 10.0,
+    "PRD Traceability": 9.0,
+    "Technology Stack Compliance": 10.0,
+    "Edge Case Coverage": 10.0,
+    "File Structure Integrity": 10.0,
+    "Label Consistency": 8.5
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validation",
+      "criterion": "Mermaid Diagram Syntax Validity",
+      "score": 8.0,
+      "severity": "High",
+      "details": "mmdc validation exits 0, but line 14 contains malformed Mermaid syntax: `System_Ext(observability, \"Observability Tools\", \"Monitoring and tracing...` is missing the closing parenthesis before the final quote. The correct syntax requires `System_Ext(id, \"name\", \"description\")` but line 14 has `System_Ext(observability, \"Observability Tools\", \"...[PRD-...}\"` without the closing `)`. This is a syntax error that mmdc appears to tolerate, but strictly violates Mermaid grammar."
+    },
+    {
+      "criterion": "C4 Level 1 Completeness",
       "score": 10.0,
       "severity": "Low",
-      "details": "Diagram validates successfully with mmdc (exit code 0). No deprecated C4 syntax (e.g., ']') detected. c1-context.md:5-35"
+      "details": "Diagram contains exactly: 1 System box (llm-switch, line 8), 2 Person_Ext boxes (Developers line 6, Operations Engineers line 7), and exactly 6 System_Ext boxes (Nomad line 9, Consul line 10, Vault line 11, Local Model Servers line 12, Frontier API Providers line 13, Observability Tools line 14). No Container or Component boxes present. Perfect C4 Level 1 composition."
+    },
+    {
+      "criterion": "Relationship Specification",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All 8 relationships properly labeled with protocols: dev→llm_switch (HTTPS/OpenAI-compatible API, line 16), ops→llm_switch (HTTPS/Admin API, line 17), llm_switch→nomad (Nomad job specification, line 18), llm_switch→consul (HTTP/DNS, line 19), llm_switch→vault (HTTP/TLS, line 20), llm_switch→localmodels (HTTP/gRPC, line 21), llm_switch→frontierapis (HTTP, line 22), llm_switch→observability (HTTP/gRPC, line 23). Every external system connected with labeled arrow."
+    },
+    {
+      "criterion": "Narrative Section Requirements",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "File contains exactly four H2 sections with adequate word counts: 'System Context' (line 28, 256 words, threshold 150), 'User Roles' (line 38, 133 words, threshold 100), 'External Dependencies' (line 43, 251 words, threshold 100), and 'Key Interactions' (line 55, 290 words, threshold 150). All sections use H2 headers correctly."
+    },
+    {
+      "criterion": "PRD Traceability",
+      "score": 9.0,
+      "severity": "Medium",
+      "details": "All diagram elements include PRD references (lines 6-14). All narrative paragraphs end with PRD references (e.g., line 29 [PRD-Executive Summary], line 35 [PRD-Infrastructure Reliability]). However, line 14 is missing closing bracket before quote: `[PRD-Domain-Specific Requirements...` should be `[PRD-Domain-Specific Requirements...]` - the `]` is omitted before the final `\"`."
+    },
+    {
+      "criterion": "Technology Stack Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Narrative explicitly lists all 7 required technologies: Golang ('Go service' line 32), Docker ('Docker containers' line 32), Nomad (lines 32, 46, 57), Consul (lines 32, 46, 58), Vault (lines 32, 46, 58), vLLM ('vLLM or llama.cpp' line 33), Langfuse ('Langfuse' line 34). Diagram uses correct C4 shapes: hexagon System (line 8), Person_Ext (lines 6-7), System_Ext rectangles (lines 9-14). No extraneous technology boxes."
+    },
+    {
+      "criterion": "Edge Case Coverage",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All five edge cases explicitly addressed: (1) Zero-code-change: line 41 'zero-code-change integration pattern', line 56. (2) Multiple model types: lines 12-13 distinction, line 33 'local model servers...falls back to frontier', lines 59-60. (3) Nomad constraints: line 57 'placement constraints favoring GPU-equipped nodes'. (4) API timeout scenarios: line 35, line 53, line 62. (5) Network partition tolerance: line 36, line 52, line 63. Each includes severity/impact analysis."
+    },
+    {
+      "criterion": "File Structure Integrity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "File begins with H1 '# C1 System Context' (line 1), followed immediately by ```mermaid block (line 3), followed by narrative sections (line 28+). No extraneous text between H1 and diagram block. Correct ordering maintained."
+    },
+    {
+      "criterion": "Label Consistency",
+      "score": 8.5,
+      "severity": "High",
+      "details": "Case-sensitive label mismatch: Diagram uses 'Nomad Cluster' (line 9) while narrative uses 'Nomad' (lines 44, 46, 57). Per contract 'All labels in the Mermaid diagram match exactly (case-sensitive) with terms used in the narrative section.' All other labels match exactly: 'Developers' (lines 6,39), 'Operations Engineers' (lines 7,40), 'Consul' (lines 10,46), 'Vault' (lines 11,46), 'Local Model Servers' (lines 12,48), 'Frontier API Providers' (lines 13,49), 'Observability Tools' (lines 14,50)."
     }
   ],
-  "overall_summary": "The architecture delivers strong compliance across most criteria. All 8 required components are present (c1-context.md:8-21), technology versions are precisely specified (Golang 1.21+, Docker 24.0+, etc. at lines 10,12,13,22), and security boundaries are correctly delineated with dashed 'Trusted Zone (mTLS Required)' around Consul/Vault (line 11) and solid 'Public Internet (TLS 1.3 Termination)' around frontier API (line 17). All 11 relationship labels meet the ≥25 character requirement and include latency bounds (lines 23-33). The narrative (line 3) explicitly references all required cluster elements: /metrics endpoint, Grafana dashboard ID 'llm-switch-overview', 'memory-priority' strategy from Section 3.1, and Kubernetes Node Affinity constraints. Two gaps exist: (1) PRD Traceability Matrix (lines 37-51) maps components to sections but does not explicitly enumerate and link User Journey *steps* from PRD Sections 4.2.1-4.2.3 to specific diagram elements as required; (2) Model Routing Edge Cases use Rel_Back for fallbacks (lines 32-33) which creates backward arrows but not visually *dashed* lines as the criterion requires—dashed styling requires explicit CSS or style definitions not present in the diagram.",
-  "average_score": 10.0,
-  "passed": true
+  "overall_summary": "The C1 System Context document is functionally complete and comprehensive, with valid Mermaid output (despite syntax anomalies on line 14 that mmdc tolerates). The architecture correctly implements C4 Level 1 with 1 system, 2 people, and 6 external systems, all properly connected with labeled protocols. All narrative sections exceed word count thresholds with thorough PRD traceability. Critical issues: (1) Line 14 Mermaid syntax error - missing closing parenthesis `)` in System_Ext declaration for observability, and missing closing bracket `]` in PRD reference. (2) Label inconsistency between 'Nomad Cluster' in diagram (line 9) and 'Nomad' in narrative (lines 44,46,57) violates exact case-sensitive matching requirement. These issues must be fixed for production deployment.",
+  "average_score": 9.5,
+  "passed": false
 }
