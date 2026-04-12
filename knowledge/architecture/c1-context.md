@@ -29,23 +29,23 @@ C4Context
     Rel(llmSwitch, nemotron, "gRPC: llm-switch routes requests to Nemotron-3-22B based on orchestration decision", "<50ms")
     Rel(llmSwitch, orchestrator, "gRPC: llm-switch sends feature vectors for intent classification", "<5ms")
     Rel(llmSwitch, statRouting, "gRPC: llm-switch activates statistical routing for latent space analysis", "<5ms")
-    Rel_Back(llmSwitch, frontierAPI, "HTTPS: llm-switch performs fallback to frontier API when local model latency exceeds 100ms", "<2s")
-    Rel_Back(vault, llmSwitch, "HTTPS: Vault service returns 401 → llm-switch initiates token refresh", "<1s")
+    Rel(llmSwitch, frontierAPI, "Failover on latency >100ms", "HTTPS")
+    Rel(vault, llmSwitch, "401 → Token Refresh", "HTTPS")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ## PRD Traceability Matrix
 
-| Component | PRD Reference |
-|-----------|---------------|
-| llm-switch | Section 4.0, Page 3 |
-| Developer | Section 4.2.1, Page 5 |
-| Operations | Section 4.2.2, Page 5 |
-| Nomad orchestrator | Section 9.0, Page 8 |
-| Consul service discovery | Section 4.2.2, Page 5 |
-| Vault secret management | Section 4.2.2, Page 5 |
-| Qwen 7B GGUF | Section 4.0, Page 3 |
-| Nemotron-3-22B | Section 4.0, Page 3 |
-| OpenAI gpt-4-turbo | Section 4.0, Page 3 |
-| Orchestrator Model (1B) | Section 7.0, Page 6 |
-| Statistical Routing | Section 7.0, Page 6 |
+| Component | PRD Reference | Linked User Journey Steps |
+|-----------|---------------|---------------------------|
+| llm-switch | Section 4.2, Page 4 | 4.2.1: Maya integrates by changing application endpoint to llm-switch; 4.2.2: Raj deploys llm-switch via Nomad job specification; 4.2.3: System provides core routing capabilities, self-learning, operational excellence, and developer experience as summarized in the journey requirements. |
+| Developer | Section 4.2.1, Page 5 | 4.2.1: Maya (developer) integrates AI applications with llm-switch requiring zero code changes; benefits from automatic model selection and overnight self-learning. |
+| Operations | Section 4.2.2, Page 6 | 4.2.2: Raj (operations) deploys and maintains llm-switch with minimal ongoing intervention; checks weekly self-learning reports and adds new models via config update. |
+| Nomad orchestrator | Section 4.2.2, Page 6 | 4.2.2: llm-switch sends job specification to Nomad orchestrator for deployment; Raj uses Nomad for initial deployment and scaling. |
+| Consul service discovery | Section 4.2.2, Page 6 | 4.2.2: llm-switch queries Consul for service discovery to locate models and services; enables dynamic service registration for scaling. |
+| Vault secret management | Section 4.2.2, Page 6 | 4.2.2: llm-switch retrieves secrets from Vault for API key management; token refresh on expiry to maintain secure access. |
+| Qwen 7B GGUF | Section 4.2.1, Page 5 | 4.2.1: llm-switch routes simple tasks to Qwen 7B GGUF for local inference; 4.2.2: Utilization monitored and balanced by self-learning system to prevent overuse. |
+| Nemotron-3-22B | Section 4.2.1, Page 5 | 4.2.1: llm-switch routes moderate tasks to Nemotron-3-22B; 4.2.2: Underutilization detected and corrected overnight by self-learning system to balance load. |
+| OpenAI gpt-4-turbo | Section 4.2.1, Page 5 | 4.2.1: llm-switch routes complex tasks to frontier API; 4.2.2: Initial deployment includes frontier API credentials for fallback and high-complexity tasks. |
+| Orchestrator Model (1B) | Section 7.0, Page 6 | 4.2.1: Used for intent and complexity classification to enable real-time routing; 4.2.3: Part of the core routing capabilities that analyze task features. |
+| Statistical Routing | Section 7.0, Page 6 | 4.2.1: Activates NormStat/VecStat mechanisms for latent space analysis to refine routing decisions; 4.2.3: Part of the core routing capabilities that provide statistical fallback. |
