@@ -3,7 +3,7 @@
   "current_sprint": 2,
   "total_sprints": 7,
   "completed_sprints": 0,
-  "total_rounds": 7,
+  "total_rounds": 8,
   "started_at": "2026-04-12T12:56:31.326425Z",
   "seed": 1775998591,
   "sprint_statuses": [
@@ -19,8 +19,8 @@
       "sprint_number": 2,
       "sprint_name": "C2 Container Overview",
       "status": "building",
-      "rounds_completed": 1,
-      "consecutive_passes": 0,
+      "rounds_completed": 2,
+      "consecutive_passes": 1,
       "final_score": null
     },
     {

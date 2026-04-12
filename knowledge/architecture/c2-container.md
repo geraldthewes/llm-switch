@@ -3,29 +3,30 @@
 llm-switch implements a two-part architecture: real-time intelligent routing selecting optimal models per query, and offline self-learning refining performance overnight. The system is deployed as a Nomad job in a cluster environment with Consul for service discovery and Vault for secrets management.
 
 *Note: Solid arrows = synchronous communication, Dashed arrows = asynchronous communication*
+*Note: API Gateway routes: /v1/* → Orchestrator, /health → Health Check, /metrics → Prometheus Exporter*
 
 ```mermaid
 C4Container
     title llm-switch Container Diagram
     System_Boundary(llm-switch, "llm-switch") {
-        Container(apiGateway, "API Gateway\nGolang\nbifrost\nDocker", "Exposes /v1/* → Orchestrator\n/health → Health Check\n/metrics → Prometheus Exporter", "")
-        Container(realTimeRouting, "Real-time Routing Container\nGolang\nbifrost\n1B parameter\nNormStat/VecStat\nDocker", "Real-time model selection\nHardware telemetry integration\nSub-40ms classification", "")
-        Container(localModelAdapter, "Local Model Adapter\nGolang\nvLLM\nllama.cpp\nDocker", "Adapts requests to local models\n(Qwen, Nemotron)\nGPU/CPU telemetry", "")
-        Container(frontierModelAdapter, "Frontier Model Adapter\nGolang\nHTTP Client\nDocker", "Adapts requests to frontier APIs\n(OpenAI, Anthropic)\nGPU required", "")
-        Container(nomadJob, "Nomad Job Definition\nNomad\nSDK\nDocker", "Constraints: GPU required for Frontier\nMemory: 32GB for Local Model\nNode pool: llm-switch", "")
-        Container(consulIntegration, "Consul Integration\nGolang\nConsul API\nDocker", "Service discovery\nConfiguration retrieval\nmTLS via Consul Connect", "")
-        Container(vaultIntegration, "Vault Integration\nGolang\nVault API\nDocker\nsecrets", "Secrets retrieval\nToken management\nTLS 1.3 encrypted", "")
-        Container(prometheusExporter, "Prometheus Metrics Exporter\nGolang\nPrometheus Client\nDocker", "Exports metrics at /metrics\nRequest latency, model usage\nError rates tracking", "")
-        Container(langfuseTraceCollector, "Langfuse Trace Collector\nGolang\nLangfuse API\nDocker", "Asynchronously pushes traces\nRequest/response pairs\nUser feedback signals", "")
-        Container(offlineSelfLearning, "Offline Self-Learning Container\nGolang\nbackground agent\nDocker", "Offline self-learning\nAnalyzes traces overnight\nUpdates routing thresholds", "")
+        Container(apiGateway, "API Gateway\nGolang\nbifrost\nDocker", "Exposes /v1/*\n→ Orchestrator\n/health →\nHealth Check\n/metrics →\nPrometheus Exporter", "")
+        Container(realTimeRouting, "Real-time Routing\nContainer\nGolang\nbifrost\n1B\nNormStat/VecStat\nDocker", "Real-time model selection\nHardware telemetry\nSub-40ms classification", "")
+        Container(localModelAdapter, "Local Model\nAdapter\nGolang\nvLLM\nllama.cpp\nDocker", "Adapts requests\nto local models\n(Qwen, Nemotron)\nGPU/CPU telemetry", "")
+        Container(frontierModelAdapter, "Frontier Model\nAdapter\nGolang\nHTTP Client\nDocker", "Adapts requests\nto frontier APIs\n(OpenAI, Anthropic)\nGPU required", "")
+        Container(nomadJob, "Nomad Job\nDefinition\nNomad\nSDK\nDocker", "Constraints:\nGPU required\nMemory: 32GB\nNode pool: llm-switch", "")
+        Container(consulIntegration, "Consul\nIntegration\nGolang\nConsul API\nDocker", "Service discovery\nConfiguration retrieval\nmTLS via\nConsul Connect", "")
+        Container(vaultIntegration, "Vault\nIntegration\nGolang\nVault API\nDocker\nsecrets", "Secrets retrieval\nToken management\nTLS 1.3 encrypted", "")
+        Container(prometheusExporter, "Prometheus\nMetrics Exporter\nGolang\nPrometheus Client\nDocker", "Exports metrics\nat /metrics\nRequest latency\nModel usage\nError rates", "")
+        Container(langfuseTraceCollector, "Langfuse Trace\nCollector\nGolang\nLangfuse API\nDocker", "Asynchronously pushes\ntraces\nRequest/response pairs\nUser feedback signals", "")
+        Container(offlineSelfLearning, "Offline Self-\nLearning Container\nGolang\nbackground agent\nDocker", "Offline self-learning\nAnalyzes traces\novernight\nUpdates routing thresholds", "")
     }
-    System_Ext(nomad, "Nomad\n3 nodes", "Orchestration platform")
+    System_Ext(nomad, "Nomad\nManager/Client", "Orchestration platform")
     System_Ext(consul, "Consul\nService Mesh", "Service discovery and configuration")
     System_Ext(vault, "Vault\nSecrets Store", "Secrets management")
     System_Ext(prometheus, "Prometheus\nServer", "Metrics storage and querying")
     System_Ext(langfuse, "Langfuse\nBackend", "Trace storage and querying")
-    System_Ext(localModels, "Local Model Servers\nQwen, Nemotron, etc.\nGPU\nservers", "Local LLM inference")
-    System_Ext(frontierAPIs, "Frontier API Providers\nOpenAI, Anthropic, etc.\nHTTPS", "Frontier LLM APIs")
+    System_Ext(localModels, "Local Model\nServers\nQwen, Nemotron,\nGPU servers", "Local LLM inference")
+    System_Ext(frontierAPIs, "Frontier API\nProviders\nOpenAI, Anthropic,\nHTTPS", "Frontier LLM APIs")
 
     Rel(apiGateway, realTimeRouting, "Routes request", "Circuit Breaker")
     Rel(realTimeRouting, localModelAdapter, "Selects local model (primary)", "gRPC")

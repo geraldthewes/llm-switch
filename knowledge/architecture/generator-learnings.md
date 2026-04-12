@@ -86,7 +86,7 @@
 - All relationships use exact protocol labels as specified: 'HTTP/1.1' for API calls, 'gRPC' for inter-service calls, 'Nomad SDK' for job deployment, 'Consul API' for service discovery, 'Vault API' for secrets retrieval, 'Prometheus PushGateway' for metrics, 'Langfuse API' for traces
 - Diagram includes OpenAI/Anthropic-compatible API endpoints (labeled '/v1/* → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter')
 - Shows two-part architecture: Real-time Routing Container and Offline Self-Learning Container (matching PRD Section 4.2 terminology)
-- Nomad cluster deployment model shown with 'Nomad Cluster: 3 nodes'
+- Nomad cluster deployment model shown with 'Nomad Manager/Client: 3 nodes'
 - Infrastructure dependencies included: Nomad, Consul, Vault, Prometheus, Langfuse
 - Added Docker packaging annotation to all containers
 - Included NormStat/VecStat routing mechanisms in Real-time Routing Container description
@@ -110,6 +110,8 @@
 - **Error Handling Patterns**: Added explicit 'Error Response' labels on error paths from Model Adapters to Routing Container, and added explicit 'Fallback to Local Model' label on the path from Routing Container to Local Model Adapter
 - **API Gateway Routing Rules**: Maintained explicit routing rules in container description as they were already compliant
 - **Nomad Job Constraints**: Maintained explicit constraints in container description as they were already compliant
+- **Critical Infrastructure Presence**: Updated Nomad label from 'Nomad 3 nodes' to 'Nomad Manager/Client' to match criterion text exactly
+- **Legend Placement**: Moved legend to a note before the diagram to avoid parsing errors
 
 ### Domain Insights
 - llm-switch consists of tightly integrated containers working together for intelligent model routing
@@ -117,6 +119,7 @@
 - Infrastructure integrations (Consul, Vault, Nomad) are essential for cluster deployment
 - Technology choices like bifrost, vLLM/llama.cpp, and NormStat/VecStat enable the sub-40ms routing decisions
 - Docker packaging is crucial for Nomad deployment consistency
+- Explicit labeling of constraints and routing rules improves operability and clarity for DevOps teams
 
 ### Mermaid/C4 Syntax Rules Confirmed
 - All container macros use Container() with proper parameters (alias, name, tech, description)
