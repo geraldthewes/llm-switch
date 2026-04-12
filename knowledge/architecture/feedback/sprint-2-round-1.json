@@ -1,65 +1,93 @@
 {
   "scores": {
-    "Mermaid Diagram Validity": 10.0,
-    "C4 Level 2 Completeness": 7.5,
-    "Relationship Accuracy": 6.0,
-    "PRD and Technology Alignment": 6.5,
-    "Narrative Documentation Quality": 9.0,
-    "Extensibility Edge Case": 5.5,
-    "Failure Handling Visibility": 3.0,
-    "Security and Cost Boundaries": 4.0
+    "Mermaid Syntax Validity": 10.0,
+    "C4 Level 2 Component Inventory": 10.0,
+    "Relationship Protocol Specification": 10.0,
+    "PRD Section 4.2 Alignment": 6.0,
+    "Technology Stack Explicit Labeling": 10.0,
+    "C4 Container Diagram Standards": 9.5,
+    "Critical Infrastructure Presence": 10.0,
+    "Dependency Direction Validation": 10.0,
+    "Security Compliance": 10.0,
+    "Error Handling Paths": 6.0,
+    "API Gateway Routing Rules": 9.5,
+    "Nomad Job Constraints": 9.0
   },
   "feedback": [
     {
-      "criterion": "Mermaid Diagram Validity",
+      "criterion": "Mermaid Syntax Validity",
       "score": 10.0,
       "severity": "Low",
-      "details": "Mermaid syntax validates successfully via mmdc (line 6-46). No syntax errors, renders correctly."
+      "details": "mmdc validation passed without errors. Diagram renders correctly."
     },
     {
-      "criterion": "C4 Level 2 Completeness",
-      "score": 7.5,
-      "severity": "Medium",
-      "details": "Missing explicit External System boundary markers (Container_Boundary/System_Boundary not used). Local Model Instances Qwen/Nemotron correctly shown as System_Ext (lines 20-21) rather than containers, but Persistent Storage (Consul/KV, Vault) incorrectly shown as containers (lines 16-17) when they should be external systems. Missing explicit container labels for technology stack on some containers (e.g., no replication factor shown for external systems). Threshold requires 10.0 - significant gaps in boundary notation."
+      "criterion": "C4 Level 2 Component Inventory",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Exactly 10 containers present with technology stacks (c2-container.md:lines 11-20)."
     },
     {
-      "criterion": "Relationship Accuracy",
+      "criterion": "Relationship Protocol Specification",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All protocols correctly specified: HTTP/1.1, gRPC, Nomad SDK, Consul API, Vault API, Prometheus PushGateway, Langfuse API (c2-container.md:lines 30-50)."
+    },
+    {
+      "criterion": "PRD Section 4.2 Alignment",
       "score": 6.0,
       "severity": "High",
-      "details": "CRITICAL: Self-learning trace flow is incorrect. Criterion requires 'self-learning system receiving traces from Model Routers asynchronously' but diagram shows Admin → Langfuse (line 45) for 'Trace Upload' instead of Model Router → Admin. Missing Model Router → Admin/Langfuse relationship entirely. Bidirectional health check flows not shown for health_check service (lines 38-40 show BiRel for other services but health_check is isolated). Health check external exposure not shown (Nomad should access health_check but relationship missing)."
+      "details": "Diagram uses 'Orchestrator Service' and 'AutoResearch Loop Agent' instead of required 'Real-time Routing Container' and 'Offline Self-Learning Container' labels. Missing explicit boundary containers matching PRD terminology (c2-container.md:lines 12, 20)."
     },
     {
-      "criterion": "PRD and Technology Alignment",
-      "score": 6.5,
+      "criterion": "Technology Stack Explicit Labeling",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All required labels present: Golang/bifrost/1B model (line 12), vLLM/llama.cpp (line 13), NormStat/VecStat (line 12), telemetry (line 13), background agent (line 20), Docker (lines 11-20)."
+    },
+    {
+      "criterion": "C4 Container Diagram Standards",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "Legend present (line 5). Container descriptions slightly exceed 15 words in some cases (line 12: 14 words OK). Static structure maintained."
+    },
+    {
+      "criterion": "Critical Infrastructure Presence",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All infrastructure present: Nomad (line 22), Consul (line 23), Vault (line 24), Prometheus (line 25), Langfuse (line 26)."
+    },
+    {
+      "criterion": "Dependency Direction Validation",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Correct dependency flow: llm-switch containers initiate calls to Nomad/Consul/Vault (lines 36-45). No reverse dependencies violating ownership principles."
+    },
+    {
+      "criterion": "Security Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Vault shows 'secrets' annotation (line 17). External HTTPS (line 47). Internal mTLS/Consul Connect mentioned (line 16)."
+    },
+    {
+      "criterion": "Error Handling Patterns",
+      "score": 6.0,
       "severity": "High",
-      "details": "Network segmentation not visualized - narrative at line 55 claims zones are 'implied' but diagram lacks Container_Boundary for DMZ/API Gateway vs internal containers. No firewall boundary shown between public and internal. Bifrost mentioned in API Gateway label (line 8) but not shown as message routing infrastructure between containers - all relationships use standard HTTP/gRPC notation, not bifrost-specific message bus notation. VRAM-aware routing mentioned (line 9) but no visual indication of VRAM tiers or hardware boundaries."
+      "details": "Circuit Breaker present (line 30). Error paths show 'Error response or fallback' instead of required 'Error Response'. Missing explicit 'Fallback to Local Model' label. Only 1 of 3 required specific labels present (c2-container.md:lines 30, 49-50)."
     },
     {
-      "criterion": "Narrative Documentation Quality",
+      "criterion": "API Gateway Routing Rules",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "All routes documented in container description (line 11): /v1/*, /health, /metrics. Could be more explicit as diagram annotations rather than description text."
+    },
+    {
+      "criterion": "Nomad Job Constraints",
       "score": 9.0,
       "severity": "Low",
-      "details": "Word count 248 stated at end of file, within 150-250 threshold. Covers container purposes, interactions, and topology. However, developer/operations journey description is vague (line 55-56) - doesn't explicitly reference how diagram supports debugging or deployment workflows as required by PRD."
-    },
-    {
-      "criterion": "Extensibility Edge Case",
-      "score": 5.5,
-      "severity": "Critical",
-      "details": "Fails to visually demonstrate horizontal scaling pattern. While '2x' notation exists on containers (lines 8-17), diagram lacks visual pool of identical model instances with load balancer notation. Model Router (line 10) shows relationships to single adapters, not a pool of N instances. No visual separation of configuration artifacts (Nomad specs) from application code. Adding new LLM model shown as text claim (line 55) not visual pattern - diagram doesn't show Nomad job spec as artifact separate from containers."
-    },
-    {
-      "criterion": "Failure Handling Visibility",
-      "score": 3.0,
-      "severity": "Critical",
-      "details": "Almost entirely missing from diagram. No fallback paths shown when model instances fail. No circuit breaker pattern indicators (Model Router claims 'implements circuit breaker' in label but no visual representation). No <500ms timeout thresholds shown on relationships. No dead letter queue path for unrouteable requests after 3 retries. No health check rerouting visualization. All failure handling is text-only, violating the visual communication requirement of C4 diagrams."
-    },
-    {
-      "criterion": "Security and Cost Boundaries",
-      "score": 4.0,
-      "severity": "Critical",
-      "details": "Security zones not visualized - no Container_Boundary showing DMZ for API Gateway vs internal VPC for compute. mTLS mentioned in narrative (line 54) but not shown on diagram relationships. No cost differentiation between local models and frontier API costs. No VRAM utilization tiers (24GB, 48GB) affecting routing decisions. No explicit hardware boundaries. All security/cost information is narrative-only, not visualized."
+      "details": "Constraints visible in description (line 15): GPU required, Memory: 32GB, Node pool: llm-switch. Acceptable but could use visual annotations."
     }
   ],
-  "overall_summary": "This architecture diagram fails significantly on visual communication of critical operational concerns. While the Mermaid syntax is valid and basic C4 structure exists, the diagram is essentially a static topology map that fails to show the dynamic operational reality of the system. Critical missing elements: failure handling (circuit breakers, dead letter queues, fallback paths), security zone boundaries (DMZ/internal segregation), extensibility patterns (model pools with load balancers), and the self-learning trace flow (incorrect direction). The narrative attempts to compensate by describing these elements textually, but violates C4 methodology by hiding operational behavior in prose. The diagram requires major revision to add Container_Boundary elements for security zones, explicit failure handling relationships with dashed lines for fallback paths, and correction of the self-learning trace direction. The '2x' replication notation is insufficient to demonstrate horizontal scaling patterns without showing the actual load balancer pattern to model pools.",
-  "average_score": 6.4375,
+  "overall_summary": "The architecture diagram demonstrates strong technical accuracy with valid Mermaid syntax, correct container inventory, and proper infrastructure dependencies. Critical gaps exist in PRD terminology alignment (using 'Orchestrator Service' and 'AutoResearch Loop Agent' instead of mandated 'Real-time Routing Container' and 'Offline Self-Learning Container') and error handling path labeling (missing 'Error Response' and 'Fallback to Local Model' explicit labels). The diagram captures the technical substance but deviates from PRD Section 4.2's specific nomenclature requirements. These gaps risk production confusion around component identification and error handling semantics. Recommend renaming containers to match PRD glossary and adding explicit error handling annotations.",
+  "average_score": 9.166666666666666,
   "passed": false
 }
