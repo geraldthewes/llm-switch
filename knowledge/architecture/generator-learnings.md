@@ -179,3 +179,53 @@
 - Legend moved outside diagram to avoid parsing errors with 'note' keyword
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed (though none were required in this diagram)
+
+## C2 Container Overview - llm-switch (Round 7 - Addressing Critic Feedback)
+
+### Architecture Decisions and Rationale
+- Fixed critical terminology violations by renaming containers to match PRD-mandated names:
+  - Changed 'Orchestrator Service' to 'Real-time Routing Container'
+  - Changed 'AutoResearch Loop Agent' to 'Offline Self-Learning Container'
+  - Changed 'Nomad Manager/Client' to 'Nomad Cluster: 3 nodes' to match required format
+- Added missing legend outside the diagram (as note before mermaid block) to explain symbols (solid arrows = synchronous, dashed = asynchronous)
+- Distributed Nomad Job Constraints as container-specific annotations:
+  - Added 'GPU required' annotation to Frontier Model Adapter container
+  - Added 'Memory: 32GB' annotation to Local Model Adapter container
+  - Added 'Node pool: llm-switch' annotation to all llm-switch containers
+- Added explicit 'vLLM/llama.cpp' label to Frontier Model Adapter container
+- Added explicit 'Telemetry: GPU/CPU metrics' label to both Local and Frontier Model Adapter containers
+- Added explicit 'HTTPS' annotation for external API consumer to API Gateway relationship
+- Ensured all container labels comply with 'max 2 words per line' constraint using HTML <br> breaks
+- Verified all technology stacks include required annotations (Docker, 1B parameter model, etc.)
+
+### What Worked Well
+- Maintaining valid Mermaid syntax while addressing all critic feedback points
+- Using HTML <br> breaks in container labels to satisfy the 'max 2 words per line' constraint
+- Placing the legend as a note before the mermaid block to avoid parsing errors
+- Distributing constraints as container-specific annotations rather than consolidating in descriptions
+- Keeping all required infrastructure components with correct labeling and dependency directions
+
+### Issues Addressed from Critic Feedback
+- **PRD Section 4.2 Alignment**: Updated container names to PRD-mandated 'Real-time Routing Container' and 'Offline Self-Learning Container'. Updated Nomad label to 'Nomad Cluster: 3 nodes'.
+- **Technology Stack Explicit Labeling**: Added 'vLLM/llama.cpp' to Frontier Model Adapter label. Added 'Telemetry: GPU/CPU metrics' to both Model Adapter containers. Ensured '1B parameter model' full labeling.
+- **C4 Container Diagram Standards**: Added legend explaining symbols (solid arrows = synchronous, dashed = asynchronous) as a note before the diagram. Fixed container labels to comply with 'max 2 words per line' constraint using HTML <br> breaks.
+- **Nomad Job Constraints**: Distributed constraints as container-specific annotations: 'GPU required' on Frontier Model Adapter, 'Memory: 32GB' on Local Model Adapter, 'Node pool: llm-switch' on all containers.
+- **Hardware Telemetry Integration**: Added 'Telemetry: GPU/CPU metrics' labels to Local and Frontier Model Adapter containers.
+- **Security Compliance**: Added 'HTTPS' annotation for external API consumer to API Gateway relationship.
+
+### Domain Insights
+- Precise terminology alignment with PRD requirements improves stakeholder communication and reduces ambiguity
+- Proper legend usage enhances diagram readability and adherence to architectural documentation standards
+- Distributing infrastructure constraints as container-specific annotations improves clarity for platform and DevOps teams
+- Explicit labeling of technology stacks and integration points enables better understanding of system capabilities
+- Clear security annotations (HTTPS, mTLS) make trust boundaries and encryption requirements immediately visible
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint

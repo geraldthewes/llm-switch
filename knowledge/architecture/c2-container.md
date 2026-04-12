@@ -2,32 +2,35 @@
 
 This diagram shows the container-level architecture of the llm-switch system, illustrating how the real-time routing and offline self-learning components interact with infrastructure dependencies in the Nomad cluster environment.
 
+> **Legend**: Solid arrows = Synchronous communication, Dashed arrows = Asynchronous communication
+
 ```mermaid
 C4Container
     title C2 Container Overview - llm-switch
     System_Boundary(llm_switch, "llm-switch") {
         Container_Boundary(api_boundary, "API Boundary") {
-            Container(apigw, "API Gateway:<br>Golang bifrost<br>Docker", "Golang, bifrost, Docker", "Handles incoming API requests, routes to orchestrator [FR1, FR2]")
+            Container(apigw, "API Gateway:<br>Golang bifrost<br>Docker<br>Node pool:<br>llm-switch", "Golang, bifrost, Docker", "Handles incoming API requests, routes to orchestrator [FR1, FR2]")
         }
         Container_Boundary(routing_boundary, "Real-time Routing Boundary") {
-            Container(orchestrator, "Orchestrator Service:<br>Golang bifrost 1B<br>Docker NormStat VecStat", "Golang, bifrost, 1B parameter model, Docker, NormStat/VecStat", "Performs real-time model selection based on complexity [FR3]")
+            Container(orchestrator, "Real-time Routing:<br>Container<br>Golang bifrost<br>1B parameter:<br>model<br>Docker NormStat:<br>VecStat<br>Node pool:<br>llm-switch", "Golang, bifrost, 1B parameter model, Docker, NormStat/VecStat", "Performs real-time model selection based on complexity [FR3]")
         }
         Container_Boundary(adapter_boundary, "Model Adapter Boundary") {
-            Container(local_adapter, "Local Model Adapter:<br>vLLM llama.cpp<br>Docker", "vLLM/llama.cpp, Docker", "Adapts requests for local models (Qwen, Nemotron) [FR4]")
-            Container(frontier_adapter, "Frontier Model Adapter:<br>HTTP client<br>Docker", "HTTP client, Docker", "Adapts requests for frontier APIs (OpenAI, Anthropic) [FR5]")
+            Container(local_adapter, "Local Model:<br>Adapter<br>vLLM llama.cpp<br>Docker<br>Telemetry:<br>GPU/CPU metrics<br>Memory: 32GB<br>Node pool:<br>llm-switch", "vLLM/llama.cpp, Docker", "Adapts requests for local models (Qwen, Nemotron) [FR4]")
+            Container(frontier_adapter, "Frontier Model:<br>Adapter<br>vLLM/llama.cpp<br>HTTP client<br>Docker<br>Telemetry:<br>GPU/CPU metrics<br>GPU required:<br>Node pool:<br>llm-switch", "HTTP client, Docker", "Adapts requests for frontier APIs (OpenAI, Anthropic) [FR5]")
         }
         Container_Boundary(infra_boundary, "Infrastructure Boundary") {
-            Container(nomad_job, "Nomad Job Definition:<br>Nomad Job<br>Nomad SDK<br>Docker", "Nomad SDK, Docker", "Defines Nomad job for llm-switch deployment [FR12]. Constraints: GPU required, Memory: 32GB, Node pool: llm-switch")
-            Container(consul_int, "Consul Integration:<br>Consul API<br>Docker", "Consul API, Docker", "Integrates with Consul for service discovery [FR46]")
-            Container(vault_int, "Vault Integration:<br>Vault API<br>secrets<br>Docker", "Vault API, Docker", "Integrates with Vault for secret management [FR45] [secrets]")
-            Container(prometheus_exporter, "Prometheus Metrics Exporter:<br>Prometheus PushGateway<br>Docker", "Prometheus PushGateway, Docker", "Exports metrics for monitoring [FR34]")
-            Container(langfuse_collector, "Langfuse Trace Collector:<br>Langfuse API<br>Docker", "Langfuse API, Docker", "Collects traces for observability [FR38]")
+            Container(nomad_job, "Nomad Job:<br>Definition<br>Nomad Job<br>Nomad SDK<br>Docker<br>Node pool:<br>llm-switch", "Nomad SDK, Docker", "Defines Nomad job for llm-switch deployment [FR12]")
+            Container(consul_int, "Consul Integration:<br>Consul API<br>Docker<br>Node pool:<br>llm-switch", "Consul API, Docker", "Integrates with Consul for service discovery [FR46]")
+            Container(vault_int, "Vault Integration:<br>Vault API<br>secrets<br>Docker<br>Node pool:<br>llm-switch", "Vault API, Docker", "Integrates with Vault for secret management [FR45] [secrets]")
+            Container(prometheus_exporter, "Prometheus Metrics:<br>Exporter<br>Prometheus PushGateway<br>Docker<br>Node pool:<br>llm-switch", "Prometheus PushGateway, Docker", "Exports metrics for monitoring [FR34]")
+            Container(langfuse_collector, "Langfuse Trace:<br>Collector<br>Langfuse API<br>Docker<br>Node pool:<br>llm-switch", "Langfuse API, Docker", "Collects traces for observability [FR38]")
         }
         Container_Boundary(learning_boundary, "Offline Learning Boundary") {
-            Container(autoresearch_loop, "AutoResearch Loop Agent:<br>background agent<br>Docker", "background agent, Docker", "Performs offline analysis and model refinement [FR7-FR11]")
+            Container(autoresearch_loop, "Offline Self-Learning:<br>Container<br>background agent<br>Docker<br>Node pool:<br>llm-switch", "background agent, Docker", "Performs offline analysis and model refinement [FR7-FR11]")
         }
     }
-    System_Ext(nomad, "Nomad Manager/Client", "Manages job scheduling and execution [FR12]")
+    System_Ext(api_consumer, "API Consumer", "External API consumer (developer or operations)")
+    System_Ext(nomad, "Nomad Cluster: 3 nodes", "Manages job scheduling and execution [FR12]")
     System_Ext(consul, "Consul Service Mesh", "Provides service discovery and configuration [FR46]")
     System_Ext(vault, "Vault Secrets Store", "Securely stores and manages API keys [FR45]")
     System_Ext(prometheus, "Prometheus Server", "Collects and stores metrics for alerting [FR34]")
@@ -36,6 +39,9 @@ C4Container
     %% API Gateway to Orchestrator relationships with specific endpoints and Circuit Breaker
     Rel(apigw, orchestrator, "/v1/chat/completions (Circuit Breaker)", "HTTP/1.1, mTLS via Consul Connect")
     Rel(apigw, orchestrator, "/v1/embeddings (Circuit Breaker)", "HTTP/1.1, mTLS via Consul Connect")
+
+    %% External API consumer to API Gateway (HTTPS)
+    Rel(api_consumer, apigw, "API Requests/Responses", "HTTPS")
 
     %% Orchestrator to Model Adapters (internal service mesh with mTLS)
     Rel(orchestrator, local_adapter, "Model selection: Local (mTLS via Consul Connect)", "gRPC")
@@ -70,6 +76,10 @@ C4Container
   - Each labeled with "(Circuit Breaker)" to indicate the resilience pattern
   - Protocol: HTTP/1.1 with mTLS via Consul Connect for internal service mesh security
 
+- **External API Consumer to API Gateway**:
+  - HTTPS relationship representing external API requests and responses
+  - Protocol: HTTPS for secure external communication
+
 - **Orchestrator Service to Model Adapters**:
   - Local Model Adapter: Receives model selection decisions for local models (Qwen, Nemotron)
   - Frontier Model Adapter: Receives model selection decisions for frontier APIs
@@ -83,7 +93,7 @@ C4Container
   - Labels include security annotation
 
 - **Infrastructure Integrations**:
-  - Nomad Job Definition: Deploys llm-switch as a Nomad job with constraints (GPU required, 32GB memory, node pool llm-switch) explicitly stated in the container description
+  - Nomad Job Definition: Deploys llm-switch as a Nomad job (node pool llm-switch)
   - Consul Integration: Service discovery via Consul API
   - Vault Integration: Secret management via Vault API (explicitly labeled with "secrets" in the container label)
   - Prometheus Exporter: Exposes metrics via Prometheus PushGateway
@@ -94,7 +104,7 @@ C4Container
   - API Gateway provides `/health` endpoint for cluster orchestration health checks with mTLS via Consul Connect
 
 - **Offline Learning Trigger**:
-  - Orchestrator Service triggers background agent in AutoResearch Loop Agent for nightly self-learning
+  - Orchestrator Service triggers background agent in Offline Self-Learning Container for nightly self-learning
   - Uses HTTP/1.1 with mTLS via Consul Connect for secure internal communication
   - Label includes security annotation
 
