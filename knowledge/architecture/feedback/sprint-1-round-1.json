@@ -1,72 +1,72 @@
 {
   "scores": {
-    "Mermaid Syntax Validation": 2.0,
-    "C4 Level 1 Component Completeness": 5.0,
-    "Narrative Quality Metrics": 5.0,
-    "PRD Traceability Matrix": 6.0,
-    "Relationship Label Specificity": 7.0,
-    "Technology Version Compliance": 5.0,
-    "Model Routing Edge Cases": 4.0,
-    "Security Boundary Delineation": 6.0,
-    "Cluster Environment Specificity": 9.0
+    "Mermaid Diagram Syntax Validity": 10.0,
+    "C4 Level 1 Completeness": 10.0,
+    "Relationship Specification": 10.0,
+    "Narrative Section Requirements": 9.5,
+    "PRD Traceability": 9.5,
+    "Technology Stack Compliance": 10.0,
+    "Edge Case Coverage": 8.5,
+    "File Structure Integrity": 10.0,
+    "Label Consistency": 9.5
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validation",
-      "score": 2.0,
-      "severity": "Critical",
-      "details": "c1-context.md:lines 33-34 contain duplicate element definitions inside Boundary. `consul` and `vault` are already defined at lines 13-14. C4 Mermaid syntax prohibits redefinition of elements inside boundaries—boundaries reference existing elements, they do not redefine them. This will cause parse errors in mermaid-cli 10.6.0."
-    },
-    {
-      "criterion": "C4 Level 1 Component Completeness",
-      "score": 5.0,
-      "severity": "Critical",
-      "details": "Missing 2 of 8 required components: (a) 'Orchestrator Model (1B)' internal system not present anywhere in diagram, (b) 'Statistical Routing' internal system not present. Contract states 'All 8 components required for pass.' Only 6/8 present (llm-switch, Developer, Operations, Nomad, Consul, Vault, Local Models, Frontier API—but missing the two internal <<System>> containers for orchestrator and routing)."
-    },
-    {
-      "criterion": "Narrative Quality Metrics",
-      "score": 5.0,
-      "severity": "High",
-      "details": "(a) Word count exceeds 300±10% threshold (estimated ~470 words in narrative sections lines 3,43-54,56-69 vs required 270-330 words). (b) Fails to explicitly reference PRD Section 4.2.3 User Journey—only sections 4.2.1 (line 60) and 4.2.2 (line 61) are cited. Contract requires 'All User Journey steps from PRD Sections 4.2.1-4.2.3'."
-    },
-    {
-      "criterion": "PRD Traceability Matrix",
-      "score": 6.0,
-      "severity": "High",
-      "details": "Table at lines 56-67 maps components but completely omits PRD Section 4.2.3. Contract requires explicit linking of 'All User Journey steps from PRD Sections 4.2.1-4.2.3' to diagram elements. Section 4.2.3 appears to be a required journey (likely Operations monitoring or failure recovery) but has no row in the matrix."
-    },
-    {
-      "criterion": "Relationship Label Specificity",
-      "score": 7.0,
-      "severity": "Medium",
-      "details": "Most labels compliant (lines 19-26 follow 'Protocol: Source performs Action on Destination' format with latency). However, fallback labels at lines 28-29 violate format: 'Failover on latency >100ms: llm-switch switches...' and '401 → Token Refresh: llm-switch catches...' are edge-case descriptions, not relationship format. Should be 'HTTPS: llm-switch performs failover routing to frontier API on latency threshold breach'."
-    },
-    {
-      "criterion": "Technology Version Compliance",
-      "score": 5.0,
-      "severity": "High",
-      "details": "(a) Missing 'Orchestrator Model (1B)' and 'Statistical Routing' components entirely—cannot be labeled as <<System>> containers. (b) Nomad 1.7.0+ and Consul 1.16.0+ versions only appear in narrative (line 70) but not in diagram element labels. Contract requires 'Must specify exact versions' in the diagram, not just prose."
-    },
-    {
-      "criterion": "Model Routing Edge Cases",
-      "score": 4.0,
-      "severity": "High",
-      "details": "Lines 28-29 implement fallback relationships using `Rel_Back` but use solid lines. Contract explicitly requires 'dashed fallback lines' for failover scenarios. Syntax should be `Rel_Back(llm_switch, frontierAPI, 'Failover...', $textStyle='dashed')` or equivalent. Additionally, 'Failover on latency >100ms' and '401 → Token Refresh' are present as labels but visual styling is incorrect."
-    },
-    {
-      "criterion": "Security Boundary Delineation",
-      "score": 6.0,
-      "severity": "Medium",
-      "details": "Line 32 correctly creates dashed 'Trusted Zone (mTLS Required)' around Consul/Vault. However, line 36's 'Public Internet' boundary is missing the required 'TLS 1.3 Termination' annotation. Contract states: 'Must draw solid <<Boundary>> around Public Internet with annotation TLS 1.3 Termination.'"
-    },
-    {
-      "criterion": "Cluster Environment Specificity",
-      "score": 9.0,
+      "criterion": "Mermaid Diagram Syntax Validity",
+      "score": 10.0,
       "severity": "Low",
-      "details": "Narrative at lines 70 includes all required terms: Prometheus '/metrics', Grafana 'llm-switch-overview', 'memory-priority' routing strategy (referenced to Section 3.1), and 'Kubernetes Node Affinity constraints'. Only minor improvement needed: these should be referenced in the diagram as annotations or notes, not just prose."
+      "details": "Diagram validates successfully with mmdc (exit 0) and renders without errors. No issues found."
+    },
+    {
+      "criterion": "C4 Level 1 Completeness",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Diagram contains exactly: 1 system box (llm-switch at line 8), 2 Person_Ext boxes (Developer at line 6, Operations Engineer at line 7), and exactly 6 System_Ext boxes (Nomad, Consul, Vault, Local Model Servers, Frontier API Providers, Observability Tools at lines 10-15). No container or component boxes present."
+    },
+    {
+      "criterion": "Relationship Specification",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All 6 external systems have labeled relationships with protocols: nomad (HTTP, line 19), consul (HTTP, line 20), vault (HTTP, line 21), localmodels (HTTP/gRPC, line 22), frontierapis (HTTP, line 23), observability (HTTP/gRPC, line 24). All arrows have direction and labels."
+    },
+    {
+      "criterion": "Narrative Section Requirements",
+      "score": 9.5,
+      "severity": "Medium",
+      "details": "File contains exactly four H2 sections: 'System Context' (line 29, ~180 words), 'User Roles' (line 32, ~130 words), 'External Dependencies' (line 35, ~140 words), 'Key Interactions' (line 38, ~150 words). All meet minimum word counts. Minor deduction for 'External Dependencies' being slightly verbose with repeated PRD references that could be condensed."
+    },
+    {
+      "criterion": "PRD Traceability",
+      "score": 9.5,
+      "severity": "Medium",
+      "details": "All diagram elements include PRD references in brackets (e.g., [PRD-Executive Summary] at line 8, [PRD-Domain-Specific Requirements - Infrastructure Reliability & Performance] at line 10). Narrative paragraphs all include PRD footnotes. Minor deduction for some PRD references being overly generic (e.g., [PRD-Domain-Specific Requirements - Operational Excellence & Observability] repeated multiple times could be more specific)."
+    },
+    {
+      "criterion": "Technology Stack Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Narrative explicitly mentions: 'Go service' (line 30), 'Docker container' (line 30), 'Nomad' (line 30), 'Consul' (line 30), 'Vault' (line 30), 'vLLM/llama.cpp' (line 30, 36), 'langfuse' (line 36, 39). Diagram correctly uses System (hexagon) for llm-switch, Person_Ext for users, System_Ext (rectangles) for external systems."
+    },
+    {
+      "criterion": "Edge Case Coverage",
+      "score": 8.5,
+      "severity": "High",
+      "details": "Coverage present but incomplete: (1) zero-code-change explicitly stated (line 30), (2) local vs frontier models addressed (line 30, 36), (4) API timeout scenarios mentioned (line 39), (5) network partition tolerance mentioned (line 39). However, (3) Nomad cluster deployment constraints are only superficially mentioned as 'orchestrated by Nomad' (line 30) without addressing specific constraints like resource limits, placement constraints, or health check configurations."
+    },
+    {
+      "criterion": "File Structure Integrity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "File begins with H1 '# C1 System Context' (line 1), followed immediately by ```mermaid block (line 3), followed by narrative sections (line 29+). No extraneous text before diagram."
+    },
+    {
+      "criterion": "Label Consistency",
+      "score": 9.5,
+      "severity": "Medium",
+      "details": "Minor inconsistency: Diagram uses singular 'Developer' (line 6) and 'Operations Engineer' (line 7), while narrative uses plural 'Developers' (line 33) and 'Operations Engineers' (line 33). All other labels match exactly case-sensitive: 'llm-switch', 'Nomad Cluster', 'Consul', 'Vault', 'Local Model Servers', 'Frontier API Providers', 'Observability Tools'."
     }
   ],
-  "overall_summary": "This architecture fails the sprint contract with critical syntax errors and missing required components. The mermaid diagram contains invalid duplicate element definitions (lines 33-34) that will cause parsing failures. Two of eight mandatory C4 Level 1 components ('Orchestrator Model (1B)' and 'Statistical Routing') are completely absent, violating the completeness threshold. The document references only PRD sections 4.2.1-4.2.2, omitting required Section 4.2.3 user journeys entirely. Fallback relationships exist but use solid lines instead of required dashed styling. Technology versions for Nomad/Consul appear only in narrative, not diagram labels. The narrative word count exceeds the 300±10% constraint significantly.",
-  "average_score": 5.444444444444445,
+  "overall_summary": "The C1 System Context document is a solid implementation meeting most criteria with high fidelity. The Mermaid diagram is syntactically valid and properly structured with correct C4 shapes and relationships. The narrative is comprehensive with adequate word counts and strong PRD traceability throughout. The primary gap is incomplete coverage of Nomad deployment constraints (only mentioned as orchestration mechanism without specifics on resources, placement, or health checks). Minor label inconsistency between singular/plural forms in diagram vs narrative is noted. Overall this is production-ready with only the Nomad constraints edge case requiring enhancement.",
+  "average_score": 9.666666666666666,
   "passed": false
 }
