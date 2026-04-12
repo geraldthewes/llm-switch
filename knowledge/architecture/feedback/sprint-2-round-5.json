@@ -1,0 +1,93 @@
+{
+  "scores": {
+    "Mermaid Syntax Validity": 10.0,
+    "C4 Level 2 Component Inventory": 10.0,
+    "Relationship Protocol Specification": 10.0,
+    "PRD Section 4.2 Alignment": 8.0,
+    "Technology Stack Explicit Labeling": 10.0,
+    "C4 Container Diagram Standards": 8.5,
+    "Critical Infrastructure Presence": 9.0,
+    "Dependency Direction Validation": 10.0,
+    "Security Compliance": 8.5,
+    "Error Handling Paths": 7.5,
+    "API Gateway Routing Rules": 9.5,
+    "Nomad Job Constraints": 7.0
+  },
+  "feedback": [
+    {
+      "criterion": "Mermaid Syntax Validity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Diagram validates successfully with mmdc (exit code 0) and renders correctly at /tmp/validate.svg. No syntax errors detected."
+    },
+    {
+      "criterion": "C4 Level 2 Component Inventory",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All 10 required containers present with technology stacks: API Gateway:Golang, bifrost (line 23), Real-time Routing Container:Golang, bifrost, 1B parameter model (line 24), Local Model Adapter:vLLM/llama.cpp (line 25), Frontier Model Adapter:HTTP client (line 26), Nomad Job Definition:Nomad SDK (line 27), Consul Integration:Consul API (line 28), Vault Integration:Vault API (line 29), Prometheus Metrics Exporter:Prometheus PushGateway (line 30), Langfuse Trace Collector:Langfuse API (line 31), Offline Self-Learning Container:background agent (line 32). Docker packaging annotation present on all containers."
+    },
+    {
+      "criterion": "Relationship Protocol Specification",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All protocols correctly specified: HTTP/1.1 (lines 37-40, 55-56), gRPC (lines 42-43), Nomad SDK (lines 48, 61), Consul API (line 49), Vault API (line 50), Prometheus PushGateway (line 51), Langfuse API (lines 52, 59). Directionality matches PRD Section 4.3."
+    },
+    {
+      "criterion": "PRD Section 4.2 Alignment",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "CRITICAL gap: While the narrative mentions OpenAI/Anthropic-compatible endpoints, the diagram does NOT explicitly label '/v1/chat/completions' and '/v1/embeddings' as required. Line 37 only shows generic '/v1/*' routing. The two-part architecture (Real-time Routing Container line 24, Offline Self-Learning Container line 32), Nomad Cluster: 3 nodes (line 12), and infrastructure dependencies are correctly present."
+    },
+    {
+      "criterion": "Technology Stack Explicit Labeling",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All required labels present: Real-time Routing Container shows 'Golang, bifrost, 1B parameter model' (line 24), Local Model Adapter shows 'vLLM/llama.cpp' (line 25), NormStat/VecStat routing visible (line 24), Telemetry: GPU/CPU metrics mentioned in descriptions (lines 25-26), AutoResearch Loop labeled as 'background agent' (line 32), Docker annotation on all containers (lines 23-32)."
+    },
+    {
+      "criterion": "C4 Container Diagram Standards",
+      "score": 8.5,
+      "severity": "Medium",
+      "details": "Legend present (line 5). Container labels use multi-line format with <br> tags (e.g., line 23: 'API Gateway:<br>Golang, bifrost<br>Docker') which violates 'max 2 words per line' constraint - each line should be max 2 words but 'Golang, bifrost' is 3 words. Descriptions generally within 15-word limit."
+    },
+    {
+      "criterion": "Critical Infrastructure Presence",
+      "score": 9.0,
+      "severity": "Medium",
+      "details": "All infrastructure present but Nomad labeling inconsistent: Diagram uses 'Nomad Cluster: 3 nodes' (line 12) instead of required 'Nomad Manager/Client'. Consul 'Consul Service Mesh' (line 13), Vault 'Vault Secrets Store' (line 14), Prometheus 'Prometheus Server' (line 15), Langfuse 'Langfuse Backend' (line 16) all correctly labeled."
+    },
+    {
+      "criterion": "Dependency Direction Validation",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Correct dependency flow: llm-switch containers initiate calls to Nomad (line 48), Consul (line 49), and Vault (line 50). No arrows originate from infrastructure back to containers. Health check properly labeled 'Health check endpoint' (line 39)."
+    },
+    {
+      "criterion": "Security Compliance",
+      "score": 8.5,
+      "severity": "Medium",
+      "details": "Vault Integration shows 'Vault API' but lacks explicit 'secrets' label required by criterion. External API connection shows '[HTTPS]' annotation (line 56). Internal service mesh connections lack explicit 'mTLS' or 'Consul Connect' annotation on the diagram arrows (only mentioned in narrative)."
+    },
+    {
+      "criterion": "Error Handling Paths",
+      "score": 7.5,
+      "severity": "High",
+      "details": "MISSING: Circuit Breaker pattern between API Gateway and Real-time Routing Container. Line 37 shows only 'HTTP/1.1' without 'Circuit Breaker' label. Error Response paths present (lines 44-45) and Fallback to Local Model present (line 45), but the Circuit Breaker is a mandatory pattern per criterion."
+    },
+    {
+      "criterion": "API Gateway Routing Rules",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "All routes documented in API Gateway description (line 23) and narrative (lines 67-68): '/v1/*' routes to Orchestrator, '/health' routes to health check endpoint, '/metrics' routes to Prometheus Exporter. Routes present but embedded in container description rather than as explicit diagram annotations."
+    },
+    {
+      "criterion": "Nomad Job Constraints",
+      "score": 7.0,
+      "severity": "High",
+      "details": "CRITICAL GAPS: 'GPU required' for Frontier Model Adapter not labeled as annotation. 'Memory: 32GB' for Local Model Adapter not labeled. 'Node pool: llm-switch' for all containers not visible. Nomad Job Definition (line 27) exists but lacks the specific constraint annotations required by the criterion."
+    }
+  ],
+  "overall_summary": "The c2-container.md architecture demonstrates strong structural implementation with valid Mermaid syntax and complete container inventory. However, three critical gaps prevent production readiness: (1) Missing explicit '/v1/chat/completions' and '/v1/embeddings' endpoint labels, using only generic '/v1/*' notation; (2) Missing Circuit Breaker pattern between API Gateway and Real-time Routing Container—a critical production resilience mechanism; (3) Nomad Job Constraints (GPU required, Memory: 32GB, Node pool: llm-switch) not visible as diagram annotations. Secondary issues include C4 label violations (multi-word lines in container labels), missing 'secrets' annotation on Vault Integration, and inconsistent Nomad infrastructure labeling. The diagram correctly implements the two-part architecture (Real-time Routing and Offline Self-Learning containers) with proper protocol specifications, but requires these specific annotations to meet the sprint contract thresholds.",
+  "average_score": 9.0,
+  "passed": false
+}

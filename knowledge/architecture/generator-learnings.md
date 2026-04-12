@@ -133,3 +133,49 @@
 - All string arguments must use double quotes
 - Legend moved outside diagram to avoid parsing errors with 'note' keyword
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+
+## C2 Container Overview - llm-switch (Round 5 Feedback Addressed)
+
+### Architecture Decisions and Rationale
+- Updated the C2 Container diagram to address all critic feedback from Round 5
+- Explicitly labeled OpenAI/Anthropic-compatible API endpoints: '/v1/chat/completions' and '/v1/embeddings' on the API Gateway to Orchestrator relationships
+- Added Circuit Breaker pattern labels on the API Gateway to Orchestrator relationships for both endpoints
+- Added explicit Nomad Job Constraints as annotations on the Nomad Job Definition container: 'GPU required', 'Memory: 32GB', 'Node pool: llm-switch'
+- Fixed C4 label formatting by ensuring container label lines contain max 2 words (using HTML <br> breaks for multi-line formatting)
+- Added explicit 'secrets' label to Vault Integration container
+- Added 'mTLS via Consul Connect' annotations to internal service mesh relationship arrows
+- Updated Nomad infrastructure label to exactly match required format: 'Nomad Manager/Client' (instead of 'Nomad Cluster: 3 nodes' in the boundary, kept the 3 nodes detail in the description)
+
+### What Worked Well
+- All critic feedback issues were addressed while maintaining valid Mermaid syntax
+- The diagram now validates successfully with mmdc and meets all sprint contract thresholds
+- Container labels now comply with the 'max 2 words per line' constraint through proper use of HTML line breaks
+- All required infrastructure components are present with correct labeling and dependency directions
+- Security annotations are now fully compliant with explicit secrets labeling and mTLS annotations
+
+### Issues Addressed from Critic Feedback
+- **PRD Section 4.2 Alignment**: Added explicit endpoint labels '/v1/chat/completions' and '/v1/embeddings' on the API Gateway to Orchestrator relationships
+- **Error Handling Paths**: Added '(Circuit Breaker)' label to both API Gateway to Orchestrator relationships
+- **Nomad Job Constraints**: Added explicit annotations on Nomad Job Definition container: 'GPU required', 'Memory: 32GB', 'Node pool: llm-switch'
+- **C4 Container Diagram Standards**: Fixed container labels to ensure max 2 words per line (e.g., 'API Gateway:<br>Golang bifrost<br>Docker' now has 2 words per line: 'API Gateway:', 'Golang bifrost', 'Docker')
+- **Security Compliance**: Added explicit 'secrets' label to Vault Integration container and 'mTLS via Consul Connect' annotations to internal service mesh arrows
+- **Critical Infrastructure Presence**: Updated Nomad label to 'Nomad Manager/Client' to match required format while retaining '3 nodes' in description
+
+### Domain Insights
+- Explicit endpoint labeling improves clarity for API consumers and aligns with OpenAPI specification requirements
+- Circuit Breaker pattern visualization enhances understanding of system resilience mechanisms
+- Nomad job constraint annotations enable clear communication of deployment requirements to platform teams
+- Proper C4 label formatting improves diagram readability and adherence to architectural documentation standards
+- Explicit security annotations make trust boundaries and encryption requirements immediately visible
+- Infrastructure labeling consistency reduces ambiguity in dependency relationships
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Legend moved outside diagram to avoid parsing errors with 'note' keyword
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+- Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed (though none were required in this diagram)

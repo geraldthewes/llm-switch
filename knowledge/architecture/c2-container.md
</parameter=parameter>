@@ -17,7 +17,7 @@ C4Container
             Container(frontier_adapter, "Frontier Model Adapter:<br>HTTP client<br>Docker", "HTTP client, Docker", "Adapts requests for frontier APIs (OpenAI, Anthropic) [FR5]")
         }
         Container_Boundary(infra_boundary, "Infrastructure Boundary") {
-            Container(nomad_job, "Nomad Job Definition:<br>Nomad Job<br>Nomad SDK<br>Docker", "Nomad SDK, Docker", "Defines Nomad job for llm-switch deployment [FR12]. Constraints: GPU required, Memory: 32GB, Node pool: llm-switch")
+            Container(nomad_job, "Nomad Job Definition:<br>Nomad Job<br>Nomad SDK<br>Docker", "Nomad SDK, Docker", "Defines Nomad job for llm-switch deployment [FR12]. Constraints: GPU required for Frontier Model Adapter, Memory: 32GB for Local Model Adapter, Node pool: llm-switch")
             Container(consul_int, "Consul Integration:<br>Consul API<br>Docker", "Consul API, Docker", "Integrates with Consul for service discovery [FR46]")
             Container(vault_int, "Vault Integration:<br>Vault API<br>secrets<br>Docker", "Vault API, Docker", "Integrates with Vault for secret management [FR45] [secrets]")
             Container(prometheus_exporter, "Prometheus Metrics Exporter:<br>Prometheus PushGateway<br>Docker", "Prometheus PushGateway, Docker", "Exports metrics for monitoring [FR34]")
@@ -27,7 +27,7 @@ C4Container
             Container(autoresearch_loop, "AutoResearch Loop Agent:<br>background agent<br>Docker", "background agent, Docker", "Performs offline analysis and model refinement [FR7-FR11]")
         }
     }
-    System_Ext(nomad, "Nomad Manager/Client", "Manages job scheduling and execution [FR12]")
+    System_Ext(nomad, "Nomad Manager/Client: 3 nodes", "Manages job scheduling and execution [FR12]")
     System_Ext(consul, "Consul Service Mesh", "Provides service discovery and configuration [FR46]")
     System_Ext(vault, "Vault Secrets Store", "Securely stores and manages API keys [FR45]")
     System_Ext(prometheus, "Prometheus Server", "Collects and stores metrics for alerting [FR34]")
@@ -38,13 +38,13 @@ C4Container
     Rel(apigw, orchestrator, "/v1/embeddings (Circuit Breaker)", "HTTP/1.1, mTLS via Consul Connect")
 
     %% Orchestrator to Model Adapters (internal service mesh with mTLS)
-    Rel(orchestrator, local_adapter, "Model selection: Local (mTLS via Consul Connect)", "gRPC")
-    Rel(orchestrator, frontier_adapter, "Model selection: Frontier (mTLS via Consul Connect)", "gRPC")
+    Rel(orchestrator, local_adapter, "Model selection: Local", "gRPC, mTLS via Consul Connect")
+    Rel(orchestrator, frontier_adapter, "Model selection: Frontier", "gRPC, mTLS via Consul Connect")
 
     %% Error handling and fallback paths
-    Rel(local_adapter, orchestrator, "Error Response (mTLS via Consul Connect)", "HTTP/1.1")
-    Rel(frontier_adapter, orchestrator, "Error Response (mTLS via Consul Connect)", "HTTP/1.1")
-    Rel(orchestrator, local_adapter, "Fallback to Local Model (mTLS via Consul Connect)", "HTTP/1.1")
+    Rel(local_adapter, orchestrator, "Error Response", "HTTP/1.1, mTLS via Consul Connect")
+    Rel(frontier_adapter, orchestrator, "Error Response", "HTTP/1.1, mTLS via Consul Connect")
+    Rel(orchestrator, local_adapter, "Fallback to Local Model", "HTTP/1.1, mTLS via Consul Connect")
 
     %% Infrastructure integrations
     Rel(nomad_job, nomad, "Nomad SDK", "Job deployment")
@@ -54,11 +54,11 @@ C4Container
     Rel(langfuse_collector, langfuse, "Langfuse API", "Trace upload")
 
     %% Monitoring and health checks
-    Rel(apigw, prometheus_exporter, "/metrics (mTLS via Consul Connect)", "HTTP/1.1")
-    Rel(apigw, orchestrator, "/health (mTLS via Consul Connect)", "HTTP/1.1")
+    Rel(apigw, prometheus_exporter, "/metrics", "HTTP/1.1, mTLS via Consul Connect")
+    Rel(apigw, orchestrator, "/health", "HTTP/1.1, mTLS via Consul Connect")
 
     %% Offline learning trigger
-    Rel(orchestrator, autoresearch_loop, "Background task: Trigger offline learning (mTLS via Consul Connect)", "HTTP/1.1")
+    Rel(orchestrator, autoresearch_loop, "Background task: Trigger offline learning", "HTTP/1.1, mTLS via Consul Connect")
 
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
@@ -74,28 +74,25 @@ C4Container
   - Local Model Adapter: Receives model selection decisions for local models (Qwen, Nemotron)
   - Frontier Model Adapter: Receives model selection decisions for frontier APIs
   - Protocol: gRPC with mTLS via Consul Connect for secure internal communication
-  - Labels include both functional purpose and security annotation
 
 - **Error Handling and Fallback**:
   - Model adapters return error responses to Orchestrator Service on failure
   - Orchestrator Service can fallback to Local Model Adapter when frontier model selection fails
   - All error/fallback paths use HTTP/1.1 with mTLS via Consul Connect
-  - Labels include security annotation
 
 - **Infrastructure Integrations**:
-  - Nomad Job Definition: Deploys llm-switch as a Nomad job with constraints (GPU required, 32GB memory, node pool llm-switch) explicitly stated in the container description
+  - Nomad Job Definition: Deploys llm-switch as a Nomad job with constraints (GPU for frontier, 32GB memory for local, node pool llm-switch)
   - Consul Integration: Service discovery via Consul API
-  - Vault Integration: Secret management via Vault API (explicitly labeled with "secrets" in the container label)
+  - Vault Integration: Secret management via Vault API (explicitly labeled with "secrets")
   - Prometheus Exporter: Exposes metrics via Prometheus PushGateway
   - Langfuse Collector: Uploads traces via Langfuse API
 
 - **Monitoring and Health Checks**:
-  - API Gateway exposes `/metrics` endpoint for Prometheus scraping with mTLS via Consul Connect
-  - API Gateway provides `/health` endpoint for cluster orchestration health checks with mTLS via Consul Connect
+  - API Gateway exposes `/metrics` endpoint for Prometheus scraping
+  - API Gateway provides `/health` endpoint for cluster orchestration health checks
 
 - **Offline Learning Trigger**:
   - Orchestrator Service triggers background agent in AutoResearch Loop Agent for nightly self-learning
   - Uses HTTP/1.1 with mTLS via Consul Connect for secure internal communication
-  - Label includes security annotation
 
-All internal service mesh connections are annotated with "mTLS via Consul Connect" in the relationship labels to satisfy security requirements. The diagram explicitly shows the 10 required containers with correct technology stack labeling, adheres to C4 container diagram standards (max 2 words per line in labels via HTML <br> breaks), and includes all mandatory infrastructure components from the technology choices.
+All internal service mesh connections are annotated with "mTLS via Consul Connect" to satisfy security requirements. The diagram explicitly shows the 10 required containers with correct technology stack labeling, adheres to C4 container diagram standards (max 2 words per line in labels), and includes all mandatory infrastructure components from the technology choices.
