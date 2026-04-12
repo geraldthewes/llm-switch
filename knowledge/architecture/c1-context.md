@@ -29,8 +29,8 @@ C4Context
     Rel(llmSwitch, nemotron, "gRPC: llm-switch routes requests to Nemotron-3-22B based on orchestration decision", "<50ms")
     Rel(llmSwitch, orchestrator, "gRPC: llm-switch sends feature vectors for intent classification", "<5ms")
     Rel(llmSwitch, statRouting, "gRPC: llm-switch activates statistical routing for latent space analysis", "<5ms")
-    Rel(llmSwitch, frontierAPI, "Failover on latency >100ms", "HTTPS")
-    Rel(vault, llmSwitch, "401 → Token Refresh", "HTTPS")
+    Rel_Back(frontierAPI, llmSwitch, "HTTPS: llm-switch fails over to OpenAI gpt-4-turbo (<100ms latency)", "HTTPS")
+    Rel_Back(vault, llmSwitch, "HTTPS: llm-switch refreshes token from Vault on 401 error (<10ms)", "HTTPS")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 

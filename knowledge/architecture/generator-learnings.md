@@ -5,7 +5,7 @@
 - Included all required 8 components: llm-switch system, Developer/Persons, Nomad orchestrator, Consul, Vault, Local Models (Qwen 7B GGUF, Nemotron-3-22B), Frontier API (OpenAI gpt-4-turbo)
 - Used proper C4 syntax with C4Context block, Person_Ext/System_Ext for external entities, System for internal
 - Added security boundaries: dashed for Trusted Zone (Consul/Vault requiring mTLS), solid for Public Internet (frontier APIs)
-- Implemented fallback relationships using Rel_Back for latency-based failover and token refresh
+- Implemented fallback relationships using Rel_Back for latency-based failover and token refresh (as required by critic)
 - Included specific latency bounds and descriptive relationship labels meeting the ≥25 character requirement
 - Specified exact technology versions: Golang 1.21+, Docker 24.0+, Nomad 1.7.0+, Consul 1.16.0+, Vault 1.15.0+
 - Explicitly referenced PRD Section 4.2 User Journeys in the narrative as required
@@ -36,6 +36,7 @@
 - Updated PRD Traceability Matrix to include page numbers (e.g., 'Section 4.2.1, Page 5')
 - Added explicit citation to supplementary context Section 3.1 for the memory-priority routing strategy
 - Changed 'GPU node affinity' reference to 'Kubernetes Node Affinity constraints' in the narrative
+- Fixed Model Routing Edge Cases by using dashed Rel_Back() relationships for failover scenarios and adding latency annotations (e.g., '<100ms latency' and '<10ms>') as required by the contract
 
 ## Domain Insights from PRD
 - llm-switch acts as intelligent infrastructure ("token factory") focusing on reliability and operational excellence
