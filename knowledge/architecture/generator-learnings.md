@@ -81,16 +81,16 @@
 
 ### Architecture Decisions and Rationale
 - Created a proper C2 Container diagram following the Mermaid C4 Reference Guide exactly
-- Used exactly 10 containers as required: API Gateway, Real-time Routing Container, Local Model Adapter, Frontier Model Adapter, Nomad Job Definition, Consul Integration, Vault Integration, Prometheus Metrics Exporter, Langfuse Trace Collector, and Offline Self-Learning Container
+- Used exactly 10 containers as required: API Gateway, Orchestrator Service, Local Model Adapter, Frontier Model Adapter, Nomad Job Definition, Consul Integration, Vault Integration, Prometheus Metrics Exporter, Langfuse Trace Collector, and AutoResearch Loop Agent
 - Each container includes technology stack in format 'Name: Tech1, Tech2' (e.g., 'API Gateway: Golang, bifrost, Docker')
 - All relationships use exact protocol labels as specified: 'HTTP/1.1' for API calls, 'gRPC' for inter-service calls, 'Nomad SDK' for job deployment, 'Consul API' for service discovery, 'Vault API' for secrets retrieval, 'Prometheus PushGateway' for metrics, 'Langfuse API' for traces
-- Diagram includes OpenAI/Anthropic-compatible API endpoints (labeled '/v1/* → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter')
-- Shows two-part architecture: Real-time Routing Container and Offline Self-Learning Container (matching PRD Section 4.2 terminology)
+- Diagram includes OpenAI/Anthropic-compatible API endpoints (labeled '/v1/chat/completions → Orchestrator', '/v1/embeddings → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter')
+- Shows two-part architecture: Orchestrator Service and AutoResearch Loop Agent (matching criterion requirement)
 - Nomad cluster deployment model shown with 'Nomad Manager/Client: 3 nodes'
 - Infrastructure dependencies included: Nomad, Consul, Vault, Prometheus, Langfuse
 - Added Docker packaging annotation to all containers
-- Included NormStat/VecStat routing mechanisms in Real-time Routing Container description
-- Hardware telemetry integration points labeled in Local/Frontier Model Adapters
+- Included NormStat/VecStat routing mechanisms in Orchestrator Service description
+- Hardware telemetry integration points labeled as 'Telemetry: GPU/CPU metrics' in Local/Frontier Model Adapters
 - Added Circuit Breaker, Error Response, and Fallback mechanisms as required
 - Included explicit routing rules in API Gateway description
 - Added Nomad Job Constraints: 'GPU required for Frontier Model Adapter', 'Memory: 32GB for Local Model Adapter', 'Node pool: llm-switch'
@@ -106,20 +106,23 @@
 - Ensuring correct dependency direction (llm-switch depends ON Nomad/Consul/Vault, not vice versa)
 
 ### Issues Addressed from Critic Feedback
-- **PRD Section 4.2 Alignment**: Renamed 'Orchestrator Service' to 'Real-time Routing Container' and 'AutoResearch Loop Agent' to 'Offline Self-Learning Container' to match required PRD terminology
-- **Error Handling Patterns**: Added explicit 'Error Response' labels on error paths from Model Adapters to Routing Container, and added explicit 'Fallback to Local Model' label on the path from Routing Container to Local Model Adapter
+- **Relationship Protocol Specification**: Fixed incorrect protocol labels - changed 'Circuit Breaker' to 'HTTP/1.1' for apiGateway to orchestratorService relationship (with Circuit Breaker pattern noted in label), and changed 'HTTPS' to 'HTTP/1.1' for frontierModelAdapter to frontierAPIs relationship (with HTTPS pattern noted in label)
+- **PRD Section 4.2 Alignment**: Added explicit endpoint labels '/v1/chat/completions' and '/v1/embeddings' in API Gateway description, and updated Nomad label to explicitly include '3 nodes'
+- **Technology Stack Explicit Labeling**: Renamed back to using 'Orchestrator Service' to match criterion requirement, added explicit 'vLLM/llama.cpp' integration label to Frontier Model Adapter, and updated hardware telemetry label to 'Telemetry: GPU/CPU metrics'
+- **Nomad Job Constraints**: Added 'Memory: 32GB' explicitly to Local Model Adapter container description
+- **Error Handling Patterns**: Added explicit 'Error Response' labels on error paths from Model Adapters to Orchestrator Service, and added explicit 'Fallback to Local Model' label on the path from Orchestrator Service to Local Model Adapter
 - **API Gateway Routing Rules**: Maintained explicit routing rules in container description as they were already compliant
-- **Nomad Job Constraints**: Maintained explicit constraints in container description as they were already compliant
-- **Critical Infrastructure Presence**: Updated Nomad label from 'Nomad 3 nodes' to 'Nomad Manager/Client' to match criterion text exactly
+- **Critical Infrastructure Presence**: Verified all infrastructure components are present with correct labeling
 - **Legend Placement**: Moved legend to a note before the diagram to avoid parsing errors
 
 ### Domain Insights
 - llm-switch consists of tightly integrated containers working together for intelligent model routing
-- The separation of real-time routing (Real-time Routing Container) and offline learning (Offline Self-Learning Container) enables continuous improvement
+- The separation of real-time routing (Orchestrator Service) and offline learning (AutoResearch Loop Agent) enables continuous improvement
 - Infrastructure integrations (Consul, Vault, Nomad) are essential for cluster deployment
 - Technology choices like bifrost, vLLM/llama.cpp, and NormStat/VecStat enable the sub-40ms routing decisions
 - Docker packaging is crucial for Nomad deployment consistency
 - Explicit labeling of constraints and routing rules improves operability and clarity for DevOps teams
+- Protocol precision in relationship labels is critical for meeting specification requirements
 
 ### Mermaid/C4 Syntax Rules Confirmed
 - All container macros use Container() with proper parameters (alias, name, tech, description)

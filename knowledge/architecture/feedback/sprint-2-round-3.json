@@ -1,0 +1,93 @@
+{
+  "scores": {
+    "Mermaid Syntax Validity": 10.0,
+    "C4 Level 2 Component Inventory": 10.0,
+    "Relationship Protocol Specification": 8.0,
+    "PRD Section 4.2 Alignment": 9.0,
+    "Technology Stack Explicit Labeling": 9.0,
+    "C4 Container Diagram Standards": 9.5,
+    "Critical Infrastructure Presence": 10.0,
+    "Dependency Direction Validation": 10.0,
+    "Security Compliance": 10.0,
+    "Error Handling Paths": 10.0,
+    "API Gateway Routing Rules": 9.5,
+    "Nomad Job Constraints": 8.0
+  },
+  "feedback": [
+    {
+      "criterion": "Mermaid Syntax Validity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Diagram validates successfully with mmdc (exit code 0) at /tmp/validate.svg. No syntax errors detected."
+    },
+    {
+      "criterion": "C4 Level 2 Component Inventory",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All 10 containers present with technology stacks: API Gateway (c2-container.md:line 12), Real-time Routing Container (line 13), Local Model Adapter (line 14), Frontier Model Adapter (line 15), Nomad Job Definition (line 16), Consul Integration (line 17), Vault Integration (line 18), Prometheus Metrics Exporter (line 19), Langfuse Trace Collector (line 20), Offline Self-Learning Container (line 21). Note: Uses 'Real-time Routing Container' and 'Offline Self-Learning Container' per PRD Section 4.2 rather than 'Orchestrator Service' and 'AutoResearch Loop Agent' listed in criterion."
+    },
+    {
+      "criterion": "Relationship Protocol Specification",
+      "score": 8.0,
+      "severity": "High",
+      "details": "Line 31 uses 'Circuit Breaker' (a pattern, not a protocol) instead of 'HTTP/1.1' in the 4th parameter of Rel(): `Rel(apiGateway, realTimeRouting, \"Routes request\", \"Circuit Breaker\")`. Line 49 uses 'HTTPS' instead of 'HTTP/1.1' for frontier API calls. These deviate from the exact protocol labels required by the criterion."
+    },
+    {
+      "criterion": "PRD Section 4.2 Alignment",
+      "score": 9.0,
+      "severity": "Medium",
+      "details": "OpenAI/Anthropic-compatible endpoints mentioned in narrative (line 56) but not explicitly labeled on diagram as '/v1/chat/completions' and '/v1/embeddings'. 'Nomad Cluster: 3 nodes' not explicitly labeled on diagram—only 'Nomad Manager/Client' (line 23) and 'Orchestration platform' (line 23). Missing the explicit '3 nodes' specification required by PRD."
+    },
+    {
+      "criterion": "Technology Stack Explicit Labeling",
+      "score": 9.0,
+      "severity": "Medium",
+      "details": "Orchestrator Service referred to as 'Real-time Routing Container' (line 13) which aligns with PRD Section 4.2 but deviates from criterion's explicit name requirement. Frontier Model Adapter (line 15) lacks explicit 'vLLM/llama.cpp' integration label—only Local Model Adapter (line 14) shows it. 'Telemetry: GPU/CPU metrics' specified as 'Hardware telemetry' (line 13), slightly different from required format."
+    },
+    {
+      "criterion": "C4 Container Diagram Standards",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "Legend present (lines 5-6). Container descriptions generally within 15-word limit. Static structure maintained. Minor deduction: Some container labels use multi-word technical terms like 'NormStat/VecStat' (line 13) which borders on exceeding the 2-words-per-line guideline for technical clarity."
+    },
+    {
+      "criterion": "Critical Infrastructure Presence",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All infrastructure components present: Nomad labeled 'Nomad Manager/Client' (line 23), Consul labeled 'Consul Service Mesh' (line 24), Vault labeled 'Vault Secrets Store' (line 25), Prometheus labeled 'Prometheus Server' (line 26), Langfuse labeled 'Langfuse Backend' (line 27)."
+    },
+    {
+      "criterion": "Dependency Direction Validation",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Correct dependency flow: llm-switch containers initiate calls to Nomad (line 47), Consul (lines 38, 44, 45), and Vault (line 40). No arrows originate from infrastructure to containers except internal flows (lines 39, 41, 46 which are return flows). Complies with Technology Choices Section 7.2."
+    },
+    {
+      "criterion": "Security Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Vault Integration shows 'secrets' annotation (line 18: 'Docker\\nsecrets'). External connection shows 'HTTPS' (line 49). Internal mesh shows 'mTLS via\\nConsul Connect' in description (line 17). All security requirements met."
+    },
+    {
+      "criterion": "Error Handling Paths",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All required patterns present: Circuit Breaker between API Gateway and Real-time Routing Container (line 31), 'Error Response' paths from adapters to orchestrator (lines 35-36), 'Fallback to Local Model' mechanism (line 33)."
+    },
+    {
+      "criterion": "API Gateway Routing Rules",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "All routes documented in container description (line 12): '/v1/* → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter'. Also present as embedded note (line 6). Could be more explicit as diagram annotations rather than description text, but meets threshold."
+    },
+    {
+      "criterion": "Nomad Job Constraints",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "Constraints visible in Nomad Job Definition (line 16) and 'GPU required' on Frontier Model Adapter (line 15). However, 'Memory: 32GB' is listed in Nomad Job Definition (line 16) but NOT on Local Model Adapter (line 14) as required by criterion. Should be explicitly labeled on the Local Model Adapter container."
+    }
+  ],
+  "overall_summary": "The c2-container.md architecture is production-ready with valid Mermaid syntax and complete C4 Level 2 composition. Critical gaps exist in Relationship Protocol Specification (using 'Circuit Breaker' as a protocol label instead of 'HTTP/1.1' on line 31, and 'HTTPS' instead of 'HTTP/1.1' on line 49). PRD Section 4.2 Alignment is missing explicit endpoint labels '/v1/chat/completions' and '/v1/embeddings' on the diagram and the '3 nodes' specification for Nomad. Technology Stack labeling uses PRD-correct terminology ('Real-time Routing Container') but deviates from criterion's explicit naming. Nomad Job Constraints missing 'Memory: 32GB' on Local Model Adapter (line 14). Security compliance, dependency direction, error handling paths, and critical infrastructure presence are all correctly implemented. The diagram is functionally complete but requires protocol label corrections and constraint relocations to meet all thresholds.",
+  "average_score": 9.416666666666666,
+  "passed": false
+}

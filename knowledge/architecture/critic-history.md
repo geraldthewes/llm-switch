@@ -124,3 +124,21 @@
 - [Low] Nomad Job Constraints (9.0/10): Constraints visible in Nomad Job Definition (line 15): GPU required, Memory: 32GB, Node pool: llm-switch. Frontier Model Adapter shows 'GPU required' (line 14). Acceptable but could use more prominent
 **Summary**: The c2-container.md architecture document is production-ready with valid Mermaid syntax, complete C4 Level 2 composition (all 10 required containers with technology stacks), and correct protocol specifications matching PRD Section 4.3. Error handling patterns (Circuit Breaker, Error Response paths, 
 ---
+
+## Sprint 2 · Round 3 — 2026-04-12 16:31:36 UTC
+**Score**: 9.4/10  **Passed**: No
+**Concerns**:
+- [Low] Mermaid Syntax Validity (10.0/10): Diagram validates successfully with mmdc (exit code 0) at /tmp/validate.svg. No syntax errors detected.
+- [Low] C4 Level 2 Component Inventory (10.0/10): All 10 containers present with technology stacks: API Gateway (c2-container.md:line 12), Real-time Routing Container (line 13), Local Model Adapter (line 14), Frontier Model Adapter (line 15), Nomad J
+- [High] Relationship Protocol Specification (8.0/10): Line 31 uses 'Circuit Breaker' (a pattern, not a protocol) instead of 'HTTP/1.1' in the 4th parameter of Rel(): `Rel(apiGateway, realTimeRouting, "Routes request", "Circuit Breaker")`. Line 49 uses 'H
+- [Medium] PRD Section 4.2 Alignment (9.0/10): OpenAI/Anthropic-compatible endpoints mentioned in narrative (line 56) but not explicitly labeled on diagram as '/v1/chat/completions' and '/v1/embeddings'. 'Nomad Cluster: 3 nodes' not explicitly lab
+- [Medium] Technology Stack Explicit Labeling (9.0/10): Orchestrator Service referred to as 'Real-time Routing Container' (line 13) which aligns with PRD Section 4.2 but deviates from criterion's explicit name requirement. Frontier Model Adapter (line 15) 
+- [Low] C4 Container Diagram Standards (9.5/10): Legend present (lines 5-6). Container descriptions generally within 15-word limit. Static structure maintained. Minor deduction: Some container labels use multi-word technical terms like 'NormStat/Vec
+- [Low] Critical Infrastructure Presence (10.0/10): All infrastructure components present: Nomad labeled 'Nomad Manager/Client' (line 23), Consul labeled 'Consul Service Mesh' (line 24), Vault labeled 'Vault Secrets Store' (line 25), Prometheus labeled
+- [Low] Dependency Direction Validation (10.0/10): Correct dependency flow: llm-switch containers initiate calls to Nomad (line 47), Consul (lines 38, 44, 45), and Vault (line 40). No arrows originate from infrastructure to containers except internal 
+- [Low] Security Compliance (10.0/10): Vault Integration shows 'secrets' annotation (line 18: 'Docker\nsecrets'). External connection shows 'HTTPS' (line 49). Internal mesh shows 'mTLS via\nConsul Connect' in description (line 17). All sec
+- [Low] Error Handling Paths (10.0/10): All required patterns present: Circuit Breaker between API Gateway and Real-time Routing Container (line 31), 'Error Response' paths from adapters to orchestrator (lines 35-36), 'Fallback to Local Mod
+- [Low] API Gateway Routing Rules (9.5/10): All routes documented in container description (line 12): '/v1/* → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter'. Also present as embedded note (line 6). Could be more expl
+- [Medium] Nomad Job Constraints (8.0/10): Constraints visible in Nomad Job Definition (line 16) and 'GPU required' on Frontier Model Adapter (line 15). However, 'Memory: 32GB' is listed in Nomad Job Definition (line 16) but NOT on Local Model
+**Summary**: The c2-container.md architecture is production-ready with valid Mermaid syntax and complete C4 Level 2 composition. Critical gaps exist in Relationship Protocol Specification (using 'Circuit Breaker' as a protocol label instead of 'HTTP/1.1' on line 31, and 'HTTPS' instead of 'HTTP/1.1' on line 49).
+---
