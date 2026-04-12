@@ -1,0 +1,69 @@
+{
+  "sprint_number": 2,
+  "sprint_name": "C2 Container Overview",
+  "files_to_produce": [
+    "c2-container.md"
+  ],
+  "criteria": [
+    {
+      "name": "Mermaid Syntax Validity",
+      "description": "c2-container.md contains valid Mermaid syntax that passes 'mmdc -v' (mermaid-cli) validation without errors and renders in Mermaid Live Editor (v10.6.0+) without parsing warnings or missing element alerts.",
+      "threshold": 10.0
+    },
+    {
+      "name": "C4 Level 2 Component Inventory",
+      "description": "Diagram explicitly labels exactly 10 containers: API Gateway, Orchestrator Service, Local Model Adapter, Frontier Model Adapter, Nomad Job Definition, Consul Integration, Vault Integration, Prometheus Metrics Exporter, Langfuse Trace Collector, and AutoResearch Loop Agent. Each container label includes technology stack in format 'Name: Tech1, Tech2' (e.g., 'API Gateway: Golang, bifrost').",
+      "threshold": 9.5
+    },
+    {
+      "name": "Relationship Protocol Specification",
+      "description": "All container relationships use exact protocol labels: 'HTTP/1.1' for API calls, 'gRPC' for inter-service calls, 'Nomad SDK' for job deployment, 'Consul API' for service discovery, 'Vault API' for secrets retrieval, 'Prometheus PushGateway' for metrics, 'Langfuse API' for traces. Directionality must match PRD Section 4.3 (Data Flow Specification) with no deviations.",
+      "threshold": 9.5
+    },
+    {
+      "name": "PRD Section 4.2 Alignment",
+      "description": "Diagram includes OpenAI/Anthropic-compatible API endpoints (labeled '/v1/chat/completions', '/v1/embeddings'), two-part architecture (Real-time Routing Container and Offline Self-Learning Container), Nomad cluster deployment model (labeled 'Nomad Cluster: 3 nodes'), and infrastructure dependencies (Consul, Vault) exactly as specified in PRD Section 4.2 (Domain-Specific Requirements).",
+      "threshold": 10.0
+    },
+    {
+      "name": "Technology Stack Explicit Labeling",
+      "description": "Orchestrator Service labeled 'Orchestrator Service: Golang, bifrost, 1B parameter model', Local/Frontier Model Adapters show 'vLLM/llama.cpp' integration, NormStat/VecStat routing mechanisms visible as internal components or labels, hardware telemetry integration points labeled 'Telemetry: GPU/CPU metrics', AutoResearch Loop labeled with 'background agent' annotation, all containers show 'Docker' packaging annotation.",
+      "threshold": 9.5
+    },
+    {
+      "name": "C4 Container Diagram Standards",
+      "description": "Container labels max 2 words per line, descriptions max 15 words per container, legend present explaining symbols (solid arrows = synchronous, dashed = asynchronous), diagram shows static structure only (no runtime instances), all terminology matches PRD glossary (Section 1.4).",
+      "threshold": 9.0
+    },
+    {
+      "name": "Critical Infrastructure Presence",
+      "description": "Diagram includes all infrastructure components from Technology Choices Section 7: Nomad (labeled 'Nomad Manager/Client'), Consul (labeled 'Consul Service Mesh'), Vault (labeled 'Vault Secrets Store'), Prometheus (labeled 'Prometheus Server'), Langfuse (labeled 'Langfuse Backend'). No component from this list may be omitted.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Dependency Direction Validation",
+      "description": "All infrastructure dependencies flow correctly: llm-switch containers depend ON Nomad (not vice versa), Consul, and Vault. No arrows originate from Nomad/Consul/Vault pointing to llm-switch containers except for health checks (which must be labeled 'Health Check'). Violation of Technology Choices Section 7.2 (Infrastructure Ownership Principles).",
+      "threshold": 10.0
+    },
+    {
+      "name": "Security Compliance",
+      "description": "Vault Integration container shows explicit 'secrets' label or annotation indicating secrets management. All external API connections (API Gateway to outside) must show 'TLS 1.3' or 'HTTPS' annotation. Internal service mesh connections show 'mTLS' or 'Consul Connect' annotation.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Error Handling Paths",
+      "description": "Diagram includes error handling paths: Circuit Breaker pattern shown between API Gateway and Orchestrator (labeled 'Circuit Breaker'), error return paths from Model Adapters to Orchestrator (labeled 'Error Response'), and fallback mechanisms (labeled 'Fallback to Local Model').",
+      "threshold": 9.0
+    },
+    {
+      "name": "API Gateway Routing Rules",
+      "description": "API Gateway shows explicit routing rules: '/v1/*' routes to Orchestrator, '/health' routes to health check endpoint, '/metrics' routes to Prometheus Exporter. These must be labeled on the diagram or in an embedded legend.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Nomad Job Constraints",
+      "description": "Nomad Job Definition container shows constraints: 'GPU required' for Frontier Model Adapter, 'Memory: 32GB' for Local Model Adapter, 'Node pool: llm-switch' for all containers. These must be visible as labels or annotations.",
+      "threshold": 9.0
+    }
+  ]
+}

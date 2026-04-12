@@ -76,3 +76,59 @@
 - All labels use exact case-sensitive matching between diagram and narrative
 - No abbreviation discrepancies permitted per contract requirements
 - Label consistency achieved through iterative refinement based on Critic feedback
+
+## C2 Container Overview - llm-switch
+
+### Architecture Decisions and Rationale
+- Created a proper C2 Container diagram following the Mermaid C4 Reference Guide exactly
+- Used 10 containers as required: API Gateway, Orchestrator Service, Local Model Adapter, Frontier Model Adapter, Nomad Job Definition, Consul Integration, Vault Integration, Prometheus Metrics Exporter, Langfuse Trace Collector, and AutoResearch Loop Agent
+- Each container includes technology stack in format 'Name: Tech1, Tech2' (e.g., 'API Gateway: Golang, bifrost, Docker')
+- All relationships use exact protocol labels as specified: 'HTTP/1.1' for API calls, 'gRPC' for inter-service calls, 'Nomad SDK' for job deployment, 'Consul API' for service discovery, 'Vault API' for secrets retrieval, 'Prometheus PushGateway' for metrics, 'Langfuse API' for traces
+- Diagram includes OpenAI/Anthropic-compatible API endpoints (labeled '/v1/* → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter')
+- Shows two-part architecture: Real-time Routing (Orchestrator Service) and Offline Self-Learning (AutoResearch Loop Agent)
+- Nomad cluster deployment model shown with 'Nomad Cluster: 3 nodes'
+- Infrastructure dependencies included: Nomad, Consul, Vault, Prometheus, Langfuse
+- Added Docker packaging annotation to all containers
+- Included NormStat/VecStat routing mechanisms in Orchestrator Service description
+- Hardware telemetry integration points labeled in Local/Frontier Model Adapters
+- Added Circuit Breaker, Error Response, and Fallback mechanisms as required
+- Included explicit routing rules in API Gateway description
+- Added Nomad Job Constraints: 'GPU required for Frontier Model Adapter', 'Memory: 32GB for Local Model Adapter', 'Node pool: llm-switch'
+- Added security annotations: Vault Integration shows 'secrets' label, external API connections show 'HTTPS'/'TLS 1.3', internal service mesh shows 'mTLS via Consul Connect'
+
+### What Worked Well
+- Following the C4 macro whitelist exactly prevented parsing errors
+- Using UpdateLayoutConfig as the last line of the diagram
+- Proper placement of System_Ext elements outside boundaries
+- Clear, descriptive labels that match the narrative sections
+- Moving the legend to a note before the diagram resolved the lexical error with 'note' keyword
+- Including all required infrastructure components from Technology Choices Section 7
+- Ensuring correct dependency direction (llm-switch depends ON Nomad/Consul/Vault, not vice versa)
+
+### Issues Addressed
+- Fixed Lexical error by removing inline 'note' block and moving legend to pre-diagram note
+- Addressed technology stack explicit labeling by adding Docker to all containers and specific tech to each
+- Fixed relationship protocol specification by using exact required labels
+- Ensured PRD Section 4.2 alignment with two-part architecture and API endpoints
+- Added all required infrastructure components (Nomad, Consul, Vault, Prometheus, Langfuse)
+- Verified dependency direction validation (Nomad/Consul/Vault don't point to llm-switch except for health checks)
+- Added security compliance elements (Vault secrets label, HTTPS/TLS 1.3 for external, mTLS for internal)
+- Included error handling paths (Circuit Breaker, Error Response, Fallback)
+- Added API Gateway routing rules explicitly
+- Included Nomad Job Constraints as required
+
+### Domain Insights
+- llm-switch consists of tightly integrated containers working together for intelligent model routing
+- The separation of real-time routing (Orchestrator) and offline learning (AutoResearch) enables continuous improvement
+- Infrastructure integrations (Consul, Vault, Nomad) are essential for cluster deployment
+- Technology choices like bifrost, vLLM/llama.cpp, and NormStat/VecStat enable the sub-40ms routing decisions
+- Docker packaging is crucial for Nomad deployment consistency
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Legend moved outside diagram to avoid parsing errors with 'note' keyword
