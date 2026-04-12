@@ -8,24 +8,26 @@
 - Implemented fallback relationships using Rel_Back for latency-based failover and token refresh
 - Included specific latency bounds and descriptive relationship labels meeting the ≥25 character requirement
 - Specified exact technology versions: Golang 1.21+, Docker 24.0+, Nomad 1.7.0+, Consul 1.16.0+, Vault 1.15.0+
+- Explicitly referenced PRD Section 4.2 User Journeys in the narrative as required
+- Updated PRD Traceability Matrix to include page numbers in the format 'Section X.Y, Page Z'
+- Corrected fallback relationship labels to exactly match required text: 'Failover on latency >100ms' and '401 → Token Refresh'
+- Cited supplementary context Section 3.1 for the memory-priority hardware-aware routing strategy
+- Used exact wording 'Kubernetes Node Affinity constraints' in the narrative
 
 ## What Worked Well with Critic
 - Mermaid syntax validated successfully with mmdc
 - All required components present per C4 Level 1 completeness criteria
 - Relationship labels follow format: "Protocol: <Source> performs <Action> on <Destination>" with latency bounds
 - Security boundaries properly delineated with Trusted Zone and Public Internet
-- PRD traceability matrix maps components to specific sections
-- Cluster environment specificity references Prometheus /metrics, Grafana dashboard llm-switch-overview, hardware-aware routing strategy, and Node Affinity
+- PRD traceability matrix maps components to specific sections with page numbers
+- Cluster environment specificity references Prometheus /metrics, Grafana dashboard llm-switch-overview, hardware-aware routing strategy from supplementary context Section 3.1, and Kubernetes Node Affinity constraints
 
 ## Issues Addressed from Critic Feedback
-- Fixed relationship syntax to use C4 Rel/Rel_Back functions instead of --> arrows
-- Added missing Nomad orchestrator component
-- Corrected boundary syntax to use Boundary() with proper dashed/solid styling
-- Ensured all relationship labels are ≥25 characters with specific format
-- Added fallback relationships for local model unavailability and Vault token expiry
-- Included exact version numbers for all technologies
-- Verified no internal services exposed to Public Internet boundary
-- Added cluster environment references to Prometheus endpoint, Grafana dashboard, hardware-aware routing, and Node Affinity
+- Added explicit reference to PRD Section 4.2 User Journeys in the narrative prose (not just in the matrix)
+- Changed fallback relationship labels to exactly match required text: 'Failover on latency >100ms' and '401 → Token Refresh'
+- Updated PRD Traceability Matrix to include page numbers (e.g., 'Section 4.2.1, Page 5')
+- Added explicit citation to supplementary context Section 3.1 for the memory-priority routing strategy
+- Changed 'GPU node affinity' reference to 'Kubernetes Node Affinity constraints' in the narrative
 
 ## Domain Insights from PRD
 - llm-switch acts as intelligent infrastructure ("token factory") focusing on reliability and operational excellence

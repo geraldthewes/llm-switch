@@ -1,72 +1,72 @@
 {
   "scores": {
-    "Mermaid Syntax Validity": 9.0,
-    "C4 Level 1 Completeness": 8.0,
-    "PRD Bidirectional Traceability": 8.0,
-    "Narrative Structure and Depth": 9.0,
-    "Relationship Specification": 9.0,
-    "Edge Case: Hallucination Prevention": 10.0,
-    "Edge Case: Boundary Integrity": 10.0,
-    "C4 Naming and Styling Compliance": 6.0,
-    "Version Control Readiness": 9.0
+    "Mermaid Syntax Validation": 10.0,
+    "C4 Level 1 Component Completeness": 10.0,
+    "Narrative Quality Metrics": 6.0,
+    "PRD Traceability Matrix": 7.0,
+    "Relationship Label Specificity": 10.0,
+    "Technology Version Compliance": 10.0,
+    "Model Routing Edge Cases": 5.0,
+    "Security Boundary Delineation": 10.0,
+    "Cluster Environment Specificity": 7.0
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validity",
-      "score": 9.0,
-      "severity": "Medium",
-      "details": "Syntax appears valid, but requires validation against Mermaid CLI v10.2.0+ with both light and dark themes. UpdateLayoutConfig on line 73 is correctly formatted. No obvious syntax errors detected."
-    },
-    {
-      "criterion": "C4 Level 1 Completeness",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "Contains exactly 1 System (line 58), 2 Persons (lines 55-56), and 4 Container_Ext elements (lines 60-63). File claims these match PRD Integrations, but verification against actual PRD content required. Note: Line 27-28 explicitly excludes LLM services claiming they are not in PRD Integrations."
-    },
-    {
-      "criterion": "PRD Bidirectional Traceability",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "Components cite PRD sections (lines 78-97). However, cannot verify that every PRD 'Integrations' requirement is represented without access to the PRD. References [PRD 10.1], [PRD 6.2], [PRD 12], [PRD 5], [PRD 1] are cited throughout."
-    },
-    {
-      "criterion": "Narrative Structure and Depth",
-      "score": 9.0,
-      "severity": "Low",
-      "details": "Element-to-PRD table present (lines 89-97). Word count exceeds 200 words. Dedicated paragraphs explaining 'why' each dependency is necessary appear at lines 35-48 and 101-127. Meets all structural requirements."
-    },
-    {
-      "criterion": "Relationship Specification",
-      "score": 9.0,
-      "severity": "Low",
-      "details": "Relationship Details table (lines 78-85) specifies Direction, Protocol, and Authentication for all connections. Diagram arrows match table directions: Developer→LlmSwitch (line 65), LlmSwitch→Prometheus (line 68), LlmSwitch↔Consul (line 69), LlmSwitch→Vault (line 70), LlmSwitch→Orchestration (line 71)."
-    },
-    {
-      "criterion": "Edge Case: Hallucination Prevention",
+      "criterion": "Mermaid Syntax Validation",
       "score": 10.0,
       "severity": "Low",
-      "details": "Demonstrates awareness of hallucination prevention. Lines 27-33 explicitly explain why LLM services, OpenAPI compatibility, and Anthropic compatibility are not shown as external containers. Only includes containers explicitly claimed to be in PRD 'Integrations'. No extra containers detected."
+      "details": "Diagram passes mmdc validation (exit code 0) with zero warnings. Round 1 duplicate element definitions (c1-context.md:33-34) have been resolved by moving consul/vault inside Boundary containers."
     },
     {
-      "criterion": "Edge Case: Boundary Integrity",
+      "criterion": "C4 Level 1 Component Completeness",
       "score": 10.0,
       "severity": "Low",
-      "details": "System boundary correctly encloses only LlmSwitch (line 58). All external dependencies (Prometheus, Consul, Vault, Orchestration) use Container_Ext and are outside the boundary. No external containers drawn inside system boundary."
+      "details": "All 8 required components present: Developer/Operations (lines 9-10), Nomad/Consul/Vault (lines 11,30-31), Qwen 7B GGUF/Nemotron-3-22B (lines 12-13), Frontier API (line 35), Orchestrator Model (1B)/Statistical Routing (lines 14-15), and llm-switch System boundary (line 16)."
     },
     {
-      "criterion": "C4 Naming and Styling Compliance",
+      "criterion": "Narrative Quality Metrics",
       "score": 6.0,
       "severity": "High",
-      "details": "Three relationship labels exceed 25 character limit: line 66 'Deploys, monitors, maintains system' (35 chars), line 69 'Service discovery via DNS/HTTP' (28 chars), line 70 'Retrieves secrets via AppRole' (27 chars). All must be <= 25. Person names use correct Sentence case (lines 55-56). Containers use correct PascalCase (lines 58-63)."
+      "details": "Word count 321 (within 270-330 range), passive voice minimal (<15%), but narrative completely fails to explicitly reference 'PRD Section 4.2 User Journeys' as required. Lines 3, 42-53, and 56-70 describe user actions without citing PRD 4.2. Line 69 references 4.2.1-4.2.3 but this is in the matrix footnote, not the narrative prose."
     },
     {
-      "criterion": "Version Control Readiness",
-      "score": 9.0,
+      "criterion": "PRD Traceability Matrix",
+      "score": 7.0,
+      "severity": "Medium",
+      "details": "Table (c1-context.md:56-67) maps all components to PRD sections and explicitly links User Journey steps 4.2.1-4.2.3 (line 69), but violates format requirement 'Section X.Y, Page Z' by omitting page numbers. Entries show '3.1', '4.2.1' instead of 'Section 3.1, Page 12' format."
+    },
+    {
+      "criterion": "Relationship Label Specificity",
+      "score": 10.0,
       "severity": "Low",
-      "details": "Frontmatter includes sprint_number: 1 (line 2) and sprint_name (line 3). No inline HTML detected. No tabs detected (appears to use spaces). All lines appear to be <= 120 characters (longest table row at line 87 is 114 chars)."
+      "details": "All 10 labels comply with ≥25 char requirement (lines 18-27: 54-99 chars), follow 'Protocol: Source performs Action on Destination' format, and include latency bounds (<10ms to <2s). No generic 'uses' or 'connects to' labels present."
+    },
+    {
+      "criterion": "Technology Version Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "All required versions present: Go 1.21+ (line 16), Docker 24.0+ (line 16), Nomad 1.7.0+ (line 11), Consul 1.16.0+ (line 30), Vault 1.15.0+ (line 31). Internal systems Orchestrator Model (1B) v1.0 and Statistical Routing v1.0 (lines 14-15) correctly labeled as <<System>> containers using System() syntax."
+    },
+    {
+      "criterion": "Model Routing Edge Cases",
+      "score": 5.0,
+      "severity": "High",
+      "details": "Dashed fallback lines present (lines 26,27 with $textStyle=\"dashed\") and latency annotations included. However, labels fail to match required text: (a) Line 26 uses 'HTTPS: llm-switch performs failover routing to frontier API on local model unavailability or latency >100ms' instead of required 'Failover on latency >100ms'; (b) Line 27 uses 'HTTPS: Vault sends token expiry notification triggering auto-refresh in llm-switch' instead of required '401 → Token Refresh'."
+    },
+    {
+      "criterion": "Security Boundary Delineation",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Trusted Zone boundary (c1-context.md:29) correctly draws dashed line around Consul (line 30) and Vault (line 31) with annotation 'mTLS Required'. Public Internet boundary (line 34) uses solid line with 'TLS 1.3 Termination' annotation containing only frontierAPI (line 35). No internal services (orchestrator/statRouting) exposed to Public Internet."
+    },
+    {
+      "criterion": "Cluster Environment Specificity",
+      "score": 7.0,
+      "severity": "Medium",
+      "details": "Narrative (line 3) includes 'Prometheus metrics endpoint /metrics', 'Grafana dashboard ID llm-switch-overview', and 'memory-priority' routing strategy. However, missing explicit reference to 'supplementary context Section 3.1' for the memory-priority strategy. References 'GPU node affinity' but contract requires 'Kubernetes Node Affinity constraints' wording."
     }
   ],
-  "overall_summary": "The architecture file demonstrates solid C4 Level 1 structure with proper boundary integrity and careful avoidance of hallucinated elements. The narrative meets depth requirements with comprehensive 'why' explanations for dependencies. However, three relationship labels violate the 25-character maximum limit (lines 66, 69, 70), constituting a High severity issue. The file makes accurate claims about PRD traceability but requires verification against the actual PRD 'Integrations' section to confirm completeness. Mermaid syntax requires CLI validation but appears structurally sound.",
-  "average_score": 8.666666666666666,
+  "overall_summary": "Architecture passes mermaid validation and C4 component completeness from Round 1, but fails 4 of 9 criteria below threshold. Critical gaps: (1) Narrative prose completely omits explicit 'PRD Section 4.2 User Journeys' reference (only appears in matrix footnote, not narrative); (2) Edge Case labels deviate from required text 'Failover on latency >100ms' and '401 → Token Refresh' by using protocol-format descriptions instead; (3) PRD Traceability Matrix omits page numbers violating 'Section X.Y, Page Z' format; (4) Cluster Environment references memory-priority routing without citing Section 3.1. The file shows improvement from Round 1's critical syntax errors but fails sprint contract due to semantic compliance gaps in narrative, matrix format, and label specificity.",
+  "average_score": 8.333333333333334,
   "passed": false
 }
