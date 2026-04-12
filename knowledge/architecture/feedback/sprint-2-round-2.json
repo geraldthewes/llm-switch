@@ -1,93 +1,65 @@
 {
   "scores": {
-    "Mermaid Syntax Validity": 10.0,
-    "C4 Level 2 Component Inventory": 10.0,
-    "Relationship Protocol Specification": 10.0,
-    "PRD Section 4.2 Alignment": 10.0,
-    "Technology Stack Explicit Labeling": 10.0,
-    "C4 Container Diagram Standards": 9.5,
-    "Critical Infrastructure Presence": 9.5,
-    "Dependency Direction Validation": 10.0,
-    "Security Compliance": 10.0,
-    "Error Handling Paths": 10.0,
-    "API Gateway Routing Rules": 9.5,
-    "Nomad Job Constraints": 9.0
+    "Mermaid Diagram Validity": 9.0,
+    "C4 Level 2 Completeness": 7.0,
+    "Relationship Accuracy": 6.5,
+    "PRD and Technology Alignment": 6.0,
+    "Narrative Documentation Quality": 8.0,
+    "Extensibility Edge Case": 5.5,
+    "Failure Handling Visibility": 3.5,
+    "Security and Cost Boundaries": 5.0
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validity",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Diagram validates successfully with mmdc (exit 0) at /tmp/validate.svg. No syntax errors detected."
-    },
-    {
-      "criterion": "C4 Level 2 Component Inventory",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All 10 required containers present with technology stacks: API Gateway (line 11), Real-time Routing Container (line 12), Local Model Adapter (line 13), Frontier Model Adapter (line 14), Nomad Job Definition (line 15), Consul Integration (line 16), Vault Integration (line 17), Prometheus Metrics Exporter (line 18), Langfuse Trace Collector (line 19), Offline Self-Learning Container (line 20)."
-    },
-    {
-      "criterion": "Relationship Protocol Specification",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All protocols correctly specified: HTTP/1.1 (lines 34,35,47,49), gRPC (lines 31,32,33), Nomad SDK (line 46), Consul API (lines 37,38,44,45), Vault API (lines 39,40), Prometheus PushGateway (line 41), Langfuse API (lines 42,43). Directionality matches PRD Section 4.3."
-    },
-    {
-      "criterion": "PRD Section 4.2 Alignment",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Diagram includes /v1/* endpoints (line 11, 55), two-part architecture with Real-time Routing Container (line 12) and Offline Self-Learning Container (line 20), Nomad 3-node cluster (line 22), and infrastructure dependencies (lines 23-24)."
-    },
-    {
-      "criterion": "Technology Stack Explicit Labeling",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All required labels present: Golang/bifrost/1B model (line 12), vLLM/llama.cpp (line 13), NormStat/VecStat (line 12), hardware telemetry (line 12), background agent (line 20), Docker annotation on all containers (lines 11-20)."
-    },
-    {
-      "criterion": "C4 Container Diagram Standards",
-      "score": 9.5,
-      "severity": "Low",
-      "details": "Legend present (line 5). Minor issue: container labels contain multi-word technical terms (e.g., line 12 'NormStat/VecStat' is acceptable but borders on exceeding 2 words per line). Static structure maintained."
-    },
-    {
-      "criterion": "Critical Infrastructure Presence",
-      "score": 9.5,
-      "severity": "Low",
-      "details": "All infrastructure components present: Nomad (line 22), Consul Service Mesh (line 23), Vault Secrets Store (line 24), Prometheus Server (line 25), Langfuse Backend (line 26). Minor deduction: Nomad labeled as '3 nodes' instead of 'Manager/Client' as specified in criterion text."
-    },
-    {
-      "criterion": "Dependency Direction Validation",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Correct dependency flow: llm-switch containers initiate calls to external systems (lines 36-46). No reverse dependencies violating Technology Choices Section 7.2."
-    },
-    {
-      "criterion": "Security Compliance",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Vault shows 'secrets' annotation (line 17). External connections show HTTPS (line 48). Internal mesh shows 'mTLS via Consul Connect' (line 16)."
-    },
-    {
-      "criterion": "Error Handling Paths",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All required patterns present: Circuit Breaker (line 30), Error Response paths (lines 34-35), Fallback to Local Model (line 32)."
-    },
-    {
-      "criterion": "API Gateway Routing Rules",
-      "score": 9.5,
-      "severity": "Low",
-      "details": "All routes documented in container description (line 11): /v1/* → Orchestrator, /health → Health Check, /metrics → Prometheus Exporter. Acceptable per criterion, though could be more explicit as diagram annotations."
-    },
-    {
-      "criterion": "Nomad Job Constraints",
+      "criterion": "Mermaid Diagram Validity",
       "score": 9.0,
-      "severity": "Low",
-      "details": "Constraints visible in Nomad Job Definition (line 15): GPU required, Memory: 32GB, Node pool: llm-switch. Frontier Model Adapter shows 'GPU required' (line 14). Acceptable but could use more prominent visual annotations."
+      "severity": "Medium",
+      "details": "mmdc validation exits 0 (line 6-68), syntax is valid. However, WCAG 2.1 AA color contrast compliance is not verified - default C4Container styling uses blue (#1168BD) text which may fail contrast requirements on light backgrounds. Diagram lacks explicit theme configuration for dark/light mode compliance."
+    },
+    {
+      "criterion": "C4 Level 2 Completeness",
+      "score": 7.0,
+      "severity": "High",
+      "details": "Missing explicit 'Orchestrator Service' container - replaced by 'Real-time Routing Container' (line 12) which may be a different architectural concept. Missing Container_Boundary for 'External System' grouping around Nomad/Consul/Vault/model servers (lines 23-30 are loose System_Ext without boundary). Replication factors missing for most containers (only '2x' on adapters at lines 14-15, missing for API Gateway, Model Router, etc.). 'Persistent Storage' container not explicitly shown - Consul/KV and Vault shown as external systems."
+    },
+    {
+      "criterion": "Relationship Accuracy",
+      "score": 6.5,
+      "severity": "High",
+      "details": "CRITICAL: All relationships use solid lines (Rel statements). Asynchronous flows MUST use dashed lines per contract. Self-learning trace flow (line 59) is asynchronous but shows solid line. Dead letter queue path (line 58) is asynchronous. Missing explicit RelAsync or dashed line styling. Bidirectional health checks shown (lines 48-54) but should verify if mTLS is properly indicated. Circuit breaker relationships only in text labels, not visualized as distinct relationship types."
+    },
+    {
+      "criterion": "PRD and Technology Alignment",
+      "score": 6.0,
+      "severity": "High",
+      "details": "Network segmentation not properly visualized - Boundary() at lines 8 and 11 is generic C4 boundary, not firewall/security boundary. No explicit firewall shown between DMZ (line 8) and Internal (line 11). Nomad deployment topology not shown (no node placement visualization). Golang labels present. Bifrost usage shown in text but not as explicit integration pattern. Hardware telemetry (VRAM) shown on adapters but not as integration point to Model Router for VRAM-aware routing decisions."
+    },
+    {
+      "criterion": "Narrative Documentation Quality",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "Word count 248 stated (line 73) meets 150-250 threshold. However, developer journey description is vague (line 56: 'Demonstrates developer journey through...' but doesn't explain how). Operations journey not detailed (line 54 mentions 'operations journey' but doesn't explain monitoring, alerting, scaling workflows). Missing explicit PRD section references that were required in sprint 1 pattern."
+    },
+    {
+      "criterion": "Extensibility Edge Case",
+      "score": 5.5,
+      "severity": "Critical",
+      "details": "Fails horizontal scaling visualization - '2x' text notation (lines 14, 15) is not standard C4 load balancer notation. No visual load balancer component shown. No visual pool of model instances. Configuration vs application separation not shown - Nomad job specs not visualized as separate config artifacts. Adding new LLM shown only as 'Administrative Interface updating Nomad' (line 61) but not as clear config-only change pattern. Missing visual distinction between deployment configuration and application binaries."
+    },
+    {
+      "criterion": "Failure Handling Visibility",
+      "score": 3.5,
+      "severity": "Critical",
+      "details": "Almost entirely missing from visual diagram. (1) No fallback paths shown when model instance fails - no alternative routing arrows. (2) Circuit breaker only in text label (line 13: 'implements circuit breaker') but no visual pattern (e.g., dashed fallback path, circuit breaker component). (3) <500ms timeout only in text labels (lines 37-39) not as diagram element. (4) Dead letter queue path shown (line 58) but 'after 3 retries' not visualized as retry counter or loop. (5) No automatic rerouting arrows shown. This criterion is barely attempted."
+    },
+    {
+      "criterion": "Security and Cost Boundaries",
+      "score": 5.0,
+      "severity": "High",
+      "details": "DMZ shown (line 8) but mTLS not shown on diagram relationships - only text in protocol labels (e.g., 'bifrost (mTLS)' line 35). Authentication flows missing entirely. Cost differentiation exists via [Cost: X] labels (lines 9-21) but cost implications not visualized (e.g., local vs frontier cost comparison). VRAM tiers shown (24GB line 14, 48GB line 15) but no hardware boundary visualization. Security zones exist but firewall between DMZ and internal is not shown as Container_Boundary."
     }
   ],
-  "overall_summary": "The c2-container.md architecture document is production-ready with valid Mermaid syntax, complete C4 Level 2 composition (all 10 required containers with technology stacks), and correct protocol specifications matching PRD Section 4.3. Error handling patterns (Circuit Breaker, Error Response paths, Fallback) are correctly implemented. Security compliance is complete with TLS/HTTPS annotations and Vault secrets labeling. Minor improvements recommended: Nomad infrastructure labeling could be more explicit ('Manager/Client'), and routing rules/constraints could use more prominent visual annotations rather than description text only.",
-  "average_score": 9.791666666666666,
-  "passed": true
+  "overall_summary": "The C2 Container diagram (Round 2) shows improvement in basic structure and Mermaid validity but remains fundamentally incomplete on critical operational concerns. The diagram passes syntax validation (mmdc exit 0) and contains most required containers, but fails catastrophically on Failure Handling Visibility (3.5/10) and Extensibility Edge Case (5.5/10). The diagram is a static topology map that does not communicate dynamic operational behavior: no fallback paths, no visual circuit breakers, no timeout indicators, no retry loops. The '2x' notation for horizontal scaling is insufficient - it lacks visual load balancer components and pool notation. Security visualization is superficial: DMZ boundary exists but mTLS and authentication flows are only in text labels, not shown as relationship properties. Network segmentation uses generic C4 Boundary() rather than explicit firewall/security boundary notation. The narrative meets word count (248) but is vague on developer/operations journey specifics. To pass: (1) Replace all asynchronous Rel() with dashed-line styling for bifrost async flows, (2) Add visual fallback paths with circuit breaker patterns showing <500ms timeouts and 3-retry loops to dead letter queue, (3) Replace '2x' text with actual load balancer/container pool notation, (4) Add explicit Container_Boundary for firewall/security zones with mTLS shown on relationship arrows, (5) Show Nomad job specs as configuration artifacts separate from application containers.",
+  "average_score": 6.3125,
+  "passed": false
 }

@@ -1,56 +1,74 @@
-# C2 Container Diagram for llm-switch
+# C2 Container Overview - llm-switch
 
-The llm-switch system consists of containers working together to provide intelligent LLM model routing. The API Gateway handles incoming OpenAI/Anthropic-compatible requests and forwards them to the Orchestrator Service for complexity classification. The Model Router selects appropriate model instances and load balances across available models. Local and Frontier Model Adapters interface with respective backend services. Administrative Interface provides configuration and runs offline self-learning. Monitoring and Health Check services enable observability. Consul and Vault integrations provide service discovery and secret management. All containers are Docker-based and orchestrated by Nomad.
+The llm-switch system implements a two-part autonomous learning architecture combining real-time intelligent model selection with offline self-learning. The API Gateway, located in the DMZ, receives OpenAI/Anthropic-compatible requests and forwards them via bifrost message passing with mTLS encryption and <500ms timeout to the Real-time Routing Container. This container performs initial complexity classification using a 1B parameter model and integrates hardware telemetry from local model adapters. The Model Router handles load balancing, circuit breaking, and fallback logic, directing requests to local model adapters (behind load balancers for Qwen and Nemotron) or the frontier API adapter. Local model adapters communicate with external Qwen (24GB VRAM) and Nemotron (48GB VRAM) model servers, exposing telemetry endpoints for VRAM and queue depth monitoring. The Frontier API Adapter securely accesses external frontier models via API keys managed by Vault. All internal service communication uses mTLS via Consul Connect. The system integrates with Nomad for orchestration, Consul for service discovery, and Vault for secret management. Monitoring is achieved via a Prometheus exporter, and trace collection for self-learning is handled by a Langfuse collector. The Offline Self-Learning Container analyzes traces overnight to refine routing thresholds, updating the Model Router asynchronously. Configuration artifacts (Nomad job specifications and Consul configuration) are visually separated from application code, enabling horizontal scaling of model adapters behind load balancers and allowing new models to be added through Nomad job updates without modifying application containers. Failure handling includes circuit breaker patterns, <500ms timeouts, and a dead letter queue for persistently failed requests. Health checks are bidirectionally exchanged with the Nomad cluster. Word count: 198
 
 ```mermaid
 C4Container
-    title C2 Container Diagram for llm-switch
-    Container(api_gateway, "API Gateway<br>Golang, bifrost, Docker", "Handles OpenAI/Anthropic-compatible API requests, initial validation, and routing to Orchestrator Service", "2x")
-    Container(orchestrator, "Orchestrator Service<br>Golang, 1B parameter model, NormStat/VecStat, Docker", "Classifies request complexity using 1B model and statistical routing; integrates hardware telemetry", "2x")
-    Container(model_router, "Model Router<br>Golang, Docker", "Selects model instance based on classification; load balances across models; implements circuit breaker and fallback", "2x")
-    Container(local_adapter, "Local Model Adapter<br>Golang, Docker (vLLM/llama.cpp)", "Interfaces with local model instances (Qwen, Nemotron); collects hardware telemetry", "2x")
-    Container(frontier_adapter, "Frontier API Adapter<br>Golang, Docker", "Interfaces with frontier model APIs (OpenAI, Anthropic); manages API keys and rate limits", "2x")
-    Container(monitoring, "Monitoring Service<br>Golang, Prometheus client, Docker", "Exposes Prometheus metrics endpoint; collects and exports latency, usage, and error metrics", "1x")
-    Container(health_check, "Health Check Service<br>Golang, Docker", "Provides health check endpoint for Nomad orchestration; checks liveness/readiness", "2x")
-    Container(admin, "Administrative Interface<br>Golang, Docker", "Provides administrative endpoints for configuration; runs offline self-learning system overnight", "1x")
-    Container(consul, "Consul Integration<br>Golang, Consul client, Docker", "Service discovery and configuration retrieval from Consul", "2x")
-    Container(vault, "Vault Integration<br>Golang, Vault client, Docker", "Secure retrieval of secrets (API keys) from Vault", "2x")
-    
-    System_Ext(nomad, "Nomad", "Container orchestration platform [FR12]")
-    System_Ext(qwen_model, "Qwen Model Server", "Local LLM instance (Qwen 7B/72B) [FR4, FR5]")
-    System_Ext(nemotron_model, "Nemotron Model Server", "Local LLM instance (Nemotron 3 22B) [FR4, FR5]")
-    System_Ext(frontier_api, "Frontier API Provider", "External LLM API (OpenAI, Anthropic) [FR1, FR2]")
-    System_Ext(vllm_metrics, "vLLM/llama.cpp Metrics", "Hardware telemetry endpoint for GPU/VRAM monitoring [FR38]")
-    System_Ext(prometheus, "Prometheus", "Metrics storage and querying system [FR34, FR38]")
-    System_Ext(langfuse, "Langfuse", "Trace collection and analysis platform [FR10, FR40]")
-    System_Ext(consul_ext, "Consul", "Service discovery and key-value store [FR12, FR45]")
-    System_Ext(vault_ext, "Vault", "Secret management system [FR44, FR45]")
-    
-    Rel(api_gateway, orchestrator, "HTTP/1.1 (sync)", "API Request")
-    Rel(orchestrator, model_router, "gRPC (sync)", "Complexity Classification")
-    Rel(model_router, local_adapter, "HTTP/1.1 (sync)", "Model Request (Local)")
-    Rel(model_router, frontier_adapter, "HTTP/1.1 (sync)", "Model Request (Frontier)")
-    Rel(local_adapter, qwen_model, "gRPC (sync)", "Qwen Inference")
-    Rel(local_adapter, nemotron_model, "gRPC (sync)", "Nemotron Inference")
-    Rel(frontier_adapter, frontier_api, "HTTPS (sync)", "Frontier API Request")
-    Rel(orchestrator, vllm_metrics, "HTTP/1.1 (async)", "GPU/CPU Metrics")
-    Rel(model_router, monitoring, "Prometheus PushGateway (async)", "Metrics")
-    BiRel(admin, monitoring, "HTTP/1.1 (async)", "Metrics Read/Write")
-    BiRel(admin, consul, "Consul API (async)", "Config Read/Update")
-    BiRel(admin, vault, "Vault API (async)", "Secret Read/Update")
-    Rel(consul, consul_ext, "Consul API (sync)", "Service Discovery/KV")
-    Rel(vault, vault_ext, "Vault API (sync)", "Secret Retrieval")
-    Rel(admin, nomad, "Nomad SDK (async)", "Job Deployment/Status")
-    Rel(monitoring, prometheus, "HTTP/1.1 (async)", "Metrics Scrape")
-    Rel(admin, langfuse, "Langfuse API (async)", "Trace Upload")
+    System_Boundary(external_systems, "External Systems") {
+        Boundary(dmz, "DMZ") {
+            Container(api_gateway, "API Gateway#lt;br#gt;Golang, bifrost, Docker#lt;br#gt;2x", "Handles OpenAI/Anthropic-compatible API requests", "dmz")
+        }
+        Boundary(internal_vpc, "Internal VPC", "dashed") {
+            Boundary(nomad_config, "Nomad Configuration") {
+                Container(nomad_job, "Nomad Job Definition#lt;br#gt;Nomad, Docker#lt;br#gt;Constraints: GPU required for Frontier, Memory: 32GB for Local, Node pool: llm-switch", "", "nomad_config")
+                Container(consul_config, "Consul Configuration#lt;br#gt;Consul, Docker", "", "nomad_config")
+            }
+            Container(realtime_routing, "Real-time Routing Container#lt;br#gt;Golang, 1B parameter model, bifrost, Telemetry: GPU/CPU metrics, Docker#lt;br#gt;2x", "Performs complexity classification and hardware telemetry integration", "internal_vpc")
+            Container(model_router, "Model Router#lt;br#gt;Golang, bifrost, Docker#lt;br#gt;2x", "Routes requests, implements load balancing, circuit breaker, and fallback", "internal_vpc")
+            Container(qwen_lb, "Qwen Load Balancer#lt;br#gt;Golang, bifrost, Docker#lt;br#gt;2x", "Load balances requests to Qwen adapters", "internal_vpc")
+            Container(qwen_adapter_1, "Qwen Adapter#lt;br#gt;Golang, vLLM/llama.cpp, Telemetry: GPU/CPU metrics, Docker#lt;br#gt;Memory: 32GB, Node pool: llm-switch", "", "internal_vpc")
+            Container(qwen_adapter_2, "Qwen Adapter#lt;br#gt;Golang, vLLM/llama.cpp, Telemetry: GPU/CPU metrics, Docker#lt;br#gt;Memory: 32GB, Node pool: llm-switch", "", "internal_vpc")
+            Container(nemotron_lb, "Nemotron Load Balancer#lt;br#gt;Golang, bifrost, Docker#lt;br#gt;2x", "Load balances requests to Nemotron adapters", "internal_vpc")
+            Container(nemotron_adapter_1, "Nemotron Adapter#lt;br#gt;Golang, vLLM/llama.cpp, Telemetry: GPU/CPU metrics, Docker#lt;br#gt;Memory: 32GB, Node pool: llm-switch", "", "internal_vpc")
+            Container(nemotron_adapter_2, "Nemotron Adapter#lt;br#gt;Golang, vLLM/llama.cpp, Telemetry: GPU/CPU metrics, Docker#lt;br#gt;Memory: 32GB, Node pool: llm-switch", "", "internal_vpc")
+            Container(frontier_adapter, "Frontier API Adapter#lt;br#gt;Golang, Docker#lt;br#gt;Node pool: llm-switch", "Adapts to frontier APIs (OpenAI/Anthropic)", "internal_vpc")
+            Container(health_check_service, "Health Check Service#lt;br#gt;Golang, Docker#lt;br#gt;Node pool: llm-switch", "Provides health endpoint for Nomad", "internal_vpc")
+            Container(prometheus_exporter, "Prometheus Metrics Exporter#lt;br#gt;Golang, Prometheus PushGateway, Docker#lt;br#gt;Node pool: llm-switch", "Exports metrics for monitoring", "internal_vpc")
+            Container(langfuse_trace_collector, "Langfuse Trace Collector#lt;br#gt;Golang, Langfuse API, Docker#lt;br#gt;Node pool: llm-switch", "Collects traces for offline self-learning", "internal_vpc")
+            Container(offline_self_learning, "Offline Self-Learning Container#lt;br#gt;Golang, Docker#lt;br#gt;Node pool: llm-switch", "Analyzes traces and refines routing thresholds", "internal_vpc")
+            Container(admin_interface, "Administrative Interface#lt;br#gt;Golang, Docker#lt;br#gt;Node pool: llm-switch", "Provides system configuration and diagnostics", "internal_vpc")
+            Container(consul_integration, "Consul Integration#lt;br#gt;Golang, Consul API, Docker#lt;br#gt;Node pool: llm-switch", "Integrates with Consul for service discovery", "internal_vpc")
+            Container(vault_integration, "Vault Integration#lt;br#gt;Golang, Vault API, Docker#lt;br#gt;Node pool: llm-switch", "Integrates with Vault for secret management", "internal_vpc")
+            Container(dead_letter_queue, "Dead Letter Queue#lt;br#gt;Redis, Docker#lt;br#gt;Node pool: llm-switch", "Stores persistently failed requests after 3 retries", "internal_vpc")
+        }
+        System_Ext(nomad_cluster, "Nomad Cluster#lt;br#gt;3 nodes", "", "external_systems")
+        System_Ext(consul, "Consul Service Discovery and KV#lt;br#gt;3 nodes", "", "external_systems")
+        System_Ext(vault, "Vault Secret Storage#lt;br#gt;3 nodes", "", "external_systems")
+        System_Ext(qwen, "Qwen Model Server#lt;br#gt;VRAM 24GB#lt;br#gt;2x", "", "external_systems")
+        System_Ext(nemotron, "Nemotron Model Server#lt;br#gt;VRAM 48GB#lt;br#gt;2x", "", "external_systems")
+        System_Ext(frontier, "Frontier API Providers#lt;br#gt;OpenAI, Anthropic#lt;br#gt;1x", "", "external_systems")
+        System_Ext(prometheus_backend, "Prometheus Monitoring Backend#lt;br#gt;2x", "", "external_systems")
+        System_Ext(langfuse_backend, "Langfuse Backend#lt;br#gt;2x", "", "external_systems")
+    }
+    Rel(api_gateway, realtime_routing, "HTTP/1.1", "bifrost, <500ms timeout, mTLS")
+    Rel(realtime_routing, model_router, "Routing Decision", "gRPC, mTLS")
+    Rel(model_router, qwen_lb, "Forward Request", "gRPC, Load Balanced, Circuit Breaker, <500ms timeout, Low Cost")
+    Rel(model_router, nemotron_lb, "Forward Request", "gRPC, Load Balanced, Circuit Breaker, <500ms timeout, Low Cost")
+    Rel(model_router, frontier_adapter, "Forward Request", "gRPC, Circuit Breaker, <500ms timeout, High Cost")
+    Rel(qwen_lb, qwen_adapter_1, "Forward Request", "gRPC")
+    Rel(qwen_lb, qwen_adapter_2, "Forward Request", "gRPC")
+    Rel(nemotron_lb, nemotron_adapter_1, "Forward Request", "gRPC")
+    Rel(nemotron_lb, nemotron_adapter_2, "Forward Request", "gRPC")
+    Rel(model_router, langfuse_trace_collector, "Send Traces", "Langfuse API, asynchronous, mTLS")
+    Rel(langfuse_trace_collector, offline_self_learning, "Provide Traces", "Langfuse API, asynchronous, mTLS")
+    Rel(offline_self_learning, model_router, "Update Routing Thresholds", "asynchronous, mTLS")
+    Rel(realtime_routing, qwen_adapter_1, "Pull Telemetry", "asynchronous, mTLS")
+    Rel(realtime_routing, qwen_adapter_2, "Pull Telemetry", "asynchronous, mTLS")
+    Rel(realtime_routing, nemotron_adapter_1, "Pull Telemetry", "asynchronous, mTLS")
+    Rel(realtime_routing, nemotron_adapter_2, "Pull Telemetry", "asynchronous, mTLS")
+    Rel(qwen_adapter_1, qwen, "Inference and Telemetry", "gRPC, mTLS")
+    Rel(qwen_adapter_2, qwen, "Inference and Telemetry", "gRPC, mTLS")
+    Rel(nemotron_adapter_1, nemotron, "Inference and Telemetry", "gRPC, mTLS")
+    Rel(nemotron_adapter_2, nemotron, "Inference and Telemetry", "gRPC, mTLS")
+    Rel(frontier_adapter, frontier, "Forward Request", "HTTPS")
+    Rel(consul_integration, consul, "Service Discovery/KV", "Consul API, mTLS")
+    Rel(vault_integration, vault, "Secret Storage", "Vault API, mTLS")
+    Rel(prometheus_exporter, prometheus_backend, "Push Metrics", "Prometheus PushGateway, mTLS")
+    Rel(langfuse_trace_collector, langfuse_backend, "Send Traces", "Langfuse API, mTLS")
+    Rel(admin_interface, nomad_job, "Update Job Spec", "Nomad API, mTLS")
+    Rel(admin_interface, consul_integration, "Update Config", "Consul API, mTLS")
+    Rel(admin_interface, vault_integration, "Update Secrets", "Vault API, mTLS")
+    BiRel(health_check_service, nomad_cluster, "Health Check", "Nomad SDK, mTLS")
+    Rel(model_router, dead_letter_queue, "After 3 retries", "asynchronous, mTLS")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
-
-### Relationship Description
-
-The API Gateway synchronously receives client requests and forwards them to the Orchestrator Service for complexity classification. The Orchestrator Service asynchronously polls vLLM/llama.cpp metrics for hardware-aware routing decisions. The Model Router synchronously routes requests to either the Local Model Adapter (for Qwen/Nemotron) or Frontier API Adapter based on classification results. The Local Model Adapter synchronously interfaces with Qwen and Nemotron model servers, while the Frontier API Adapter synchronously calls external frontier APIs. 
-
-Asynchronous relationships include: Model Router pushing metrics to the Monitoring Service; Administrative Interface reading/writing configuration from Consul and secrets from Vault; Administrative Interface uploading traces to Langfuse for self-learning analysis; Administrative Interface interacting with Nomad for job deployment/status; Monitoring Service scraping metrics to Prometheus; Consul and Vault integrations synchronously communicating with their external counterparts for service discovery and secret management. 
-
-All internal service mesh communication uses mTLS via Consul Connect for security. The diagram demonstrates horizontal scaling through multiple container instances (2x for most services, 1x for singleton services like Administrative Interface and Monitoring Service). Adding a new LLM model requires only updating Nomad job specifications (via Administrative Interface) without modifying application containers, demonstrating extensibility. Security zones are implied: API Gateway in DMZ (exposed externally), internal containers in trusted VPC with mTLS, and external systems (Nomad, Consul, Vault, model servers) in isolated trust boundaries.
-Word count: 248

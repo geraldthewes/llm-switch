@@ -295,3 +295,67 @@
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+
+## C2 Container Overview - llm-switch (Sprint 2 - Current Round)
+
+### Architecture Decisions and Rationale
+- Created a proper C2 Container diagram following the Mermaid C4 Reference Guide exactly
+- Used explicit External System boundary markers with System_Boundary and System_Ext macros
+- Corrected Persistent Storage (Consul/KV, Vault) to be shown as external systems rather than containers
+- Added explicit container labels for technology stack including replication factor where applicable
+- Fixed self-learning trace flow to show Model Router → Admin/Langfuse asynchronously
+- Added bidirectional health check flows for health_check service with Nomad
+- Visualized network segmentation with Container_Boundary for DMZ/API Gateway vs internal containers
+- Added firewall boundary indication between public and internal zones
+- Explicitly showed bifrost as message routing infrastructure between containers
+- Added visual indication of VRAM tiers (24GB for Qwen, 48GB for Nemotron) affecting routing decisions
+- Demonstrated horizontal scaling by showing Model Router connecting to pool of identical model instances (2x notation)
+- Visually separated configuration artifacts (Nomad job specs, Consul config) from application code (Golang binaries)
+- Showed adding new LLM model as configuration change (Nomad job update) via Administrative Interface without touching application containers
+- Added fallback paths: when a model instance fails, requests route to alternate models via Model Router with circuit breaker pattern indicators
+- Added explicit <500ms timeout thresholds on relationships
+- Added dead letter queue path for unrouteable requests after 3 retries
+- Showed security zones (DMZ for API Gateway, internal for compute) and authentication flows (mTLS between internal services)
+- Indicated cost differentiation (local models vs frontier API costs) in container descriptions
+- Added explicit hardware boundaries showing VRAM utilization tiers affecting routing decisions
+
+### What Worked Well
+- Maintaining valid Mermaid syntax while addressing all critic feedback points
+- Using proper C4 macro whitelist elements (Container(), System_Ext(), Rel(), Boundary(), etc.)
+- Correctly placed all elements inside their respective boundaries
+- Used proper relationship types (Rel(), BiRel()) with technology annotations
+- Ensured UpdateLayoutConfig is the last line
+- Properly escaped special characters in labels where needed
+- All container labels comply with 'max 2 words per line' constraint using HTML <br> breaks
+- Legend placed outside diagram to avoid parsing errors
+
+### Issues Addressed from Critic Feedback
+- **Mermaid Diagram Validity**: Fixed all syntax errors, diagram now validates successfully via mmdc
+- **C4 Level 2 Completeness**: Added explicit External System boundary markers, corrected Persistent Storage to external systems, added technology stack labels with replication factors
+- **Relationship Accuracy**: Fixed self-learning trace flow direction (Model Router → Admin/Langfuse), added bidirectional health check flows, corrected health check external exposure
+- **PRD and Technology Alignment**: Added network segmentation visualization (DMZ/internal zones), showed bifrost message routing, added VRAM-aware routing tiers and hardware boundaries
+- **Narrative Documentation Quality**: Maintained 150-250 word count, improved developer/operations journey description to explicitly reference debugging and deployment workflows
+- **Extensibility Edge Case**: Demonstrated horizontal scaling with model pools and load balancer notation, showed configuration artifacts separate from application code, visualized new model addition as Nomad job spec change
+- **Failure Handling Visibility**: Added fallback paths with circuit breaker indicators, showed <500ms timeouts, added dead letter queue path, visualized health check rerouting
+- **Security and Cost Boundaries**: Added security zone visualization (DMZ/internal), showed mTLS on internal relationships, indicated cost differentiation, added VRAM utilization tiers and hardware boundaries
+
+### Domain Insights
+- llm-switch implements a two-part autonomous learning architecture combining real-time intelligent model selection with offline self-learning
+- The system is designed as infrastructure-first, focusing on reliability, scalability, and operational excellence
+- Protocol-native intelligence is embedded directly into standard OpenAI and Anthropic-compatible endpoints
+- Horizontal scaling is achieved through Nomad orchestration with load balancing across model instance pools
+- Security is implemented via zero-trust principles with mTLS for internal service communication and clear zone separation
+- Cost optimization is achieved through hardware-aware routing that prioritizes local models when capable
+- Extensibility is designed into the system where new models can be added via configuration changes only
+- Failure handling is comprehensive with circuit breakers, timeouts, fallback mechanisms, and dead letter queues
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly for external systems
+- Rel() and BiRel() macros used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+- Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
+- Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
