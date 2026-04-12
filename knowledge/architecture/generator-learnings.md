@@ -13,6 +13,10 @@
 - Corrected fallback relationship labels to exactly match required text: 'Failover on latency >100ms' and '401 → Token Refresh'
 - Cited supplementary context Section 3.1 for the memory-priority hardware-aware routing strategy
 - Used exact wording 'Kubernetes Node Affinity constraints' in the narrative
+- Fixed duplicate frontierAPI definition by placing it only inside the Public Internet boundary
+- Ensured relationship labels follow format: "Protocol: <Source> performs <Action> on <Destination>" with latency bounds
+- Achieved narrative word count of 315 words (within 300±10% range)
+- Maintained all 8 required components in the diagram
 
 ## What Worked Well with Critic
 - Mermaid syntax validated successfully with mmdc
@@ -21,6 +25,10 @@
 - Security boundaries properly delineated with Trusted Zone and Public Internet
 - PRD traceability matrix maps components to specific sections with page numbers
 - Cluster environment specificity references Prometheus /metrics, Grafana dashboard llm-switch-overview, hardware-aware routing strategy from supplementary context Section 3.1, and Kubernetes Node Affinity constraints
+- Fixed duplicate element definition that was causing ambiguity
+- Corrected relationship label length to be ≥25 characters
+- Used exact term 'memory-priority' from supplementary context
+- Changed 'GPU node affinity' reference to 'Kubernetes Node Affinity constraints'
 
 ## Issues Addressed from Critic Feedback
 - Added explicit reference to PRD Section 4.2 User Journeys in the narrative prose (not just in the matrix)
@@ -44,4 +52,6 @@
 - Boundary() containers accept "dashed" or "solid" parameters
 - Do NOT use %%{init}%% directives (GitHub ignores them)
 - Use HTTPS/HTTP in relationship labels for technology specification
-- Latency bounds should be in angle brackets like "<50ms"
+- Latency bounds should be in angle brackets like "<50ms>"
+- Elements inside a Boundary block must be defined there, not referenced by alias
+- Pre-defined elements cannot be moved into a boundary retroactively
