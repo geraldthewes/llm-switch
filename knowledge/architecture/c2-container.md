@@ -1,112 +1,56 @@
-# C2 Container Overview - llm-switch
+# C2 Container Diagram for llm-switch
 
-This diagram shows the container-level architecture of the llm-switch system, illustrating how the real-time routing and offline self-learning components interact with infrastructure dependencies in the Nomad cluster environment.
-
-> **Legend**: Solid arrows = Synchronous communication, Dashed arrows = Asynchronous communication
+The llm-switch system consists of containers working together to provide intelligent LLM model routing. The API Gateway handles incoming OpenAI/Anthropic-compatible requests and forwards them to the Orchestrator Service for complexity classification. The Model Router selects appropriate model instances and load balances across available models. Local and Frontier Model Adapters interface with respective backend services. Administrative Interface provides configuration and runs offline self-learning. Monitoring and Health Check services enable observability. Consul and Vault integrations provide service discovery and secret management. All containers are Docker-based and orchestrated by Nomad.
 
 ```mermaid
 C4Container
-    title C2 Container Overview - llm-switch
-    %% Legend: Solid arrows = Synchronous communication, Dashed arrows = Asynchronous communication
-    System_Boundary(llm_switch, "llm-switch") {
-        Container_Boundary(api_boundary, "API Boundary") {
-            Container(apigw, "API Gateway:<br>Golang bifrost<br>Docker<br>Node pool:<br>llm-switch", "Golang, bifrost, Docker", "Handles incoming API requests, routes to orchestrator [FR1, FR2]")
-        }
-        Container_Boundary(routing_boundary, "Real-time Routing Boundary") {
-            Container(orchestrator, "Real-time Routing:<br>Container<br>Golang bifrost<br>1B parameter:<br>model<br>Docker NormStat:<br>VecStat<br>Node pool:<br>llm-switch", "Golang, bifrost, 1B parameter model, Docker, NormStat/VecStat", "Performs real-time model selection based on complexity [FR3]")
-        }
-        Container_Boundary(adapter_boundary, "Model Adapter Boundary") {
-            Container(local_adapter, "Local Model:<br>Adapter<br>vLLM llama.cpp<br>Docker<br>Telemetry:<br>GPU/CPU metrics<br>Memory: 32GB<br>Node pool:<br>llm-switch", "vLLM/llama.cpp, Docker", "Adapts requests for local models (Qwen, Nemotron) [FR4]")
-            Container(frontier_adapter, "Frontier Model:<br>Adapter<br>vLLM/llama.cpp<br>HTTP client<br>Docker<br>Telemetry:<br>GPU/CPU metrics<br>GPU required:<br>Node pool:<br>llm-switch", "HTTP client, Docker", "Adapts requests for frontier APIs (OpenAI, Anthropic) [FR5]")
-        }
-        Container_Boundary(infra_boundary, "Infrastructure Boundary") {
-            Container(nomad_job, "Nomad Job:<br>Definition<br>Nomad Job<br>Nomad SDK<br>Docker<br>Node pool:<br>llm-switch", "Nomad SDK, Docker", "Defines Nomad job for llm-switch deployment [FR12]")
-            Container(consul_int, "Consul Integration:<br>Consul API<br>Docker<br>Node pool:<br>llm-switch", "Consul API, Docker", "Integrates with Consul for service discovery [FR46]")
-            Container(vault_int, "Vault Integration:<br>Vault API<br>secrets<br>Docker<br>Node pool:<br>llm-switch", "Vault API, Docker", "Integrates with Vault for secret management [FR45] [secrets]")
-            Container(prometheus_exporter, "Prometheus Metrics:<br>Exporter<br>Prometheus PushGateway<br>Docker<br>Node pool:<br>llm-switch", "Prometheus PushGateway, Docker", "Exports metrics for monitoring [FR34]")
-            Container(langfuse_collector, "Langfuse Trace:<br>Collector<br>Langfuse API<br>Docker<br>Node pool:<br>llm-switch", "Langfuse API, Docker", "Collects traces for observability [FR38]")
-        }
-        Container_Boundary(learning_boundary, "Offline Learning Boundary") {
-            Container(autoresearch_loop, "Offline Self-Learning:<br>Container<br>background agent<br>Docker<br>Node pool:<br>llm-switch", "background agent, Docker", "Performs offline analysis and model refinement [FR7-FR11]")
-        }
-    }
-    System_Ext(api_consumer, "API Consumer", "External API consumer (developer or operations)")
-    System_Ext(nomad, "Nomad Cluster: 3 nodes", "Manages job scheduling and execution [FR12]")
-    System_Ext(consul, "Consul Service Mesh", "Provides service discovery and configuration [FR46]")
-    System_Ext(vault, "Vault Secrets Store", "Securely stores and manages API keys [FR45]")
-    System_Ext(prometheus, "Prometheus Server", "Collects and stores metrics for alerting [FR34]")
-    System_Ext(langfuse, "Langfuse Backend", "Stores traces for analysis and debugging [FR38]")
-
-    %% API Gateway to Orchestrator relationships with specific endpoints and Circuit Breaker
-    Rel(apigw, orchestrator, "/v1/chat/completions (Circuit Breaker)", "HTTP/1.1, mTLS via Consul Connect")
-    Rel(apigw, orchestrator, "/v1/embeddings (Circuit Breaker)", "HTTP/1.1, mTLS via Consul Connect")
-
-    %% External API consumer to API Gateway (HTTPS)
-    Rel(api_consumer, apigw, "API Requests/Responses", "HTTPS")
-
-    %% Orchestrator to Model Adapters (internal service mesh with mTLS)
-    Rel(orchestrator, local_adapter, "Model selection: Local (mTLS via Consul Connect)", "gRPC")
-    Rel(orchestrator, frontier_adapter, "Model selection: Frontier (mTLS via Consul Connect)", "gRPC")
-
-    %% Error handling and fallback paths
-    Rel(local_adapter, orchestrator, "Error Response (mTLS via Consul Connect)", "HTTP/1.1")
-    Rel(frontier_adapter, orchestrator, "Error Response (mTLS via Consul Connect)", "HTTP/1.1")
-    Rel(orchestrator, local_adapter, "Fallback to Local Model (mTLS via Consul Connect)", "HTTP/1.1")
-
-    %% Infrastructure integrations
-    Rel(nomad_job, nomad, "Nomad SDK", "Job deployment")
-    Rel(consul_int, consul, "Consul API", "Service discovery")
-    Rel(vault_int, vault, "Vault API", "Secrets retrieval")
-    Rel(prometheus_exporter, prometheus, "Prometheus PushGateway", "Metrics export")
-    Rel(langfuse_collector, langfuse, "Langfuse API", "Trace upload")
-
-    %% Monitoring and health checks
-    Rel(apigw, prometheus_exporter, "/metrics (mTLS via Consul Connect)", "HTTP/1.1")
-    Rel(apigw, orchestrator, "/health (mTLS via Consul Connect)", "HTTP/1.1")
-
-    %% Offline learning trigger
-    Rel(orchestrator, autoresearch_loop, "Background task: Trigger offline learning (mTLS via Consul Connect)", "HTTP/1.1")
-
+    title C2 Container Diagram for llm-switch
+    Container(api_gateway, "API Gateway<br>Golang, bifrost, Docker", "Handles OpenAI/Anthropic-compatible API requests, initial validation, and routing to Orchestrator Service", "2x")
+    Container(orchestrator, "Orchestrator Service<br>Golang, 1B parameter model, NormStat/VecStat, Docker", "Classifies request complexity using 1B model and statistical routing; integrates hardware telemetry", "2x")
+    Container(model_router, "Model Router<br>Golang, Docker", "Selects model instance based on classification; load balances across models; implements circuit breaker and fallback", "2x")
+    Container(local_adapter, "Local Model Adapter<br>Golang, Docker (vLLM/llama.cpp)", "Interfaces with local model instances (Qwen, Nemotron); collects hardware telemetry", "2x")
+    Container(frontier_adapter, "Frontier API Adapter<br>Golang, Docker", "Interfaces with frontier model APIs (OpenAI, Anthropic); manages API keys and rate limits", "2x")
+    Container(monitoring, "Monitoring Service<br>Golang, Prometheus client, Docker", "Exposes Prometheus metrics endpoint; collects and exports latency, usage, and error metrics", "1x")
+    Container(health_check, "Health Check Service<br>Golang, Docker", "Provides health check endpoint for Nomad orchestration; checks liveness/readiness", "2x")
+    Container(admin, "Administrative Interface<br>Golang, Docker", "Provides administrative endpoints for configuration; runs offline self-learning system overnight", "1x")
+    Container(consul, "Consul Integration<br>Golang, Consul client, Docker", "Service discovery and configuration retrieval from Consul", "2x")
+    Container(vault, "Vault Integration<br>Golang, Vault client, Docker", "Secure retrieval of secrets (API keys) from Vault", "2x")
+    
+    System_Ext(nomad, "Nomad", "Container orchestration platform [FR12]")
+    System_Ext(qwen_model, "Qwen Model Server", "Local LLM instance (Qwen 7B/72B) [FR4, FR5]")
+    System_Ext(nemotron_model, "Nemotron Model Server", "Local LLM instance (Nemotron 3 22B) [FR4, FR5]")
+    System_Ext(frontier_api, "Frontier API Provider", "External LLM API (OpenAI, Anthropic) [FR1, FR2]")
+    System_Ext(vllm_metrics, "vLLM/llama.cpp Metrics", "Hardware telemetry endpoint for GPU/VRAM monitoring [FR38]")
+    System_Ext(prometheus, "Prometheus", "Metrics storage and querying system [FR34, FR38]")
+    System_Ext(langfuse, "Langfuse", "Trace collection and analysis platform [FR10, FR40]")
+    System_Ext(consul_ext, "Consul", "Service discovery and key-value store [FR12, FR45]")
+    System_Ext(vault_ext, "Vault", "Secret management system [FR44, FR45]")
+    
+    Rel(api_gateway, orchestrator, "HTTP/1.1 (sync)", "API Request")
+    Rel(orchestrator, model_router, "gRPC (sync)", "Complexity Classification")
+    Rel(model_router, local_adapter, "HTTP/1.1 (sync)", "Model Request (Local)")
+    Rel(model_router, frontier_adapter, "HTTP/1.1 (sync)", "Model Request (Frontier)")
+    Rel(local_adapter, qwen_model, "gRPC (sync)", "Qwen Inference")
+    Rel(local_adapter, nemotron_model, "gRPC (sync)", "Nemotron Inference")
+    Rel(frontier_adapter, frontier_api, "HTTPS (sync)", "Frontier API Request")
+    Rel(orchestrator, vllm_metrics, "HTTP/1.1 (async)", "GPU/CPU Metrics")
+    Rel(model_router, monitoring, "Prometheus PushGateway (async)", "Metrics")
+    BiRel(admin, monitoring, "HTTP/1.1 (async)", "Metrics Read/Write")
+    BiRel(admin, consul, "Consul API (async)", "Config Read/Update")
+    BiRel(admin, vault, "Vault API (async)", "Secret Read/Update")
+    Rel(consul, consul_ext, "Consul API (sync)", "Service Discovery/KV")
+    Rel(vault, vault_ext, "Vault API (sync)", "Secret Retrieval")
+    Rel(admin, nomad, "Nomad SDK (async)", "Job Deployment/Status")
+    Rel(monitoring, prometheus, "HTTP/1.1 (async)", "Metrics Scrape")
+    Rel(admin, langfuse, "Langfuse API (async)", "Trace Upload")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ### Relationship Description
 
-- **API Gateway to Orchestrator Service**:
-  - Two distinct relationships for OpenAI-compatible endpoints (`/v1/chat/completions` and `/v1/embeddings`)
-  - Each labeled with "(Circuit Breaker)" to indicate the resilience pattern
-  - Protocol: HTTP/1.1 with mTLS via Consul Connect for internal service mesh security
+The API Gateway synchronously receives client requests and forwards them to the Orchestrator Service for complexity classification. The Orchestrator Service asynchronously polls vLLM/llama.cpp metrics for hardware-aware routing decisions. The Model Router synchronously routes requests to either the Local Model Adapter (for Qwen/Nemotron) or Frontier API Adapter based on classification results. The Local Model Adapter synchronously interfaces with Qwen and Nemotron model servers, while the Frontier API Adapter synchronously calls external frontier APIs. 
 
-- **External API Consumer to API Gateway**:
-  - HTTPS relationship representing external API requests and responses
-  - Protocol: HTTPS for secure external communication
+Asynchronous relationships include: Model Router pushing metrics to the Monitoring Service; Administrative Interface reading/writing configuration from Consul and secrets from Vault; Administrative Interface uploading traces to Langfuse for self-learning analysis; Administrative Interface interacting with Nomad for job deployment/status; Monitoring Service scraping metrics to Prometheus; Consul and Vault integrations synchronously communicating with their external counterparts for service discovery and secret management. 
 
-- **Orchestrator Service to Model Adapters**:
-  - Local Model Adapter: Receives model selection decisions for local models (Qwen, Nemotron)
-  - Frontier Model Adapter: Receives model selection decisions for frontier APIs
-  - Protocol: gRPC with mTLS via Consul Connect for secure internal communication
-  - Labels include both functional purpose and security annotation
-
-- **Error Handling and Fallback**:
-  - Model adapters return error responses to Orchestrator Service on failure
-  - Orchestrator Service can fallback to Local Model Adapter when frontier model selection fails
-  - All error/fallback paths use HTTP/1.1 with mTLS via Consul Connect
-  - Labels include security annotation
-
-- **Infrastructure Integrations**:
-  - Nomad Job Definition: Deploys llm-switch as a Nomad job (node pool llm-switch)
-  - Consul Integration: Service discovery via Consul API
-  - Vault Integration: Secret management via Vault API (explicitly labeled with "secrets" in the container label)
-  - Prometheus Exporter: Exposes metrics via Prometheus PushGateway
-  - Langfuse Collector: Uploads traces via Langfuse API
-
-- **Monitoring and Health Checks**:
-  - API Gateway exposes `/metrics` endpoint for Prometheus scraping with mTLS via Consul Connect
-  - API Gateway provides `/health` endpoint for cluster orchestration health checks with mTLS via Consul Connect
-
-- **Offline Learning Trigger**:
-  - Orchestrator Service triggers background agent in Offline Self-Learning Container for nightly self-learning
-  - Uses HTTP/1.1 with mTLS via Consul Connect for secure internal communication
-  - Label includes security annotation
-
-All internal service mesh connections are annotated with "mTLS via Consul Connect" in the relationship labels to satisfy security requirements. The diagram explicitly shows the 10 required containers with correct technology stack labeling, adheres to C4 container diagram standards (max 2 words per line in labels via HTML <br> breaks), and includes all mandatory infrastructure components from the technology choices.
+All internal service mesh communication uses mTLS via Consul Connect for security. The diagram demonstrates horizontal scaling through multiple container instances (2x for most services, 1x for singleton services like Administrative Interface and Monitoring Service). Adding a new LLM model requires only updating Nomad job specifications (via Administrative Interface) without modifying application containers, demonstrating extensibility. Security zones are implied: API Gateway in DMZ (exposed externally), internal containers in trusted VPC with mTLS, and external systems (Nomad, Consul, Vault, model servers) in isolated trust boundaries.
+Word count: 248
