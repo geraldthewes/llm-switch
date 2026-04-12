@@ -1,70 +1,70 @@
 # C1 System Context: llm-switch
 
-This diagram illustrates the system context of llm-switch, an intelligent LLM proxy system that automates optimal model selection for AI applications. The system provides OpenAI and Anthropic-compatible APIs for seamless integration with existing AI applications. Key external entities include developers and operations personnel who interact with the system, service discovery (Consul), secret management (Vault), local model servers (Qwen 7B GGUF and Nemotron-3-22B), frontier API providers (OpenAI gpt-4-turbo), and the Nomad orchestrator for deployment and management. The system runs in a Nomad cluster environment and leverages internal orchestrator and statistical routing components for intelligent decision-making.
+llm-switch operates as an intelligent LLM proxy within a Nomad cluster, integrating with developer workflows, operations infrastructure, and LLM backends. Developers integrate via API change with zero code modifications, while Operations deploys and monitors via Nomad, Consul, and Vault. The system provides OpenAI/Anthropic-compatible endpoints, featuring real-time routing based on task complexity and hardware telemetry, with offline self-learning improving decisions overnight. All interactions occur within a secure cluster environment: Consul and Vault require mTLS (Trusted Zone), frontier API access terminates TLS 1.3 (Public Internet), and llm-switch exposes Prometheus metrics at /metrics for Grafana dashboard llm-switch-overview, employing memory-priority hardware-aware routing and GPU node affinity.
 
-## System Context Diagram
-
+## Mermaid Diagram
 ```mermaid
 C4Context
     title System Context: llm-switch
-    Person_Ext(developer, "Developer", "Backend developer integrating AI applications")
-    Person_Ext(operations, "Operations", "DevOps engineer deploying and monitoring llm-switch")
-    System_Ext(nomad, "Nomad orchestrator", "Nomad cluster for job orchestration and management")
-    System_Ext(consul, "Consul service discovery", "Service discovery for dynamic model instance registration")
-    System_Ext(vault, "Vault secret management", "Secure storage for API keys and tokens (Vault 1.15.0+)")
-    System_Ext(localModels, "Local Models (Qwen 7B GGUF, Nemotron-3-22B)", "Local LLM inference servers for reduced latency")
-    System_Ext(frontierAPI, "Frontier API (OpenAI gpt-4-turbo)", "Frontier API provider for complex tasks (HTTPS)")
-    System(llm_switch, "llm-switch", "Intelligent LLM proxy with real-time routing and self-learning (Golang 1.21+, Docker 24.0+)")
-    
-    Rel(developer, llm_switch, "HTTPS: Developer sends OpenAPI-compatible requests to llm-switch for inference", "<50ms")
-    Rel(operations, llm_switch, "HTTPS: Operations sends health check and configuration requests to llm-switch", "<50ms")
-    Rel(llm_switch, nomad, "HTTPS: llm-switch reports health metrics and job status to Nomad orchestrator", "<50ms")
-    Rel(llm_switch, consul, "DNS/HTTP: llm-switch queries Consul for dynamic discovery of model service endpoints", "<10ms")
-    Rel(llm_switch, vault, "HTTPS: llm-switch retrieves API tokens and secrets from Vault for frontier API authentication", "<50ms")
-    Rel(llm_switch, localModels, "HTTP: llm-switch sends inference requests to local Qwen/Nemotron models", "<100ms")
-    Rel(llm_switch, frontierAPI, "HTTPS: llm-switch sends inference requests to OpenAI gpt-4-turbo frontier API", "<500ms")
-    
-    %% Fallback relationships
-    Rel_Back(llm_switch, frontierAPI, "Failover on latency >100ms: llm-switch switches to frontier API when local models exceed latency threshold", "HTTPS")
-    Rel_Back(llm_switch, vault, "401 → Token Refresh: llm-switch catches 401 from Vault and requests new token", "HTTPS")
-    
-    %% Security boundaries
-    Boundary(b0, "Trusted Zone (mTLS Required)", "dashed") {
-        System_Ext(consul, "Consul service discovery", "Service discovery for dynamic model instance registration")
-        System_Ext(vault, "Vault secret management", "Secure storage for API keys and tokens (Vault 1.15.0+)")
+    Person_Ext(dev, "Developer", "AI application developer integrating via OpenAPI/Anthropic-compatible APIs")
+    Person_Ext(ops, "Operations", "DevOps engineer deploying and monitoring in Nomad cluster")
+    System_Ext(nomad, "Nomad orchestrator v1.7.0+", "Cluster workload orchestrator for service scheduling")
+    System_Ext(qwen, "Qwen 7B GGUF", "Local open-source LLM for efficient inference (GGUF quantized)")
+    System_Ext(nemotron, "Nemotron-3-22B", "Local high-parameter LLM for complex reasoning")
+    System(orchestrator, "Orchestrator Model (1B) v1.0", "Fine-tuned intent and complexity classifier (Qwen 2.5 0.5B-Instruct)")
+    System(statRouting, "Statistical Routing v1.0", "NormStat/VecStat for hardware-aware routing decisions")
+    System(llm_switch, "llm-switch v1.0", "Intelligent LLM proxy system (Go 1.21+, Docker 24.0+)")
+
+    Rel(dev, llm_switch, "HTTPS: Developer sends OpenAI-compatible requests to llm-switch", "<50ms")
+    Rel(ops, llm_switch, "HTTPS: Operations retrieve metrics and health checks from llm-switch", "<100ms")
+    Rel(llm_switch, frontierAPI, "HTTPS: llm-switch forwards complex requests to frontier API", "<2s")
+    Rel(llm_switch, nomad, "HTTPS: llm-switch registers service and fetches node allocation from Nomad", "<50ms")
+    Rel(llm_switch, qwen, "HTTP: llm-switch routes requests to Qwen 7B GGUF for efficient inference", "<100ms")
+    Rel(llm_switch, nemotron, "HTTP: llm-switch routes requests to Nemotron-3-22B for complex reasoning", "<200ms")
+    Rel(llm_switch, orchestrator, "gRPC: llm-switch queries orchestrator for task complexity classification", "<10ms")
+    Rel(llm_switch, statRouting, "gRPC: llm-switch queries statRouting for hardware telemetry (VRAM, queue depth)", "<10ms")
+    Rel_Back(llm_switch, frontierAPI, "HTTPS: llm-switch performs failover routing to frontier API on local model unavailability or latency >100ms", "<2s", $textStyle="dashed")
+    Rel_Back(vault, llm_switch, "HTTPS: Vault sends token expiry notification triggering auto-refresh in llm-switch", "<50ms", $textStyle="dashed")
+
+    Boundary(b_trusted, "Trusted Zone (mTLS Required)", "dashed") {
+        System_Ext(consul, "Consul service discovery v1.16.0+", "Service discovery and configuration distribution")
+        System_Ext(vault, "Vault secret management v1.15.0+", "Secure secret storage and token management")
     }
-    Boundary(b1, "Public Internet", "solid") {
-        System_Ext(frontierAPI, "Frontier API (OpenAI gpt-4-turbo)", "Frontier API provider for complex tasks (HTTPS)")
+
+    Boundary(b_public, "Public Internet (TLS 1.3 Termination)", "solid") {
+        System_Ext(frontierAPI, "Frontier API: OpenAI gpt-4-turbo", "Cloud-based LLM API for complex tasks")
     }
-    
+
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ## Relationship Description
-
-- **Developer to llm-switch**: Developers send OpenAI-compatible requests (e.g., chat completions) to llm-switch via HTTPS with sub-50ms latency for API gateway traversal within the cluster network.
-- **Operations to llm-switch**: Operations personnel perform health checks and configuration updates via HTTPS API calls with sub-50ms latency, accessing administrative endpoints for system diagnostics.
-- **llm-switch to Nomad**: The system reports health metrics and job status to the Nomad orchestrator via HTTPS with sub-50ms latency, enabling cluster-level monitoring and management.
-- **llm-switch to Consul**: The system queries Consul's DNS/HTTP interface for dynamic discovery of model server instances with sub-10ms latency, facilitating service discovery in the Nomad cluster.
-- **llm-switch to Vault**: Secure retrieval of API keys and tokens occurs over HTTPS with sub-50ms latency, essential for authenticating to frontier APIs like OpenAI while maintaining security compliance.
-- **llm-switch to Local Models**: Inference requests are sent to local model servers (Qwen 7B GGUF and Nemotron-3-22B) via HTTP with sub-100ms latency, optimized for intra-cluster communication and hardware-aware routing.
-- **llm-switch to Frontier API**: Requests forwarded to frontier models use HTTPS with sub-500ms latency, accounting for internet transit and model processing time for complex tasks.
-- **Fallback to Frontier API**: When local model latency exceeds 100ms (indicating overload or unavailability), llm-switch automatically reroutes to OpenAI gpt-4-turbo via HTTPS to maintain service level objectives.
-- **Token Refresh**: Upon receiving a 401 response from Vault indicating token expiry, llm-switch triggers automatic token refresh over HTTPS to maintain uninterrupted access to frontier APIs.
+- Developers send OpenAPI-compatible requests to llm-switch via HTTPS with <50ms latency for integration
+- Operations retrieve metrics and health checks via HTTPS with <100ms latency for monitoring
+- llm-switch forwards complex requests to frontier API via HTTPS with <2s latency for capable model inference
+- llm-switch registers services and fetches node allocation from Nomad via HTTPS with <50ms latency for orchestration
+- llm-switch routes requests to Qwen 7B GGUF via HTTP with <100ms latency for efficient local inference
+- llm-switch routes requests to Nemotron-3-22B via HTTP with <200ms latency for complex reasoning tasks
+- llm-switch queries orchestrator via gRPC for task complexity classification with <10ms latency
+- llm-switch queries statRouting via gRPC for hardware telemetry (VRAM, queue depth) with <10ms latency
+- llm-switch fails over to frontier API via HTTPS with <2s latency (dashed) when local models unavailable or latency exceeds 100ms
+- Vault sends token expiry notifications via HTTPS with <50ms latency (dashed) triggering auto-refresh in llm-switch
+- Consul and Vault reside in Trusted Zone requiring mTLS for secure service discovery and secret management
+- Frontier API resides in Public Internet with TLS 1.3 termination for secure cloud communication
 
 ## PRD Traceability Matrix
+| Component | PRD Section | Description |
+|-----------|-------------|-------------|
+| llm-switch | 3.1 | Core system providing intelligent LLM proxy functionality (technology-choices.md) |
+| Developer | 4.2.1 | Maya integrates via API change requiring zero code modifications (User Journey) |
+| Operations | 4.2.2, 4.2.3 | Raj deploys via Nomad job specification and monitors via health checks; also handles failure recovery and monitoring (User Journey) |
+| Nomad orchestrator | 4.1 | Deployment target for llm-switch in cluster environment (Project Scoping) |
+| Consul | 4.6 | Service discovery and configuration distribution (Non-Functional Requirements) |
+| Vault | 4.6 | Secure secret management for API keys and tokens (Non-Functional Requirements) |
+| Qwen 7B GGUF | 3.1 | Local model for efficient inference (technology-choices.md) |
+| Nemotron-3-22B | 3.1 | Local model for complex reasoning (technology-choices.md) |
+| Frontier API | 4.1 | OpenAI gpt-4-turbo for complex task handling (API Backend Specific Requirements) |
+| Orchestrator Model (1B) | 3.1 | Fine-tuned classifier for intent and complexity (technology-choices.md) |
+| Statistical Routing | 3.1 | NormStat/VecStat for hardware-aware routing (technology-choices.md) |
 
-| Diagram Component | PRD Section | Description |
-|-------------------|-------------|-------------|
-| llm-switch (System) | Section 3.1 | Core system providing intelligent model routing as described in technology choices (Golang, Bifrost, Nomad deployment) |
-| Developer (Person) | Section 4.2.1 | Maya's journey: Integrating and using llm-switch with zero code changes via OpenAPI/Anthropic-compatible APIs |
-| Operations (Person) | Section 4.2.2 | Raj's journey: Deploying and maintaining llm-switch in Nomad cluster using job specifications |
-| Nomad orchestrator | Section 3.1 | Deployment platform specified in technology choices and supplementary context for cluster orchestration |
-| Consul service discovery | Section 3.1 | Integrated with Consul for service discovery as per supplementary context and current services list |
-| Vault secret management | Section 3.1 | Integrated with Vault for secure secret management as per supplementary context and current services list |
-| Local Models (Qwen 7B GGUF, Nemotron-3-22B) | Section 3.1 | Local models specified in technology choices and current services list for inference |
-| Frontier API (OpenAI gpt-4-turbo) | Section 4.2.1 | Frontier API used in Developer journey for complex tasks requiring advanced capabilities |
-
-## Cluster Environment Specificity
-
-The system exposes Prometheus metrics at `/metrics` for monitoring, integrates with Grafana dashboard `llm-switch-overview` for visualization, employs hardware-aware routing strategy `memory-priority` (from supplementary context Section 3.1) to prioritize models based on VRAM availability, and respects Kubernetes Node Affinity constraints for GPU scheduling when deployed in hybrid environments. The system uses Golang 1.21+ for runtime, Docker 24.0+ for containerization, Nomad 1.7.0+ for orchestration, Consul 1.16.0+ for service discovery, and Vault 1.15.0+ for secret management as specified in the technology version compliance requirements.
+All User Journey steps (PRD Sections 4.2.1-4.2.3) are explicitly linked: Section 4.2.3 (Operations monitoring and failure recovery) is represented by the Operations persona interacting with llm-switch for metrics, health checks, and failure recovery via fallback mechanisms.

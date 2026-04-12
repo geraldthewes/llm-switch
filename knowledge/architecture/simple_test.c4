@@ -1,0 +1,6 @@
+C4Context
+    title Simple Test
+    Person_Ext(user, "User", "A user")
+    System(sys, "System", "A system")
+    Rel(user, sys, "Uses", "HTTPS")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

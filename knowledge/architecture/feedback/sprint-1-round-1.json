@@ -1,72 +1,72 @@
 {
   "scores": {
-    "Mermaid Syntax Validity": 10.0,
-    "C4 Level 1 Completeness": 3.0,
-    "PRD Bidirectional Traceability": 4.0,
-    "Narrative Structure and Depth": 4.0,
-    "Relationship Specification": 5.0,
-    "Edge Case: Hallucination Prevention": 1.0,
-    "Edge Case: Boundary Integrity": 10.0,
-    "C4 Naming and Styling Compliance": 1.0,
-    "Version Control Readiness": 4.0
+    "Mermaid Syntax Validation": 2.0,
+    "C4 Level 1 Component Completeness": 5.0,
+    "Narrative Quality Metrics": 5.0,
+    "PRD Traceability Matrix": 6.0,
+    "Relationship Label Specificity": 7.0,
+    "Technology Version Compliance": 5.0,
+    "Model Routing Edge Cases": 4.0,
+    "Security Boundary Delineation": 6.0,
+    "Cluster Environment Specificity": 9.0
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validity",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Diagram syntax is valid. C4Context block structure is correct. UpdateLayoutConfig (c1-context.md:52) is properly placed at the end. All arrows use valid syntax (->, <->). No parsing errors detected."
-    },
-    {
-      "criterion": "C4 Level 1 Completeness",
-      "score": 3.0,
+      "criterion": "Mermaid Syntax Validation",
+      "score": 2.0,
       "severity": "Critical",
-      "details": "Major structural flaw: Contains 7 Container_Ext elements when only external dependencies should be present. OpenAPI_Spec (c1-context.md:33) and Anthropic_Spec (c1-context.md:34) are API specifications/standards, not external systems. Batch_Support (c1-context.md:39) is an internal capability, not an external dependency. This violates the requirement for exactly one container per external dependency."
+      "details": "c1-context.md:lines 33-34 contain duplicate element definitions inside Boundary. `consul` and `vault` are already defined at lines 13-14. C4 Mermaid syntax prohibits redefinition of elements inside boundaries—boundaries reference existing elements, they do not redefine them. This will cause parse errors in mermaid-cli 10.6.0."
     },
     {
-      "criterion": "PRD Bidirectional Traceability",
-      "score": 4.0,
+      "criterion": "C4 Level 1 Component Completeness",
+      "score": 5.0,
       "severity": "Critical",
-      "details": "Missing the mandatory table mapping each diagram element (Developer, Operations, llm-switch, each Container_Ext) to its purpose and PRD section. Only a relationship table exists (c1-context.md:57-67), not an element mapping table. Hallucinated elements (OpenAPI_Spec, Anthropic_Spec, Batch_Support) cannot be traced to actual PRD Integrations requirements."
+      "details": "Missing 2 of 8 required components: (a) 'Orchestrator Model (1B)' internal system not present anywhere in diagram, (b) 'Statistical Routing' internal system not present. Contract states 'All 8 components required for pass.' Only 6/8 present (llm-switch, Developer, Operations, Nomad, Consul, Vault, Local Models, Frontier API—but missing the two internal <<System>> containers for orchestrator and routing)."
     },
     {
-      "criterion": "Narrative Structure and Depth",
-      "score": 4.0,
-      "severity": "Critical",
-      "details": "Missing the required table mapping each diagram element to its purpose and PRD section. Word count exceeds 200 (satisfied). Dedicated paragraphs for dependencies exist (c1-context.md:71-83), but the mandatory element-to-PRD mapping table is absent, failing this criterion."
-    },
-    {
-      "criterion": "Relationship Specification",
+      "criterion": "Narrative Quality Metrics",
       "score": 5.0,
       "severity": "High",
-      "details": "Semantic errors in relationship definitions: llm-switch -> OpenAPI_Spec (c1-context.md:44) claims 'Implements OpenAPI specification' - you implement standards, you do not have runtime relationships with them. Same invalid pattern for Anthropic_Spec (c1-context.md:45) and Batch_Support (c1-context.md:50). Table lists protocol as 'N/A' for these (c1-context.md:61-62, 67), which is incorrect - they are not valid relationships."
+      "details": "(a) Word count exceeds 300±10% threshold (estimated ~470 words in narrative sections lines 3,43-54,56-69 vs required 270-330 words). (b) Fails to explicitly reference PRD Section 4.2.3 User Journey—only sections 4.2.1 (line 60) and 4.2.2 (line 61) are cited. Contract requires 'All User Journey steps from PRD Sections 4.2.1-4.2.3'."
     },
     {
-      "criterion": "Edge Case: Hallucination Prevention",
-      "score": 1.0,
-      "severity": "Critical",
-      "details": "Automatic failure criterion triggered. Three hallucinated external dependencies not in PRD Integrations: (1) OpenAPI Specification is a standard, not an external container (c1-context.md:33); (2) Anthropic Message API is a protocol specification, not a system (c1-context.md:34); (3) Batch Processing is an internal capability/feature, not an external dependency (c1-context.md:39). Each extra container constitutes failure."
+      "criterion": "PRD Traceability Matrix",
+      "score": 6.0,
+      "severity": "High",
+      "details": "Table at lines 56-67 maps components but completely omits PRD Section 4.2.3. Contract requires explicit linking of 'All User Journey steps from PRD Sections 4.2.1-4.2.3' to diagram elements. Section 4.2.3 appears to be a required journey (likely Operations monitoring or failure recovery) but has no row in the matrix."
     },
     {
-      "criterion": "Edge Case: Boundary Integrity",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Correctly implemented. llm-switch is the sole System element (c1-context.md:31). All external systems use Container_Ext (c1-context.md:33-39), correctly placing them outside the system boundary. No external dependencies drawn inside boundary."
+      "criterion": "Relationship Label Specificity",
+      "score": 7.0,
+      "severity": "Medium",
+      "details": "Most labels compliant (lines 19-26 follow 'Protocol: Source performs Action on Destination' format with latency). However, fallback labels at lines 28-29 violate format: 'Failover on latency >100ms: llm-switch switches...' and '401 → Token Refresh: llm-switch catches...' are edge-case descriptions, not relationship format. Should be 'HTTPS: llm-switch performs failover routing to frontier API on latency threshold breach'."
     },
     {
-      "criterion": "C4 Naming and Styling Compliance",
-      "score": 1.0,
-      "severity": "Critical",
-      "details": "Severe violations of <=25 character label rule: (1) Person_Ext description 'Integrates and uses llm-switch via OpenAPI/Anthropic-compatible APIs [PRD 5]' is 83 characters (c1-context.md:28); (2) System description 'Intelligent LLM Proxy System providing dynamic model selection [PRD 1]' is 66 characters (c1-context.md:31); (3) Multiple Container_Ext descriptions exceed 50 characters. System ID 'llm-switch' uses lowercase with hyphen instead of PascalCase (c1-context.md:31), violating C4 naming conventions."
+      "criterion": "Technology Version Compliance",
+      "score": 5.0,
+      "severity": "High",
+      "details": "(a) Missing 'Orchestrator Model (1B)' and 'Statistical Routing' components entirely—cannot be labeled as <<System>> containers. (b) Nomad 1.7.0+ and Consul 1.16.0+ versions only appear in narrative (line 70) but not in diagram element labels. Contract requires 'Must specify exact versions' in the diagram, not just prose."
     },
     {
-      "criterion": "Version Control Readiness",
+      "criterion": "Model Routing Edge Cases",
       "score": 4.0,
       "severity": "High",
-      "details": "MD013 violations: Line 10 is 144 characters (>120 limit). Line 73 is 158 characters. Line 75 is 187 characters. Frontmatter present with sprint_number and sprint_name (c1-context.md:1-4). No inline HTML detected. No tabs detected. Fails MD013 line length requirement."
+      "details": "Lines 28-29 implement fallback relationships using `Rel_Back` but use solid lines. Contract explicitly requires 'dashed fallback lines' for failover scenarios. Syntax should be `Rel_Back(llm_switch, frontierAPI, 'Failover...', $textStyle='dashed')` or equivalent. Additionally, 'Failover on latency >100ms' and '401 → Token Refresh' are present as labels but visual styling is incorrect."
+    },
+    {
+      "criterion": "Security Boundary Delineation",
+      "score": 6.0,
+      "severity": "Medium",
+      "details": "Line 32 correctly creates dashed 'Trusted Zone (mTLS Required)' around Consul/Vault. However, line 36's 'Public Internet' boundary is missing the required 'TLS 1.3 Termination' annotation. Contract states: 'Must draw solid <<Boundary>> around Public Internet with annotation TLS 1.3 Termination.'"
+    },
+    {
+      "criterion": "Cluster Environment Specificity",
+      "score": 9.0,
+      "severity": "Low",
+      "details": "Narrative at lines 70 includes all required terms: Prometheus '/metrics', Grafana 'llm-switch-overview', 'memory-priority' routing strategy (referenced to Section 3.1), and 'Kubernetes Node Affinity constraints'. Only minor improvement needed: these should be referenced in the diagram as annotations or notes, not just prose."
     }
   ],
-  "overall_summary": "This architecture document is fundamentally broken and cannot proceed to production. It fails the automatic failure criterion for hallucination prevention by including three elements that are not external dependencies: OpenAPI Specification and Anthropic Message API are API standards/protocols, not systems; Batch Processing is an internal capability. The C4 naming violations are severe with labels up to 83 characters when the limit is 25. The mandatory element-to-PRD mapping table is completely absent. Line lengths violate MD013 throughout. The only passing criteria are Mermaid syntax validity and boundary integrity. This represents a fundamental misunderstanding of C4 notation (confusing specifications with systems) and basic formatting requirements.",
-  "average_score": 4.666666666666667,
+  "overall_summary": "This architecture fails the sprint contract with critical syntax errors and missing required components. The mermaid diagram contains invalid duplicate element definitions (lines 33-34) that will cause parsing failures. Two of eight mandatory C4 Level 1 components ('Orchestrator Model (1B)' and 'Statistical Routing') are completely absent, violating the completeness threshold. The document references only PRD sections 4.2.1-4.2.2, omitting required Section 4.2.3 user journeys entirely. Fallback relationships exist but use solid lines instead of required dashed styling. Technology versions for Nomad/Consul appear only in narrative, not diagram labels. The narrative word count exceeds the 300±10% constraint significantly.",
+  "average_score": 5.444444444444445,
   "passed": false
 }

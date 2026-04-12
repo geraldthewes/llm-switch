@@ -1,0 +1,23 @@
+2026-04-11 15:14:34,030 INFO     Log file: knowledge/architecture/logs/architect-run-20260411-151434.log
+2026-04-11 15:14:34,033 INFO       ANTHROPIC_BASE_URL=http://litellm.cluster:9999
+2026-04-11 15:14:34,034 INFO       ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-standard
+2026-04-11 15:14:34,035 INFO       ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-standard
+2026-04-11 15:14:34,036 INFO       ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-standard
+2026-04-11 15:14:34,037 INFO       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+2026-04-11 15:14:34,037 INFO       ANTHROPIC_AUTH_TOKEN=(set)
+2026-04-11 15:14:34,038 INFO       ANTHROPIC_API_KEY=(not set)
+2026-04-11 15:14:34,039 DEBUG    sys.platform='linux', git_executable='git'
+2026-04-11 15:14:34,039 INFO     Supplementary context: 1 file(s), 2753 chars
+2026-04-11 15:14:34,041 INFO     Running preflight check...
+2026-04-11 15:14:34,823 WARNING  [Preflight Generator] turn=1 API error: invalid_request
+2026-04-11 15:14:34,826 DEBUG    [Preflight Generator] turn=1 text (154 chars): There's an issue with the selected model (claude-opus-standard). It may not exist or you may not have access to it. Run --model to pick a different model.
+2026-04-11 15:14:34,848 ERROR    Fatal error in message reader: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-11 15:14:34,849 ERROR      Generator (opus): FAIL — Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-11 15:14:35,642 WARNING  [Preflight Critic] turn=1 API error: invalid_request
+2026-04-11 15:14:35,644 DEBUG    [Preflight Critic] turn=1 text (156 chars): There's an issue with the selected model (claude-sonnet-standard). It may not exist or you may not have access to it. Run --model to pick a different model.
+2026-04-11 15:14:35,668 ERROR    Fatal error in message reader: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-11 15:14:35,670 ERROR      Critic (sonnet): FAIL — Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
