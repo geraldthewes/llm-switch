@@ -1,51 +1,39 @@
-# C1 System Context: llm-switch
-
-llm-switch implements a two-part autonomous learning architecture combining real-time intelligent model selection with offline self-learning to continuously improve routing decisions without ongoing manual intervention. This directly supports the user journeys described in PRD Section 4.2: developers integrate by redirecting API calls to llm-switch, benefiting from automatic model selection based on complexity, latency, and cost without requiring code changes; operations engineers deploy in the Nomad cluster using Consul for service discovery and Vault for secret management of API credentials. The system provides a Prometheus metrics endpoint at /metrics for monitoring and integrates with Grafana dashboard llm-switch-overview (dashboard ID: llm-switch-overview). Hardware-aware routing strategies, as specified in supplementary context Section 3.1, use the memory-priority approach to dynamically assign workloads to appropriate GPU resources based on real-time VRAM availability and queue depth, while Kubernetes Node Affinity constraints ensure optimal scheduling of GPU-intensive tasks to prevent resource starvation and maintain consistent performance under varying load conditions. llm-switch supports OpenAI and Anthropic-compatible APIs, enabling seamless integration with existing AI applications through standard endpoints such as /v1/chat/completions and /v1/messages, thus eliminating the need for application-level modifications when switching between different LLM backends. Security boundaries define a trusted zone requiring mTLS for Consul and Vault communications, with frontier API access protected by TLS 1.3 termination at the public internet boundary, ensuring that sensitive credentials and configuration data remain isolated within the cluster's internal network. By dynamically routing requests to local models such as Qwen 7B GGUF and Nemotron-3-22B when feasible, llm-switch reduces frontier model API costs while maintaining response times under 500ms for 95% of requests, achieving a target local model utilization rate of 90% or higher through intelligent load balancing and failover mechanisms. The offline self-learning system analyzes routing decisions overnight to refine orchestration thresholds, progressively increasing local model utilization and improving cost efficiency without manual intervention, utilizing the AutoResearch loop to perform 5-minute training experiments that validate routing improvements before deployment.
+# C1 System Context
 
 ```mermaid
 C4Context
-    title System Context: llm-switch
-    Person_Ext(dev, "Developer", "Software developer integrating AI applications")
-    Person_Ext(ops, "Operations", "Operations engineer deploying and maintaining systems")
-    System_Ext(nomad, "Nomad orchestrator", "Nomad 1.7.0+ cluster orchestrator")
-    Boundary(b0, "Trusted Zone (mTLS Required)", "dashed") {
-        System_Ext(consul, "Consul service discovery", "Consul 1.16.0+ service mesh")
-        System_Ext(vault, "Vault secret management", "Vault 1.15.0+ secret store")
-    }
-    System_Ext(qwen, "Qwen 7B GGUF", "Local LLM model")
-    System_Ext(nemotron, "Nemotron-3-22B", "Local LLM model")
-    Boundary(b1, "Public Internet (TLS 1.3 Termination)", "solid") {
-        System_Ext(frontierAPI, "OpenAI gpt-4-turbo", "Frontier API accessed via TLS 1.3")
-    }
-    System(orchestrator, "Orchestrator Model (1B)", "1B parameter model for intent classification")
-    System(statRouting, "Statistical Routing", "NormStat/VecStat routing mechanism")
-    System(llmSwitch, "llm-switch", "Golang 1.21+ intelligent LLM proxy running in Docker 24.0+ container")
-    Rel(dev, llmSwitch, "HTTPS: Developers send OpenAPI/Anthropic requests to llm-switch", "<10ms")
-    Rel(ops, llmSwitch, "HTTPS: Operations configure and monitor llm-switch via API", "<10ms")
-    Rel(llmSwitch, nomad, "gRPC: llm-switch queries Nomad for model resource allocation", "<20ms")
-    Rel(llmSwitch, consul, "DNS/RPC: llm-switch discovers services via Consul", "<5ms")
-    Rel(llmSwitch, vault, "TLS: llm-switch retrieves API tokens from Vault", "<10ms")
-    Rel(llmSwitch, qwen, "gRPC: llm-switch routes requests to Qwen 7B GGUF based on orchestration decision", "<50ms")
-    Rel(llmSwitch, nemotron, "gRPC: llm-switch routes requests to Nemotron-3-22B based on orchestration decision", "<50ms")
-    Rel(llmSwitch, orchestrator, "gRPC: llm-switch sends feature vectors for intent classification", "<5ms")
-    Rel(llmSwitch, statRouting, "gRPC: llm-switch activates statistical routing for latent space analysis", "<5ms")
-    Rel_Back(frontierAPI, llmSwitch, "HTTPS: llm-switch fails over to OpenAI gpt-4-turbo (<100ms latency)", "HTTPS")
-    Rel_Back(vault, llmSwitch, "HTTPS: llm-switch refreshes token from Vault on 401 error (<10ms)", "HTTPS")
+    title System Context for llm-switch
+    Person_Ext(dev, "Developer", "AI application developer integrating with llm-switch via standard APIs [PRD-User Journeys - Developer Journey]")
+    Person_Ext(op, "Operations Engineer", "DevOps engineer deploying and maintaining llm-switch in Nomad cluster [PRD-User Journeys - Operations Journey]")
+    System(llmswitch, "llm-switch", "Intelligent LLM proxy for automatic model selection [PRD-Executive Summary]")
+    
+    System_Ext(nomad, "Nomad Cluster", "Orchestrator for container deployment and management [PRD-Domain-Specific Requirements - Infrastructure Reliability & Performance]")
+    System_Ext(consul, "Consul", "Service discovery and configuration store [PRD-Domain-Specific Requirements - Operational Excellence & Observability]")
+    System_Ext(vault, "Vault", "Secret management for API keys and credentials [PRD-Domain-Specific Requirements - Security & Access Control]")
+    System_Ext(localmodels, "Local Model Servers", "vLLM/llama.cpp instances hosting open-source LLMs [PRD-Technology Choices]")
+    System_Ext(frontierapis, "Frontier API Providers", "Commercial LLM APIs (OpenAI, Anthropic, etc.) [PRD-Domain-Specific Requirements - API Compatibility & Integration]")
+    System_Ext(observability, "Observability Tools", "Prometheus for metrics, langfuse for tracing [PRD-Domain-Specific Requirements - Operational Excellence & Observability]")
+    
+    Rel(dev, llmswitch, "Sends LLM requests via OpenAI/Anthropic-compatible API", "HTTP/HTTPS")
+    Rel(op, llmswitch, "Manages deployment, monitors health and metrics", "HTTP/HTTPS")
+    Rel(llmswitch, nomad, "Deploys and manages container via Nomad job specification", "HTTP")
+    Rel(llmswitch, consul, "Registers service and discovers dependencies via Consul API", "HTTP")
+    Rel(llmswitch, vault, "Retrieves API keys and secrets for frontier model access", "HTTP")
+    Rel(llmswitch, localmodels, "Routes inference requests to appropriate local model", "HTTP/gRPC")
+    Rel(llmswitch, frontierapis, "Routes inference requests to frontier models when needed", "HTTP")
+    Rel(llmswitch, observability, "Exports metrics and traces for monitoring and analysis", "HTTP/gRPC")
+    
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
-## PRD Traceability Matrix
+## System Context
+The llm-switch system is an intelligent LLM proxy designed to automate optimal model selection for AI applications while encouraging privacy-preserving, cost-effective local model usage [PRD-Executive Summary]. It eliminates manual model selection complexity by dynamically choosing the best model per query based on real-time factors such as complexity, latency, and cost [PRD-Success Criteria - User Success]. The system provides unified access through industry-standard OpenAI and Anthropic-compatible APIs, enabling seamless integration with existing AI applications requiring zero code changes [PRD-Domain-Specific Requirements - API Compatibility & Integration]. Built as a lightweight Go service, llm-switch runs in a Docker container orchestrated by Nomad, leveraging Consul for service discovery and Vault for secure secret management [PRD-Technology Choices]. The system monitors local model servers (vLLM/llama.cpp instances) and frontier API providers, making real-time routing decisions to optimize cost efficiency and response times [PRD-Success Criteria - Business Success]. With a target of under 500ms response time for 95% of routine decisions and zero request retries due to model failure, llm-switch delivers immediate usability while progressively improving accuracy through its offline self-learning system [PRD-Success Criteria - Measurable Outcomes].
 
-| Component | PRD Reference | Linked User Journey Steps |
-|-----------|---------------|---------------------------|
-| llm-switch | Section 4.2, Page 4 | 4.2.1: Maya integrates by changing application endpoint to llm-switch; 4.2.2: Raj deploys llm-switch via Nomad job specification; 4.2.3: System provides core routing capabilities, self-learning, operational excellence, and developer experience as summarized in the journey requirements. |
-| Developer | Section 4.2.1, Page 5 | 4.2.1: Maya (developer) integrates AI applications with llm-switch requiring zero code changes; benefits from automatic model selection and overnight self-learning. |
-| Operations | Section 4.2.2, Page 6 | 4.2.2: Raj (operations) deploys and maintains llm-switch with minimal ongoing intervention; checks weekly self-learning reports and adds new models via config update. |
-| Nomad orchestrator | Section 4.2.2, Page 6 | 4.2.2: llm-switch sends job specification to Nomad orchestrator for deployment; Raj uses Nomad for initial deployment and scaling. |
-| Consul service discovery | Section 4.2.2, Page 6 | 4.2.2: llm-switch queries Consul for service discovery to locate models and services; enables dynamic service registration for scaling. |
-| Vault secret management | Section 4.2.2, Page 6 | 4.2.2: llm-switch retrieves secrets from Vault for API key management; token refresh on expiry to maintain secure access. |
-| Qwen 7B GGUF | Section 4.2.1, Page 5 | 4.2.1: llm-switch routes simple tasks to Qwen 7B GGUF for local inference; 4.2.2: Utilization monitored and balanced by self-learning system to prevent overuse. |
-| Nemotron-3-22B | Section 4.2.1, Page 5 | 4.2.1: llm-switch routes moderate tasks to Nemotron-3-22B; 4.2.2: Underutilization detected and corrected overnight by self-learning system to balance load. |
-| OpenAI gpt-4-turbo | Section 4.2.1, Page 5 | 4.2.1: llm-switch routes complex tasks to frontier API; 4.2.2: Initial deployment includes frontier API credentials for fallback and high-complexity tasks. |
-| Orchestrator Model (1B) | Section 7.0, Page 6 | 4.2.1: Used for intent and complexity classification to enable real-time routing; 4.2.3: Part of the core routing capabilities that analyze task features. |
-| Statistical Routing | Section 7.0, Page 6 | 4.2.1: Activates NormStat/VecStat mechanisms for latent space analysis to refine routing decisions; 4.2.3: Part of the core routing capabilities that provide statistical fallback. |
+## User Roles
+Two primary user roles interact with llm-switch: Developers and Operations Engineers [PRD-User Journeys]. Developers integrate llm-switch by simply changing their application's endpoint from direct model APIs to llm-switch, benefiting from automatic routing without code modifications [PRD-User Journeys - Developer Journey]. They experience consistent, reliable response times and transparent model selection logic for debugging [PRD-User Experience]. Operations Engineers deploy and maintain llm-switch in the Nomad cluster, managing configuration through Consul and Vault [PRD-User Journeys - Operations Journey]. They rely on health check endpoints and metrics for monitoring, with minimal ongoing intervention due to the system's self-learning capabilities that optimize resource utilization overnight [PRD-Operational Excellence & Observability]. Both roles benefit from reduced operational overhead—developers spend zero time on model selection, while operations teams see approximately 70% reduction in LLM integration maintenance [PRD-User Journeys - Operations Journey].
+
+## External Dependencies
+llm-switch depends on six external systems for core functionality [PRD-Domain-Specific Requirements - Infrastructure Reliability & Performance]. Nomad Cluster orchestrates container deployment, ensuring scalable and fault-tolerant operation [PRD-Project Scoping & Phased Development - MVP Strategy]. Consul provides service discovery and distributed configuration, enabling dynamic registration of llm-switch instances and discovery of backend services [PRD-Domain-Specific Requirements - Operational Excellence & Observability]. Vault manages secrets including API keys for frontier models, integrating with the cluster's security infrastructure [PRD-Domain-Specific Requirements - Security & Access Control]. Local Model Servers (vLLM/llama.cpp instances) host open-source LLMs like Qwen and Nemotron, providing cost-effective inference [PRD-Technology Choices]. Frontier API Providers (OpenAI, Anthropic, etc.) offer access to commercial models when local alternatives are insufficient [PRD-Domain-Specific Requirements - API Compatibility & Integration]. Observability Tools (Prometheus for metrics, langfuse for tracing) enable monitoring, alerting, and trace accumulation for self-learning [PRD-Domain-Specific Requirements - Operational Excellence & Observability].
+
+## Key Interactions
+Developers interact with llm-switch by sending LLM requests via OpenAI/Anthropic-compatible API endpoints, which the system routes to appropriate models [PRD-Domain-Specific Requirements - API Compatibility & Integration]. Operations Engineers deploy llm-switch using Nomad job specifications, with Consul registering the service and Vault providing secrets [PRD-User Journeys - Operations Journey]. At runtime, llm-switch queries Consul for service discovery, retrieves credentials from Vault, and monitors Nomad for deployment status [PRD-Domain-Specific Requirements - Infrastructure Reliability & Performance]. The system routes requests to Local Model Servers or Frontier API Providers based on real-time complexity assessment, exporting metrics to Prometheus and traces to langfuse [PRD-Innovation & Novel Patterns - Two-Part Autonomous Learning Architecture]. During API timeout scenarios or network partitions, llm-switch implements automatic fallback to more capable models and queues requests for retry [PRD-Non-Functional Requirements - Reliability]. The self-learning system analyzes langfuse traces overnight to refine routing decisions, adjusting thresholds without manual intervention [PRD-Self-Learning & Optimization]. All interactions maintain HTTP-only communication within the cluster network, ensuring security compliance [PRD-Domain-Specific Requirements - Security & Access Control].

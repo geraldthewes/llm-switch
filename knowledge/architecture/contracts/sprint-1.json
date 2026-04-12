@@ -6,48 +6,48 @@
   ],
   "criteria": [
     {
-      "name": "Mermaid Syntax Validation",
-      "description": "Diagram must pass `mermaid -v 10.6.0 -c c1-context.md --validate` with exit code 0 and zero warnings. No deprecated C4 syntax (e.g., `]`) allowed.",
+      "name": "Mermaid Diagram Syntax Validity",
+      "description": "The Mermaid diagram in c1-context.md passes validation in mermaid-cli (mmdc) without errors or warnings, and renders in a standard Mermaid live editor without console errors.",
       "threshold": 10.0
     },
     {
-      "name": "C4 Level 1 Component Completeness",
-      "description": "Must include exactly: (1) System boundary 'llm-switch' with <<System>> container, (2) User roles 'Developer' and 'Operations', (3) System components 'Nomad orchestrator', 'Consul service discovery', 'Vault secret management', (4) Local models: 'Qwen 7B GGUF', 'Nemotron-3-22B', (5) Frontier API: 'OpenAI gpt-4-turbo', (6) Internal systems: 'Orchestrator Model (1B)', 'Statistical Routing'. All 8 components required for pass.",
+      "name": "C4 Level 1 Completeness",
+      "description": "Diagram contains exactly: 1 system box (llm-switch), 2 people boxes (developer, operations), and minimum 6 external system boxes (Nomad, Consul, Vault, local models, frontier APIs, monitoring tools). No container boxes or component boxes permitted at C1 level.",
       "threshold": 10.0
     },
     {
-      "name": "Narrative Quality Metrics",
-      "description": "Narrative must contain exactly 300 words (±10%), zero Grammarly API errors (score ≥95), and ≥85% active voice sentences as measured by NLTK passive voice detection. Must explicitly reference PRD Section 4.2 User Journeys.",
+      "name": "Relationship Specification",
+      "description": "Every external system has at least one labeled relationship arrow connecting to llm-switch, specifying protocol (e.g., gRPC, HTTP) and direction. No unlabeled connections permitted.",
       "threshold": 9.0
     },
     {
-      "name": "PRD Traceability Matrix",
-      "description": "Must include markdown table mapping each of the 8 diagram components to specific PRD section (format: 'Section X.Y, Page Z'). All User Journey steps from PRD Sections 4.2.1-4.2.3 must be explicitly linked to diagram elements.",
+      "name": "Narrative Section Requirements",
+      "description": "Markdown file contains exactly four sections: System Context (min 150 words), User Roles (min 100 words), External Dependencies (min 100 words), and Key Interactions (min 150 words). Each section must use H2 headers.",
       "threshold": 9.0
     },
     {
-      "name": "Relationship Label Specificity",
-      "description": "All connection labels must be ≥25 characters, follow format 'Protocol: <Source> performs <Action> on <Destination>' (e.g., 'HTTPS: Developers send OpenAPI requests to llm-switch'), and include latency bounds (e.g., '<50ms'). Generic labels ('uses', 'connects to') are rejected.",
+      "name": "PRD Traceability",
+      "description": "Every diagram element (system, person, external system) and every narrative statement about requirements includes a comment or footnote referencing the specific PRD section number (e.g., [PRD-3.2]).",
       "threshold": 9.0
     },
     {
-      "name": "Technology Version Compliance",
-      "description": "Must specify exact versions: Golang 1.21+, Docker 24.0+, Nomad 1.7.0+, Consul 1.16.0+, Vault 1.15.0+. Internal systems must be labeled as <<System>> containers. No generic 'Docker container' without image tag.",
+      "name": "Technology Stack Compliance",
+      "description": "Narrative explicitly lists: Golang, Docker, Nomad, Consul, Vault, vLLM, langfuse. Diagram uses correct C4 shapes (hexagon for system, person for users, rectangle for external systems). No other technology boxes permitted in diagram.",
       "threshold": 10.0
     },
     {
-      "name": "Model Routing Edge Cases",
-      "description": "Must show dashed fallback lines for: (a) Local model unavailability → Frontier API with label 'Failover on latency >100ms', (b) Vault token expiry → Auto-refresh with label '401 → Token Refresh'. Must include latency annotations for all model paths.",
+      "name": "Edge Case Coverage",
+      "description": "Narrative explicitly addresses: (1) zero-code-change integration pattern with existing applications, (2) handling of multiple model types (local vs frontier), (3) Nomad cluster deployment constraints, (4) API timeout scenarios, (5) network partition tolerance.",
       "threshold": 9.0
     },
     {
-      "name": "Security Boundary Delineation",
-      "description": "Must draw dashed <<Boundary>> container around 'Vault' and 'Consul' labeled 'Trusted Zone (mTLS Required)'. Must draw solid <<Boundary>> around 'Public Internet' with annotation 'TLS 1.3 Termination'. No internal service exposed to Public Internet boundary.",
+      "name": "File Structure Integrity",
+      "description": "File begins with H1 title 'C1 System Context', followed immediately by Mermaid diagram block (```mermaid...```), followed by narrative sections. No extraneous text before diagram.",
       "threshold": 10.0
     },
     {
-      "name": "Cluster Environment Specificity",
-      "description": "Narrative must reference: Prometheus metrics endpoint '/metrics', Grafana dashboard ID 'llm-switch-overview', hardware-aware routing strategy 'memory-priority' from supplementary context Section 3.1, and Kubernetes Node Affinity constraints for GPU scheduling.",
+      "name": "Label Consistency",
+      "description": "All labels in the Mermaid diagram match exactly (case-sensitive) with terms used in the narrative section. No abbreviation discrepancies permitted.",
       "threshold": 9.0
     }
   ]

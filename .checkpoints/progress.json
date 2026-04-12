@@ -3,15 +3,15 @@
   "current_sprint": 1,
   "total_sprints": 7,
   "completed_sprints": 0,
-  "total_rounds": 5,
-  "started_at": "2026-04-11T15:27:24.399472Z",
-  "seed": 1775921244,
+  "total_rounds": 0,
+  "started_at": "2026-04-12T12:56:31.326425Z",
+  "seed": 1775998591,
   "sprint_statuses": [
     {
       "sprint_number": 1,
       "sprint_name": "C1 System Context",
       "status": "building",
-      "rounds_completed": 5,
+      "rounds_completed": 0,
       "consecutive_passes": 0,
       "final_score": null
     },
