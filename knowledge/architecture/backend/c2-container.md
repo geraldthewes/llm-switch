@@ -4,30 +4,28 @@ date: 2026-04-13
 version: 1.0
 ---
 
-# Backend Container Architecture - llm-switch
+# Backend / Orchestration Container (C2)
 
-The llm-switch backend container serves as the central orchestration component responsible for handling incoming LLM requests, performing intelligent model routing, and managing interactions with infrastructure services. It exposes OpenAI and Anthropic-compatible API endpoints to external AI applications while integrating with Consul for service discovery, Vault for secret management, and Nomad for job orchestration. The container routes requests to local model servers (Qwen and Nemotron) or frontier API gateways based on real-time complexity assessments, implementing circuit breaker patterns, timeout handling, and fallback mechanisms to ensure reliability. Horizontal scaling is achieved through Nomad job scheduling, with health checks enabling automated failover and load balancing across model instances.
-
-## C2 Container Diagram
+This section details the backend orchestration container for llm-switch, focusing on the Nomad job specification, API endpoint documentation, and infrastructure integrations. The llm-switch application container serves as the main orchestration layer that routes LLM requests to appropriate models based on real-time complexity analysis.
 
 ```mermaid
-C4Container
-    title Backend Container Architecture - llm-switch
-    Person_Ext(ai_app, "AI Application", "Uses llm-switch for LLM inference")
-    Container(llm_switch, "llm-switch", "Golang, bifrost, Docker", "Main application handling API requests and routing")
-    Container_Ext(consul_agent, "Consul Agent", "Consul, Docker", "Service discovery and configuration")
-    Container_Ext(vault_agent, "Vault Agent", "Vault, Docker", "Secret storage and management")
-    Container_Ext(nomad, "Nomad", "Nomad, Docker", "Job orchestration and scheduling")
-    Container_Ext(qwen_local, "Qwen Local", "Qwen, vLLM/llama.cpp, Docker", "Local model server for inference")
-    Container_Ext(nemotron_local, "Nemotron Local", "Nemotron, vLLM/llama.cpp, Docker", "Local model server for inference")
-    Container_Ext(frontier_api_gateway, "Frontier API Gateway", "OpenAPI/Anthropic, Docker", "Gateway to frontier model APIs")
-    Rel(ai_app, llm_switch, "OpenAI/Anthropic-compatible API", "HTTPS")
-    Rel(llm_switch, consul_agent, "Service Discovery", "Consul API")
-    Rel(llm_switch, vault_agent, "Secret Retrieval", "Vault API")
-    Rel(llm_switch, nomad, "Job Management", "Nomad API")
-    Rel(llm_switch, qwen_local, "Inference Request", "gRPC")
-    Rel(llm_switch, nemotron_local, "Inference Request", "gRPC")
-    Rel(llm_switch, frontier_api_gateway, "Forward to Frontier Model", "HTTPS")
+C4Context
+    title llm-switch Backend Orchestration Context
+    Person_Ext(ai_app, "AI Application", "External AI application using OpenAI/Anthropic-compatible APIs")
+    Container(llm-switch, "llm-switch Application", "Go, bifrost, Docker", "Main orchestration container handling API requests and model routing")
+    Container(consul-agent, "Consul Agent", "Go", "Service discovery and configuration")
+    Container(vault-server, "Vault Server", "Go", "Secret management and token renewal")
+    Container(nomad-client, "Nomad Client", "Go", "Job scheduling and resource allocation")
+    Container(qwen-local, "Qwen Local Model", "vLLM, Python", "Local LLM inference service (1B parameter model)")
+    Container(nemotron-local, "Nemotron Local Model", "vLLM, Python", "Local LLM inference service (22B parameter model)")
+    Container(frontier-api-gateway, "Frontier API Gateway", "NGINX, Lua", "Gateway to frontier model APIs (OpenAI, Anthropic)")
+    Rel(ai_app, llm-switch, "Sends LLM requests via OpenAI/Anthropic-compatible APIs", "HTTPS")
+    Rel(llm-switch, consul-agent, "Registers service, discovers other services", "Consul API")
+    Rel(llm-switch, vault-server, "Retrieves secrets, manages tokens", "Vault API")
+    Rel(llm-switch, nomad-client, "Deploys and manages jobs", "Nomad SDK")
+    Rel(llm-switch, qwen-local, "Routes requests for local model inference", "gRPC")
+    Rel(llm-switch, nemotron-local, "Routes requests for local model inference", "gRPC")
+    Rel(llm-switch, frontier-api-gateway, "Routes requests to frontier models when local models insufficient", "HTTPS")
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
@@ -63,26 +61,22 @@ job "llm-switch" {
       }
     }
 
-    task "server" {
+    task "llm-switch" {
       driver = "docker"
 
       config {
-        image = "ghcr.io/maximhq/llm-switch:latest"
-        port_map {
-          http = 8080
-        }
+        image = "gcr.io/distroless/static-debian11:latest"
+        command = ["llm-switch"]
+        args = [
+          "-config", "/config/llm-switch.yaml"
+        ]
       }
 
+      # GPU resource allocation for local model inference
       resources {
-        cpu = 4000
+        gpu = 1
+        cpus = 4000
         memory = 8192
-        network {
-          mbits = 100
-        }
-        device {
-          name = "gpu"
-          count = 1
-        }
       }
 
       env {
@@ -90,10 +84,16 @@ job "llm-switch" {
         VAULT_ADDR       = "vault.service.consul:8200"
       }
 
+      # Vault agent configuration for secret management
       vault {
         policies = ["llm-switch-read"]
         change_mode = "restart"
+
+        # Token renewal enabled for long-running services (explicitly set)
         renewal = true
+        auth {
+          role = "llm-switch-role"
+        }
       }
     }
   }
@@ -108,6 +108,9 @@ info:
   title: llm-switch API
   version: 1.0.0
   description: Intelligent LLM proxy service for dynamic model selection
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
 servers:
   - url: http://llm-switch.service.consul:8080
     description: Internal cluster service
@@ -115,6 +118,121 @@ servers:
     description: External endpoint (with TLS termination)
 
 paths:
+  /v1/models:
+    get:
+      summary: List models
+      operationId: listModels
+      responses:
+        '200':
+          description: A list of models
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelList'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+  /v1/models/{model}:
+    get:
+      summary: Retrieve a model
+      operationId: retrieveModel
+      parameters:
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A model object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+    delete:
+      summary: Delete a model
+      operationId: deleteModel
+      parameters:
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Model deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+  /v1/models/{model}/config:
+    put:
+      summary: Update model configuration
+      operationId: updateModelConfig
+      parameters:
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelConfigUpdate'
+      responses:
+        '200':
+          description: Configuration updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
   /v1/chat/completions:
     post:
       summary: Create a chat completion
@@ -267,7 +385,6 @@ paths:
                       type: "ServiceUnavailableError"
                       param: "service"
                       code: 503
-
   /v1/completions:
     post:
       summary: Create a completion
@@ -403,7 +520,6 @@ paths:
                       type: "ServiceUnavailableError"
                       param: "service"
                       code: 503
-
   /v1/embeddings:
     post:
       summary: Create embeddings
@@ -430,10 +546,10 @@ paths:
                   - object: embedding
                     index: 0
                     embedding: [0.0023064255, -0.009327292, -0.0028842222]
-                model: text-embedding-ada-002
-                usage:
-                  prompt_tokens: 8
-                  total_tokens: 8
+                    model: text-embedding-ada-002
+                    usage:
+                      prompt_tokens: 8
+                      total_tokens: 8
         '400':
           description: Bad request
           content:
@@ -535,7 +651,6 @@ paths:
                       type: "ServiceUnavailableError"
                       param: "service"
                       code: 503
-
   /health/ready:
     get:
       summary: Readiness probe
@@ -551,7 +666,6 @@ paths:
           content:
             application/json:
               example: {status: "not ready", reason: "dependencies not healthy"}
-
   /health/live:
     get:
       summary: Liveness probe
@@ -753,7 +867,219 @@ components:
               type: string
             code:
               type: integer
+    ModelList:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [list]
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Model'
+      required:
+        - object
+        - data
+    Model:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+          enum: [model]
+        created:
+          type: integer
+        owned_by:
+          type: string
+      required:
+        - id
+        - object
+        - created
+        - owned_by
+    ModelConfigUpdate:
+      type: object
+      properties:
+        max_concurrent_requests:
+          type: integer
+        timeout_seconds:
+          type: integer
+        temperature:
+          type: number
+        required:
+          - max_concurrent_requests
+          - timeout_seconds
+          - temperature
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        required:
+          - success
+          - message
+  responses:
+    400:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    429:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-RateLimit-Limit:
+              description: Request limit per window
+              schema:
+                type: integer
+                example: 100
+            X-RateLimit-Remaining:
+              description: Requests remaining in current window
+              schema:
+                type: integer
+                example: 0
+    500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    503:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 ```
+
+#### Complete Curl Examples
+**GET Request (Model Listing)**
+```bash
+curl -X GET "https://api.example.com/v1/models" \
+  -H "Authorization: Bearer sk-llm-switch-abc123" \
+  -H "Content-Type: application/json"
+```
+Response:
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "qwen-local",
+      "object": "model",
+      "created": 1712987654,
+      "owned_by": "llm-switch"
+    },
+    {
+      "id": "nemotron-local",
+      "object": "model",
+      "created": 1712987654,
+      "owned_by": "llm-switch"
+    }
+  ]
+}
+```
+
+**POST Request (Chat Completions)**
+```bash
+curl -X POST "https://api.example.com/v1/chat/completions" \
+  -H "Authorization: Bearer sk-llm-switch-abc123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "auto",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": "Explain quantum computing in simple terms."}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 1024
+  }'
+```
+Response:
+```json
+{
+  "id": "chatcmpl-9Ox8KaNEwJ5oU76yJYQK6YqGfG6pP",
+  "object": "chat.completion",
+  "created": 1712987654,
+  "model": "nemotron-local",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Quantum computing is a type of computation that harnesses the collective properties of quantum states, such as superposition, entanglement, and interference, to perform calculations. Unlike classical computers that use bits (0s and 1s), quantum computers use quantum bits or qubits, which can exist in multiple states simultaneously."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 56,
+    "completion_tokens": 120,
+    "total_tokens": 176
+  }
+}
+```
+
+**PUT Request (Model Configuration Update)**
+```bash
+curl -X PUT "https://api.example.com/v1/models/qwen-local/config" \
+  -H "Authorization: Bearer sk-llm-switch-abc123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "max_concurrent_requests": 10,
+    "timeout_seconds": 30,
+    "temperature": 0.8
+  }'
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Configuration updated for qwen-local model"
+}
+```
+
+**DELETE Request (Model Decommission)**
+```bash
+curl -X DELETE "https://api.example.com/v1/models/nemotron-local" \
+  -H "Authorization: Bearer sk-llm-switch-abc123"
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Model nemotron-local decommissioned successfully"
+}
+```
+
+#### HTTP Status Codes and Error Formats
 
 ## Technology Choices Compliance
 

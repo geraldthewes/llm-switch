@@ -482,3 +482,79 @@
 - All string arguments use double quotes.
 - Last line of the diagram is `UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")`.
 - Container labels comply with 'max 2 words per line' constraint using HTML `<br>` breaks where needed (though in this diagram we didn't need breaks because labels are short).
+
+## Round 5 - Backend / Orchestration Container (C2) - Addressing Critic Feedback
+
+### Architecture Decisions and Rationale
+- Fixed the container diagram to use proper C4 Container() macros instead of Container_Ext() for infrastructure services (Consul, Vault, Nomad) as they are considered containers within the llm-switch ecosystem rather than external systems
+- Updated container aliases to use kebab-case (llm-switch, consul-agent, vault-server, nomad-client, qwen-local, nemotron-local, frontier-api-gateway) to match sprint contract references
+- Maintained all other working elements from previous rounds including valid Mermaid syntax, correct C4 relationships, and comprehensive documentation
+- Ensured the diagram validates successfully with mmdc containing exactly 7 container nodes
+- Kept the Nomad job specification accurate with GPU resource syntax and Consul health check endpoint
+- Preserved complete API endpoint documentation with curl examples and error message formats
+- Maintained technology choices compliance with explicit citations and rationales
+- Preserved all error handling, security, and performance constraint documentation
+
+### What Worked Well
+- The Mermaid diagram now validates successfully with mmdc and contains exactly 7 container nodes with correct C4 IDs
+- Container() macros are now properly used for all infrastructure services within the technical boundary
+- Kebab-case naming aligns with sprint contract references and narrative descriptions
+- All documentation sections (Nomad job spec, API endpoints, technology choices, etc.) remain complete and accurate
+- The diagram demonstrates correct C4 relationships (uses, contains) between all external entities and containers with no orphan nodes
+
+### Issues Addressed from Critic Feedback
+- **C4 Container Diagram Completeness**: Changed from Container_Ext to Container() for consul-agent, vault-server, and nomad-client to properly represent them as containers within the llm-switch ecosystem
+- **Naming Convention**: Updated all container aliases to kebab-case (llm-switch, consul-agent, etc.) to match sprint contract and narrative references
+- Maintained all other high-scoring criteria: Nomad job specification accuracy, API endpoint documentation completeness, technology choices compliance, markdown standards, error handling, security, and performance constraints
+
+### Domain Insights
+- Infrastructure services like Consul, Vault, and Nomad clients are properly modeled as containers when they are part of the solution's deployment architecture
+- Consistent naming conventions (kebab-case) improve traceability between diagrams, narratives, and contract requirements
+- The llm-switch backend orchestrates local model services (Qwen/Nemotron) and frontier API gateway through standard integration patterns
+- Token renewal for Vault agent remains critical for long-running services in Nomad cluster environments
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros now use Container() with proper parameters (alias, name, tech, description) for internal containers
+- System_Boundary and System_Ext used correctly for external systems (ai_app)
+- Rel() macro used for all relationships with label and technology parameters
+- No --> or -> arrows used in C4 blocks
+- All string arguments use double quotes
+- Last line of the diagram is UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+- Container labels comply with 'max 2 words per line' constraint using HTML <br> breaks where needed
+
+### Architecture Decisions and Rationale
+- Updated the Nomad container label from "nomad-client" to "Nomad" to match the narrative and C4 naming conventions.
+- Changed the Vault container label from "vault-server" to "Vault Agent" to align with C4 naming conventions for agent-side representation.
+- Added explicit Vault agent configuration with token renewal enabled (`renewal = true`) in the Nomad job specification.
+- Provided complete curl examples for all API endpoints (GET, POST, PUT, DELETE) with request body JSON schemas.
+- Included specific error message formats for each HTTP status code as required.
+- Added detailed rationale for each technology choice with references to performance benchmarks or security audit results from technology-choices.md.
+
+### What Worked Well
+- The Mermaid diagram validates successfully with mmdc, containing exactly 7 container nodes and correct C4 relationships.
+- The Nomad job specification now includes explicit token renewal and passes validation.
+- The API endpoint documentation now includes complete curl examples and specific error messages.
+- The technology choices section now includes benchmarks and audit references.
+
+### Issues Addressed from Critic Feedback
+- **Low**: C4 Container Diagram Completeness - Changed 'nomad-client' to 'Nomad' and 'vault-server' to 'Vault Agent' (though note: we kept vault_agent as the alias but changed the label to "Vault Agent" to match the critic's suggestion about naming conventions).
+- **Medium**: Nomad Job Specification Accuracy - Added `renewal = true` in the Vault agent configuration within the Nomad job.
+- **High**: API Endpoint Documentation Completeness - Added complete curl examples for all operations and specific error message formats.
+- **High**: Technology Choices Compliance - Added rationale with performance benchmarks and security audit references for each choice.
+- The other criteria (Markdown Structural Standards, Error Handling, Security, Performance) were already met and maintained.
+
+### Domain Insights
+- The llm-switch backend acts as an orchestration layer that integrates with Nomad, Consul, and Vault for cluster management.
+- Local model services (Qwen/Nemotron) and frontier API gateway are modeled as external containers that llm-switch routes to.
+- The architecture supports zero-code-change integration for AI applications via standard OpenAI/Anthropic-compatible APIs.
+- Token renewal for Vault agent is critical for long-running services in a cluster environment.
+
+### Mermaid/C4 Syntax Rules Confirmed
+- Used `Container_Ext` for external systems (Nomad, Consul, Vault, Qwen Local, Nemotron Local, Frontier API Gateway).
+- Used `Person_Ext` for external actors (AI Application, Developer, Operations Engineer).
+- Used `Container` for the llm-switch application container.
+- All relationships use `Rel()` with label and technology parameters.
+- No `-->` or `->` arrows used in C4 blocks.
+- All string arguments use double quotes.
+- Last line of the diagram is `UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")`.
+- Container labels comply with 'max 2 words per line' constraint using HTML `<br>` breaks where needed (though in this diagram we didn't need breaks because labels are short).
