@@ -424,6 +424,8 @@
 - **Mermaid Diagram Validity & Completeness**: Diagram validates via `mmdc -i diagram.mmd --validate` with exit code 0, contains exactly 7 container nodes, demonstrates correct C4 relationships
 - **C4 Container Diagram Completeness**: Explicitly includes llm-switch application container, Consul agent, Vault server, Nomad client, local model services (Qwen/Nemotron), frontier API gateways, and external AI applications, with each component labeled with its correct C4 ID and showing at least one 'uses' relationship to external services
 - **Technology Choices Compliance**: Explicitly cites technology-choices.md, specifies Go version (1.21+), Docker base image (gcr.io/distroless/static-debian11), bifrost library version (v0.4.0+), and provides rationale for each choice
+- Fixed infrastructure service boundary issue: Removed Container_Boundary that incorrectly implied infrastructure services were internal to llm-switch system
+- Corrected Nomad job comment: Ensured memory specification clearly states 8GB (not 8MB) though value 8192 was already correct
 
 ### Domain Insights
 - llm-switch acts as an intelligent proxy between external AI applications and various backend infrastructure services
@@ -600,6 +602,48 @@
 
 ### Mermaid/C4 Syntax Rules Confirmed
 - All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+- Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
+- Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+
+## Backend Container Architecture (C2) - Sprint 4 - Round 8 (Current)
+
+### Architecture Decisions and Rationale
+- Fixed infrastructure service boundary issue: Changed infrastructure services (consul-agent, vault-agent, nomad-client) from Container to Container_Ext to properly represent them as external systems that llm-switch integrates with, not containers within the llm-switch ecosystem
+- Corrected Nomad job comment: Ensured memory specification clearly states 8GB (not 8MB) though value 8192 was already correct
+- Maintained all other working elements including valid Mermaid syntax, correct C4 relationships, and comprehensive documentation
+- Ensured the diagram validates successfully with mmdc containing exactly 7 required container nodes plus 1 external entity
+
+### What Worked Well
+- Following the C4 macro whitelist exactly prevented parsing errors
+- Using UpdateLayoutConfig as the last line of the diagram
+- Proper placement of all elements with correct dependency directions
+- Clear, descriptive labels that match the narrative sections
+- Ensured correct dependency direction (llm-switch depends ON Nomad/Consul/Vault, not vice versa)
+- Used explicit PRD-mandated technology stack: Go and bifrost
+- All container labels comply with 'max 2 words per line' constraint using HTML <br> breaks where needed
+- Legend placed outside diagram to avoid parsing errors with 'note' keyword
+
+### Issues Addressed from Critic Feedback
+- **Low**: C4 Container Diagram Completeness - Fixed infrastructure service boundary issue by changing consul-agent, vault-agent, and nomad-client from Container to Container_Ext to properly represent them as external systems
+- **Medium**: Nomad Job Specification Accuracy - Corrected Nomad job comment to clearly state 8GB instead of 8MB (value 8192 was already correct)
+- Maintained all other high-scoring criteria: API endpoint documentation completeness, technology choices compliance, markdown standards, error handling, security, and performance constraints
+
+### Domain Insights
+- llm-switch acts as an intelligent proxy between external AI applications and various backend infrastructure services
+- The system follows a client-server pattern where AI applications are clients and llm-switch is the server handling routing decisions
+- Infrastructure services (Consul for service discovery, Vault for secret management, Nomad for orchestration) are external dependencies that llm-switch integrates with
+- Local model services (Qwen/Nemotron) and frontier API gateway are represented as external services that llm-switch routes to
+- The architecture supports the core value proposition of intelligent model selection based on complexity, latency, and cost
+- Proper boundary representation is crucial for accurate C4 diagrams - infrastructure services should be external when they are dependencies llm-switch relies on
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() for internal container (llm-switch) and Container_Ext() for external systems (consul-agent, vault-agent, nomad-client, qwen-local, nemotron-local, frontier-api-gateway, ai-app)
 - System_Boundary and System_Ext used correctly
 - Rel() macro used for all relationships with label and technology parameters
 - UpdateLayoutConfig must be last line

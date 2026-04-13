@@ -346,3 +346,18 @@
 - [Low] Performance and Resource Constraints (10.0/10): Complete performance constraints: p99 latency SLA < 200ms for API responses under 1000 QPS load (line 987). Memory: 2GB container with OOMKilled prevention (line 992, 1005), CPU: 4000 millicores with 
 **Summary**: Production-ready architecture document substantially exceeding sprint contract requirements. The Mermaid diagram validates successfully with all 7 required container nodes. Nomad job includes exact GPU syntax (gpu = 1), Consul health checks at /health/ready, and Vault token renewal. OpenAPI 3.0 spec
 ---
+
+## Sprint 4 · Round 8 — 2026-04-13 18:22:20 UTC
+**Score**: 7.4/10  **Passed**: No
+**Concerns**:
+- [High] Mermaid Diagram Validity & Completeness (6.0/10): Diagram passes mmdc validation but violates contract: contains 8 container nodes instead of exactly 7. backend/c2-container.md:16-31 defines: llm-switch, consul-agent, vault-agent (should be vault-ser
+- [High] C4 Container Diagram Completeness (7.0/10): Diagram contains all required components but misnames vault-server as vault-agent (line 24). While architecturally correct for Nomad, this deviates from contract specification. All C4 IDs present and 
+- [Medium] Nomad Job Specification Accuracy (9.0/10): HCL passes structural requirements: GPU syntax correct at line 109 (`gpu = 1`), health check at lines 77-83 with correct /health/ready path, 10s interval, 3s timeout. Vault config at lines 118-132 inc
+- [Low] API Endpoint Documentation Completeness (9.5/10): Excellent coverage. OpenAPI 3.0 spec at lines 169-684 includes all authentication (X-API-Key header at line 188, OAuth2 at lines 189-196), rate limiting headers (lines 356-366), curl examples for all 
+- [Medium] Technology Choices Compliance (5.0/10): Cites incorrect line numbers in technology-choices.md. backend/c2-container.md:869,873,877 all reference 'lines 1-2' but lines 1-2 contain only document header ('# Technology Choices...'). Actual tech
+- [Medium] Markdown Structural Standards (8.0/10): Document follows structural standards: YAML frontmatter at lines 1-5 with author/date/version, heading hierarchy maintained (H1 at line 7, H2 at lines 9,13,57,165,865,913,925,952,983). Code blocks spe
+- [Low] Error Handling and Failure Scenarios (9.0/10): Complete error handling documentation at lines 925-951. Timeout values correct (30s LLM at line 928, 5s Consul at line 929, 10s Vault at line 930). Retry logic documented (lines 932-934: 3 attempts, 1
+- [High] Security and Compliance (7.0/10): TLS 1.3 and cipher suites documented (lines 955-956). mTLS with 24h rotation (line 957). 90-day API key rotation (line 960). CRITICAL: Vault secrets path at line 962 uses '/secret/llm-switch/{environm
+- [High] Performance and Resource Constraints (6.0/10): p99 latency SLA documented (line 986: <200ms under 1000 QPS). CRITICAL: Memory specification mismatch - contract requires '2GB container with OOMKilled prevention' but line 108 specifies 8192MB (8GB) 
+**Summary**: Round 8 evaluation reveals persistent structural deviations from Sprint 4 contract despite Round 7 passing at 9.8/10. The document is comprehensive but fails on specific quantitative requirements: (1) Mermaid diagram contains 8 containers instead of exactly 7 with vault-server renamed to vault-agent
+---
