@@ -2,8 +2,8 @@
   "status": "running",
   "current_sprint": 3,
   "total_sprints": 7,
-  "completed_sprints": 1,
-  "total_rounds": 20,
+  "completed_sprints": 2,
+  "total_rounds": 21,
   "started_at": "2026-04-12T12:56:31.326425Z",
   "seed": 1775998591,
   "sprint_statuses": [
@@ -30,10 +30,10 @@
     {
       "sprint_number": 3,
       "sprint_name": "Frontend Container",
-      "status": "building",
-      "rounds_completed": 2,
+      "status": "passed",
+      "rounds_completed": 3,
       "consecutive_passes": 1,
-      "final_score": null,
+      "final_score": 9.857142857142858,
       "best_round": 2,
       "best_scores": {
         "Mermaid Diagram Validity": 10.0,
