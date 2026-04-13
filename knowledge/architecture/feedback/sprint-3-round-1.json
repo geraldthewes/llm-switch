@@ -1,0 +1,107 @@
+{
+  "scores": {
+    "Mermaid Diagram Validity": 9.5,
+    "C4 Completeness": 9.0,
+    "Narrative Structure": 5.0,
+    "PRD Accuracy": 9.5,
+    "Integration Documentation": 5.0,
+    "Markdown Heading Hierarchy": 8.0,
+    "Code Block Specification": 9.5,
+    "List Formatting Consistency": 9.0,
+    "Whitespace Normalization": 8.5,
+    "Technology Alignment": 5.0,
+    "Diagram Renderability": 5.0,
+    "Cross-reference Integrity": 10.0,
+    "File Encoding": 10.0,
+    "Security Headers Documentation": 10.0
+  },
+  "feedback": [
+    {
+      "criterion": "Mermaid Diagram Validity",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "mmdc validates successfully (exit 0) at /tmp/validate.svg. Diagram uses C4Container notation with 9 labeled relationships (lines 23-30) showing protocols (HTTP/1.1, HTTPS, REST API, etc.). Minor deduction: no WCAG 2.1 AA color contrast verification."
+    },
+    {
+      "criterion": "C4 Completeness",
+      "score": 9.0,
+      "severity": "Low",
+      "details": "Diagram contains all 9 required containers: llm-switch (line 14), 3 API clients (lines 15-17: code_review_tool, chat_application, data_analysis_tool), Local Model (line 18), Frontier Model (line 19), Consul (line 20), Vault (line 21), Nomad (line 22). All relationships have directionality and protocol labels. Minor deduction for potential missing container boundary visualization."
+    },
+    {
+      "criterion": "Narrative Structure",
+      "score": 5.0,
+      "severity": "Critical",
+      "details": "File contains 6 H2 sections in correct order (Introduction line 3, Architecture line 7, API Endpoints line 45, Deployment Configuration line 86, Observability line 153, PRD Requirements Mapping line 223). However, Introduction word count appears to be ~180 words, but the criterion requires 'min 100 words' which is met. Critical gap: Section 3 'API Endpoints' lacks explicit request/response JSON schema examples as required. Section 6 PRD table exists but lacks explicit word count validation for other sections."
+    },
+    {
+      "criterion": "PRD Accuracy",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "API endpoint paths match PRD: POST /v1/chat/completions (line 59), POST /v1/messages (line 74). Correct headers (Content-Type: application/json) present in curl examples. Authorization headers differ slightly (Bearer vs X-API-Key) between endpoints but both are valid. Status codes and JSON schemas not explicitly documented in response examples."
+    },
+    {
+      "criterion": "Integration Documentation",
+      "score": 5.0,
+      "severity": "Critical",
+      "details": "CRITICAL GAPS: 1) Consul service registration HCL present within Nomad job file (lines 105-115) but lacks standalone Consul registration example. 2) NO Vault secret retrieval Go code snippet present - only Nomad vault config (lines 131-134). Criterion explicitly requires 'Vault secret retrieval (Go code snippet)'. 3) Nomad job deployment HCL present (lines 91-145). Missing 1 of 3 required executable code examples."
+    },
+    {
+      "criterion": "Markdown Heading Hierarchy",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "File starts with H1 title (line 1: '# llm-switch Container Architecture (C2)'). H1 is unique (1 per file). Headings follow H1→H2→H3 hierarchy: H2 at lines 3,7,45,86,153,223. H3 at lines 34,49,54,90,157,168,176. H4 at lines 57,72 ('#### Example:'). CRITICAL: Skips H3 between H2 and H4 at lines 57 and 72 (## API Endpoints at line 45 → #### Example at line 57, missing ###). This violates 'no skipped levels' criterion."
+    },
+    {
+      "criterion": "Code Block Specification",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "All code blocks specify language: mermaid (line 11), bash (lines 58,73,149,218), hcl (line 91), yaml (line 158), json (line 177). All blocks have ≥2 lines. Dockerfile-lint validation not applicable (no Dockerfile). HCL is parseable by Nomad config validation. Minor deduction for lack of explicit validation statements."
+    },
+    {
+      "criterion": "List Formatting Consistency",
+      "score": 9.0,
+      "severity": "Low",
+      "details": "Unordered lists use '-' format consistently (lines 36-43, 49-52, 54-55, 169-174). Ordered lists not present. Indentation uses 2 spaces. No mixed list types at same level. Meets criteria."
+    },
+    {
+      "criterion": "Whitespace Normalization",
+      "score": 8.5,
+      "severity": "Medium",
+      "details": "File is UTF-8 with LF line endings (cat -A shows $ not ^M$). However, inconsistencies detected: (1) Line 43 has trailing content that may have trailing whitespace. (2) Between H2 sections (e.g., line 34 '## Relationship Description' and line 45 '## API Endpoints'), there are 11 lines of content, not exactly 2 blank lines. (3) File ends at line 271 without trailing newline (last char is not \\n)."
+    },
+    {
+      "criterion": "Technology Alignment",
+      "score": 5.0,
+      "severity": "Critical",
+      "details": "MISSING REQUIRED STATEMENT. Criterion requires exact statement: 'This container implements the API backend using Go and the bifrost library. Frontend UI frameworks (React, Vue, Angular) are explicitly out of scope.' Line 5 mentions 'Built using Go and the bifrost library' but does NOT contain the exact required text. Also MISSING reference to technology-choices.md as explicitly required. This is a contract violation."
+    },
+    {
+      "criterion": "Diagram Renderability",
+      "score": 5.0,
+      "severity": "Critical",
+      "details": "Mermaid diagram validates with mmdc (exit 0) and renders. However, CRITICAL: No fallback ASCII diagram present. Criterion explicitly states: 'Must include fallback ASCII diagram if image generation fails.' The document lacks any ASCII-art representation of the architecture as a backup."
+    },
+    {
+      "criterion": "Cross-reference Integrity",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "No internal links (#section-name) present in the document. No broken anchor links to report. Section references use consistent naming convention (kebab-case in table at line 223+). N/A - no links to validate."
+    },
+    {
+      "criterion": "File Encoding",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "File is UTF-8 encoded without BOM (verified via file command). Line endings are LF (Unix) only (cat -A shows $ not ^M$). No Windows carriage returns. Meets criteria."
+    },
+    {
+      "criterion": "Security Headers Documentation",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "No security headers mentioned in the document. Criterion states 'If security headers mentioned...' - since none are mentioned, this criterion is N/A. Pass."
+    }
+  ],
+  "overall_summary": "This Sprint 3 Frontend Container document (frontend/c2-container.md) has catastrophic failures in critical criteria that prevent production deployment. **Technology Alignment** fails (5.0/10, threshold 10.0) because the document lacks the explicitly required statement about Go/bifrost and out-of-scope UI frameworks, plus no reference to technology-choices.md. **Diagram Renderability** fails (5.0/10, threshold 9.0) because no ASCII fallback diagram is present. **Integration Documentation** fails (5.0/10, threshold 9.5) due to missing Vault secret retrieval Go code snippet - only Nomad HCL config exists. **Narrative Structure** fails (5.0/10, threshold 9.0) because Section 3 lacks JSON schema examples and Section 4 lacks explicit Nomad job file content validation. **Markdown Heading Hierarchy** fails (8.0/10, threshold 10.0) due to skipped levels: H2 at line 45 directly to H4 at lines 57,72 without intervening H3. The Mermaid diagram validates but lacks WCAG color contrast verification. While the architecture content is comprehensive (46 PRD requirements mapped), the document fails 5 of 14 criteria with scores below thresholds, making it unsuitable for production.",
+  "average_score": 8.071428571428571,
+  "passed": false
+}

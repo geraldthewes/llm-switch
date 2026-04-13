@@ -3,7 +3,7 @@
   "current_sprint": 3,
   "total_sprints": 7,
   "completed_sprints": 1,
-  "total_rounds": 18,
+  "total_rounds": 19,
   "started_at": "2026-04-12T12:56:31.326425Z",
   "seed": 1775998591,
   "sprint_statuses": [
@@ -31,11 +31,26 @@
       "sprint_number": 3,
       "sprint_name": "Frontend Container",
       "status": "building",
-      "rounds_completed": 0,
+      "rounds_completed": 1,
       "consecutive_passes": 0,
       "final_score": null,
-      "best_round": null,
-      "best_scores": null
+      "best_round": 1,
+      "best_scores": {
+        "Mermaid Diagram Validity": 9.5,
+        "C4 Completeness": 9.0,
+        "Narrative Structure": 5.0,
+        "PRD Accuracy": 9.5,
+        "Integration Documentation": 5.0,
+        "Markdown Heading Hierarchy": 8.0,
+        "Code Block Specification": 9.5,
+        "List Formatting Consistency": 9.0,
+        "Whitespace Normalization": 8.5,
+        "Technology Alignment": 5.0,
+        "Diagram Renderability": 5.0,
+        "Cross-reference Integrity": 10.0,
+        "File Encoding": 10.0,
+        "Security Headers Documentation": 10.0
+      }
     },
     {
       "sprint_number": 4,

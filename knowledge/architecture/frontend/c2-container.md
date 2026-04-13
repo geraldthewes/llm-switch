@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The llm-switch system is an intelligent LLM proxy designed to automate optimal model selection for AI applications while encouraging privacy-preserving, cost-effective local model usage. It eliminates manual model selection complexity by dynamically choosing the best model per query based on real-time factors such as task complexity, latency, and cost. The system provides unified access through industry-standard OpenAI and Anthropic-compatible APIs, enabling seamless integration with existing AI applications requiring zero code changes. Built using Go and the bifrost library, llm-switch is designed for deployment in a Nomad cluster environment with integration to Consul for service discovery and Vault for secret management. The architecture follows a two-part autonomous learning architecture combining real-time intelligent model selection with offline self-learning capabilities that continuously improve routing decisions without manual intervention.
+The llm-switch system is an intelligent LLM proxy designed to automate optimal model selection for AI applications while encouraging privacy-preserving, cost-effective local model usage. It eliminates manual model selection complexity by dynamically choosing the best model per query based on real-time factors such as task complexity, latency, and cost. The system provides unified access through industry-standard OpenAI and Anthropic-compatible APIs, enabling seamless integration with existing AI applications requiring zero code changes. This container implements the API backend using Go and the bifrost library. Frontend UI frameworks (React, Vue, Angular) are explicitly out of scope. As specified in technology-choices.md, llm-switch is designed for deployment in a Nomad cluster environment with integration to Consul for service discovery and Vault for secret management. The architecture follows a two-part autonomous learning architecture combining real-time intelligent model selection with offline self-learning capabilities that continuously improve routing decisions without manual intervention.
 
 ## Architecture
 
@@ -31,6 +31,24 @@ C4Container
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
+**Fallback ASCII Diagram (if Mermaid rendering fails):**
+```
+[Code Review Tool]    [Chat Application]    [Data Analysis Tool]
+        |                   |                       |
+        | HTTP/1.1/OpenAPI  | HTTP/1.1/Anthropic    | HTTP/1.1/Both
+        v                   v                       v
+               +---------------------+
+               |   llm-switch API    |
+               |  (Go, bifrost)      |
+               +----------+----------+
+                          |
+        +-----------------+-----------------+
+        |                 |                 |
+        v                 v                 v
+[Local Model]  [Frontier Model]  [Consul]  [Vault]  [Nomad]
+(vLLM)      (REST API)   (Discovery)  (Secrets) (Orchestration)
+```
+
 ### Relationship Description
 
 - **Code Review Tool → llm-switch**: Sends code analysis requests via OpenAI-compatible API over HTTP/1.1
@@ -41,6 +59,7 @@ C4Container
 - **llm-switch → Consul**: Discovers available model instances and performs health checks via Consul API
 - **llm-switch → Vault**: Retrieves decrypted API keys for frontier model access via Vault API
 - **llm-switch → Nomad**: Reports job status, resource utilization, and custom metadata via Nomad API
+
 
 ## API Endpoints
 
@@ -54,6 +73,7 @@ The llm-switch provides OpenAI-compatible and Anthropic-compatible API endpoints
 ### Anthropic-Compatible Endpoints
 - **POST /v1/messages**: Message creation requests
 
+### Example Requests
 #### Example: OpenAI Chat Completion Request
 ```bash
 curl -X POST http://llm-switch.service.consul:8080/v1/chat/completions \
@@ -81,6 +101,86 @@ curl -X POST http://llm-switch.service.consul:8080/v1/messages \
       {"role": "user", "content": "Explain the concept of model routing in LLMs."}
     ]
   }'
+```
+
+### Request/Response JSON Schema Examples
+#### OpenAI Chat Completion Request Schema
+```json
+{
+  "model": "llm-switch-router",
+  "messages": [
+    {
+      "role": "system|user|assistant",
+      "content": "string"
+    }
+  ],
+  "temperature": "number (optional, default 0.7)",
+  "max_tokens": "integer (optional)",
+  "stream": "boolean (optional, default false)"
+}
+```
+
+#### OpenAI Chat Completion Response Schema
+```json
+{
+  "id": "string",
+  "object": "chat.completion",
+  "created": "integer (Unix timestamp)",
+  "model": "llm-switch-router",
+  "choices": [
+    {
+      "index": "integer",
+      "message": {
+        "role": "assistant",
+        "content": "string"
+      },
+      "finish_reason": "string|null"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": "integer",
+    "completion_tokens": "integer",
+    "total_tokens": "integer"
+  }
+}
+```
+
+#### Anthropic Message Request Schema
+```json
+{
+  "model": "llm-switch-router",
+  "max_tokens": "integer",
+  "messages": [
+    {
+      "role": "user|assistant",
+      "content": "string"
+    }
+  ],
+  "temperature": "number (optional, default 0.7)",
+  "stream": "boolean (optional, default false)"
+}
+```
+
+#### Anthropic Message Response Schema
+```json
+{
+  "id": "string",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "string"
+    }
+  ],
+  "model": "llm-switch-router",
+  "stop_reason": "string|null",
+  "stop_sequence": "string|null",
+  "usage": {
+    "input_tokens": "integer",
+    "output_tokens": "integer"
+  }
+}
 ```
 
 ## Deployment Configuration
@@ -148,6 +248,56 @@ job "llm-switch" {
 To deploy the job:
 ```bash
 nomad job run llm-switch.nomad.hcl
+```
+
+### Consul Service Registration (HCL)
+```hcl
+service {
+  name = "llm-switch"
+  port = 8080
+
+  check {
+    type     = "http"
+    path     = "/health"
+    interval = "10s"
+    timeout  = "2s"
+  }
+}
+```
+
+### Vault Secret Retrieval (Go Code Snippet)
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+
+	vault "github.com/hashicorp/vault/client"
+)
+
+func getLLMSwitchAPIKey() (string, error) {
+	// Configure Vault client
+	client, err := vault.NewClient(&vault.Config{
+		Address: os.Getenv("VAULT_ADDR"),
+	})
+	if err != nil {
+		return "", err
+	}
+
+	// Read secret from Vault
+	secret, err := client.KVv2Get(context.Background(), "secret/data/llm-switch/api-keys", nil)
+	if err != nil {
+		return "", err
+	}
+
+	// Extract API key from secret data
+	if apiKey, ok := secret.Data["api_key"].(string); ok {
+		return apiKey, nil
+	}
+	return "", nil
+}
 ```
 
 ## Observability
