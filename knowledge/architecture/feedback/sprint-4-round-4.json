@@ -1,0 +1,72 @@
+{
+  "scores": {
+    "Mermaid Diagram Validity & Completeness": 10.0,
+    "C4 Container Diagram Completeness": 9.5,
+    "Nomad Job Specification Accuracy": 4.0,
+    "API Endpoint Documentation Completeness": 6.0,
+    "Technology Choices Compliance": 10.0,
+    "Markdown Structural Standards": 6.0,
+    "Error Handling and Failure Scenarios": 10.0,
+    "Security and Compliance": 10.0,
+    "Performance and Resource Constraints": 10.0
+  },
+  "feedback": [
+    {
+      "criterion": "Mermaid Diagram Validity & Completeness",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Diagram validates successfully via `mmdc` (exit 0) at backend/c2-container.md:9-36. Contains exactly 7 container nodes: llm_switch (line 16), consul_agent (line 17), vault_agent (line 18), nomad (line 19), qwen_local (line 20), nemotron_local (line 21), frontier_api_gateway (line 22). All C4 relationships correctly labeled between external entities (ai_app, dev, ops) and containers with no orphan nodes."
+    },
+    {
+      "criterion": "C4 Container Diagram Completeness",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "All required containers present with correct C4 IDs: llm-switch (line 16), Consul agent (line 17), Vault server (line 18), Nomad (line 19), local models Qwen/Nemotron (lines 20-21), Frontier API Gateway (line 22), external AI application (line 12). Correct C4 IDs present with 'uses' relationships (lines 28-33). Minor issue: Uses Container_Ext for infrastructure services (Consul/Vault/Nomad) rather than Container, which is semantically correct but inconsistent with the criterion's naming convention."
+    },
+    {
+      "criterion": "Nomad Job Specification Accuracy",
+      "score": 4.0,
+      "severity": "Critical",
+      "details": "CRITICAL FAILURE: Missing mandatory GPU resource syntax. The criterion explicitly requires `resources { gpu = 1 }` or `resources { gpu = 1; cpus = 4000; memory = 8192 }`. Current specification at lines 87-93 shows only `cpu = 4000`, `memory = 2048`, and network allocation. The justification at line 121 ('GPU resource syntax: Not required for llm-switch application itself') does not satisfy the contract requirement. Other requirements met: Consul health check `/health/ready` with interval 10s/timeout 3s (lines 70-75), Vault configuration with `renewal = true` (line 100), ACL policies (line 96)."
+    },
+    {
+      "criterion": "API Endpoint Documentation Completeness",
+      "score": 6.0,
+      "severity": "High",
+      "details": "OpenAPI 3.0 specification present (lines 134-521) with X-API-Key header authentication (lines 150-155) and OAuth2 Bearer token support (lines 156-160). Complete curl examples provided (lines 526-563). All HTTP status codes documented (200, 400, 401, 403, 429, 500, 503) with error message formats (lines 569-586). CRITICAL GAP: Missing rate limiting headers X-RateLimit-Remaining and X-RateLimit-Limit in the response schema. These headers are required by the contract but not defined anywhere in the OpenAPI spec."
+    },
+    {
+      "criterion": "Technology Choices Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Complete compliance. Citations to technology-choices.md with section numbers present (Section 1 lines 592-631, Section 2 line 605, Section 3 line 609, Section 4 line 613, etc.). Go 1.21+ specified (line 595). Docker base image gcr.io/distroless/static-debian11 specified (line 597). Bifrost v0.4.0+ cited (line 601). Rationale provided with performance benchmarks (TechEmpower Framework Benchmarks line 594) and security audit references (Trivy scan line 599, Trail ofBits audit line 603)."
+    },
+    {
+      "criterion": "Markdown Structural Standards",
+      "score": 6.0,
+      "severity": "High",
+      "details": "CRITICAL GAP: Missing YAML frontmatter with document metadata. The criterion explicitly requires YAML frontmatter with author, date, and version. File begins at line 1 with H1 '# Backend / Orchestration Container (C2)' instead of frontmatter block. Other standards met: Heading hierarchy correct (H1 line 1, H2 lines 5,48,127,588,637,648,671,691), code blocks specify language identifiers (mermaid, hcl, yaml, bash, json)."
+    },
+    {
+      "criterion": "Error Handling and Failure Scenarios",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Complete documentation. Timeout values: 30s LLM inference (line 651), 5s Consul discovery (line 652), 10s Vault operations (line 653). Retry logic: 3 attempts with exponential backoff 1s, 2s, 4s (line 656). Circuit breaker: 5 failures in 30s triggers open state for 60s (line 661). Dead letter queue with PagerDuty alerting integration (lines 665-669)."
+    },
+    {
+      "criterion": "Security and Compliance",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Complete documentation. TLS 1.3 for external communications (line 674). Cipher suite TLS_AES_256_GCM_SHA384 specified (line 675). mTLS for service mesh with 24h certificate rotation (line 676). API key rotation with 90-day max age (line 680). Vault secrets path structure `/secret/c2/*` (line 681). ACL policies for service accounts (line 682)."
+    },
+    {
+      "criterion": "Performance and Resource Constraints",
+      "score": 10.0,
+      "severity": "Low",
+      "details": "Complete documentation. p99 latency SLA < 200ms under 1000 QPS load (line 694). Memory limit 2GB with OOMKilled prevention (line 699). CPU limit 4000 millicores with burst to 8000 (line 700). Concurrent connection limit 100 per instance with load shedding at 80% CPU (line 702)."
+    }
+  ],
+  "overall_summary": "The backend/c2-container.md document shows improvement over previous rounds with valid Mermaid diagrams, complete error handling, security, and performance sections. However, it fails critically on **Nomad Job Specification Accuracy (4.0/10)** due to missing the mandatory GPU resource syntax `resources { gpu = 1 }` that the contract explicitly requires, despite the justification at line 121 claiming GPU is not needed. **API Endpoint Documentation Completeness (6.0/10)** fails due to missing X-RateLimit-Remaining and X-RateLimit-Limit headers in the OpenAPI specification (lines 134-521). **Markdown Structural Standards (6.0/10)** fails due to missing YAML frontmatter with document metadata (author, date, version) at the beginning of the file. These gaps prevent the document from meeting the sprint contract threshold.",
+  "average_score": 8.38888888888889,
+  "passed": false
+}

@@ -124,3 +124,18 @@ that caused the regression. Check critic-history.md for what the critic flagged.
 Your next round should build on this baseline — do NOT reintroduce the changes
 that caused the regression. Check critic-history.md for what the critic flagged.
 ---
+
+## Sprint 4 · Round 4 — 2026-04-13 07:11:12 UTC
+**Feedback addressed**: 9 concern(s) from prior critic round (avg 8.8/10)
+**Files modified**: sprint-4-round-3-log.json, sprint-4-round-3.json, progress.json, .brainstorm.md.swp, approach.md, c2-container.md, boundary_internal_test.md, boundary_test.md, critic-history.md, generator-history.md, minimal.md, nest_test.md, nested_system_test.md, nested_test.md, original.md, progress.json, puppeteer.config.js, puppeteer.config.json, simple.md, simple_test.c4, step1.md, test.c4, test.md, test2.md, test3.md, test_boundaries.md, test_boundary_rel.md, test_c4_linkstyle.md, test_c4_linkstyle2.md, test_dashed.md, test_dummy.c4, test_internal_systems.md, test_linkstyle.md, test_linkstyle2.md, test_linkstyle_before.md, test_linkstyle_c4.md, test_linkstyle_c4_final.md, test_linkstyle_debug.md, test_linkstyle_in_c4.md, test_linkstyle_index.md, test_linkstyle_rel.md, test_minimal.c4, test_minimal.md, test_new_approach.md, test_no_linkstyle.md, test_rel.md, test_rel_back.md, test_rel_back_dashed.md, test_system_boundary.md, test_system_boundary2.md, test_system_boundary_internal.md, test_system_component.md
+**Token usage**: 0
+---
+
+## [ROLLBACK] Sprint 4 · Round 4 — 2026-04-13 07:19:10 UTC
+**Action**: Architecture files reverted to best-scoring commit
+**Reason**: Score regressed 8.4/10 vs best 8.8/10
+**Reverted to commit**: `bd035e396248`
+**What this means**: The files you see now reflect the best architecture so far.
+Your next round should build on this baseline — do NOT reintroduce the changes
+that caused the regression. Check critic-history.md for what the critic flagged.
+---

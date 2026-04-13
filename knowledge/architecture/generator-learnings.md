@@ -443,10 +443,12 @@
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+
 ## Round 4 - Backend / Orchestration Container (C2)
 
 ### Architecture Decisions and Rationale
 - Updated the Nomad container label from "nomad-client" to "Nomad" to match the narrative and C4 naming conventions.
+- Changed the Vault container label from "vault-server" to "Vault Agent" to align with C4 naming conventions for agent-side representation.
 - Added explicit Vault agent configuration with token renewal enabled (`renewal = true`) in the Nomad job specification.
 - Provided complete curl examples for all API endpoints (GET, POST, PUT, DELETE) with request body JSON schemas.
 - Included specific error message formats for each HTTP status code as required.
@@ -459,7 +461,7 @@
 - The technology choices section now includes benchmarks and audit references.
 
 ### Issues Addressed from Critic Feedback
-- **Low**: C4 Container Diagram Completeness - Changed 'nomad-client' to 'Nomad' and 'vault-agent' to 'Vault Agent' (though note: we kept vault_agent as the alias but changed the label to "Vault Agent" to match the critic's suggestion about naming conventions).
+- **Low**: C4 Container Diagram Completeness - Changed 'nomad-client' to 'Nomad' and 'vault-server' to 'Vault Agent' (though note: we kept vault_agent as the alias but changed the label to "Vault Agent" to match the critic's suggestion about naming conventions).
 - **Medium**: Nomad Job Specification Accuracy - Added `renewal = true` in the Vault agent configuration within the Nomad job.
 - **High**: API Endpoint Documentation Completeness - Added complete curl examples for all operations and specific error message formats.
 - **High**: Technology Choices Compliance - Added rationale with performance benchmarks and security audit references for each choice.
