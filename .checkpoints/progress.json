@@ -58,7 +58,7 @@
       "status": "building",
       "rounds_completed": 8,
       "consecutive_passes": 0,
-      "final_score": null,
+      "final_score": 7.388888888888889,
       "best_round": 7,
       "best_scores": {
         "Mermaid Diagram Validity & Completeness": 10.0,
