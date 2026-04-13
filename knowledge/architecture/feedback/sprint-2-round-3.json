@@ -1,93 +1,65 @@
 {
   "scores": {
-    "Mermaid Syntax Validity": 10.0,
-    "C4 Level 2 Component Inventory": 10.0,
-    "Relationship Protocol Specification": 8.0,
-    "PRD Section 4.2 Alignment": 9.0,
-    "Technology Stack Explicit Labeling": 9.0,
-    "C4 Container Diagram Standards": 9.5,
-    "Critical Infrastructure Presence": 10.0,
-    "Dependency Direction Validation": 10.0,
-    "Security Compliance": 10.0,
-    "Error Handling Paths": 10.0,
-    "API Gateway Routing Rules": 9.5,
-    "Nomad Job Constraints": 8.0
+    "Mermaid Diagram Validity": 9.5,
+    "C4 Level 2 Completeness": 7.5,
+    "Relationship Accuracy": 6.0,
+    "PRD and Technology Alignment": 7.5,
+    "Narrative Documentation Quality": 8.5,
+    "Extensibility Edge Case": 8.5,
+    "Failure Handling Visibility": 5.5,
+    "Security and Cost Boundaries": 7.5
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validity",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Diagram validates successfully with mmdc (exit code 0) at /tmp/validate.svg. No syntax errors detected."
+      "criterion": "Mermaid Diagram Validity",
+      "score": 9.5,
+      "severity": "Medium",
+      "details": "mmdc validates successfully (exit 0) with no syntax errors. Line 6-73 contains valid C4Container syntax. Minor deduction: WCAG 2.1 AA color contrast compliance for default C4Container styling (blue #1168BD) is not explicitly verified or overridden with WCAG-compliant colors."
     },
     {
-      "criterion": "C4 Level 2 Component Inventory",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All 10 containers present with technology stacks: API Gateway (c2-container.md:line 12), Real-time Routing Container (line 13), Local Model Adapter (line 14), Frontier Model Adapter (line 15), Nomad Job Definition (line 16), Consul Integration (line 17), Vault Integration (line 18), Prometheus Metrics Exporter (line 19), Langfuse Trace Collector (line 20), Offline Self-Learning Container (line 21). Note: Uses 'Real-time Routing Container' and 'Offline Self-Learning Container' per PRD Section 4.2 rather than 'Orchestrator Service' and 'AutoResearch Loop Agent' listed in criterion."
-    },
-    {
-      "criterion": "Relationship Protocol Specification",
-      "score": 8.0,
+      "criterion": "C4 Level 2 Completeness",
+      "score": 7.5,
       "severity": "High",
-      "details": "Line 31 uses 'Circuit Breaker' (a pattern, not a protocol) instead of 'HTTP/1.1' in the 4th parameter of Rel(): `Rel(apiGateway, realTimeRouting, \"Routes request\", \"Circuit Breaker\")`. Line 49 uses 'HTTPS' instead of 'HTTP/1.1' for frontier API calls. These deviate from the exact protocol labels required by the criterion."
+      "details": "Missing distinct 'Orchestrator Service' container - 'Real-time Routing Container' (line 16) appears to be a different architectural concept. The PRD explicitly requires an 'Orchestrator Service' that manages the routing workflow. While most containers are present (API Gateway line 9, Model Router line 17, Local Model Instances lines 19-23, Frontier API Adapter line 24, Monitoring Service line 26, Health Check Service line 25, Administrative Interface line 29, Persistent Storage lines 30-31, External System boundary line 7), the missing Orchestrator Service represents a fundamental architectural gap. Also, the External System boundary (line 7) encompasses all containers including llm-switch internal containers, which contradicts C4 Level 2 conventions where External System should only contain truly external dependencies (Nomad cluster, Consul, Vault, model servers, etc.)."
     },
     {
-      "criterion": "PRD Section 4.2 Alignment",
-      "score": 9.0,
+      "criterion": "Relationship Accuracy",
+      "score": 6.0,
+      "severity": "Critical",
+      "details": "All relationships use solid lines (Rel statements), but the contract requires dashed lines for asynchronous relationships. Asynchronous flows that incorrectly use solid lines: Model Router → Langfuse trace collector (line 52), Langfuse → Offline Self-Learning (line 53), Offline Self-Learning → Model Router (line 54), telemetry pulls (lines 55-58), and Dead Letter Queue write (line 72). These MUST use Rel() with dashed styling to distinguish from synchronous flows. Additionally, the self-learning trace flow is indirect (Model Router → Langfuse → Offline Self-Learning) rather than the direct 'Model Router → Self-learning system' implied by the contract language."
+    },
+    {
+      "criterion": "PRD and Technology Alignment",
+      "score": 7.5,
+      "severity": "High",
+      "details": "Network segmentation exists with DMZ (line 8) and Internal VPC (line 11) boundaries, but no explicit firewall boundary visualized between the public-facing API Gateway (line 9) and internal containers. The contract requires 'firewall boundaries' to be shown. Golang labels (lines 9-29), bifrost usage (lines 43, 16-18), Nomad deployment topology (lines 13-14 with GPU/Memory/node pool constraints), and Consul/Vault integration points (lines 30-31, 64-65) are present. Hardware telemetry integration (lines 16, 19-23 with GPU/CPU metrics) is correctly shown."
+    },
+    {
+      "criterion": "Narrative Documentation Quality",
+      "score": 8.5,
       "severity": "Medium",
-      "details": "OpenAI/Anthropic-compatible endpoints mentioned in narrative (line 56) but not explicitly labeled on diagram as '/v1/chat/completions' and '/v1/embeddings'. 'Nomad Cluster: 3 nodes' not explicitly labeled on diagram—only 'Nomad Manager/Client' (line 23) and 'Orchestration platform' (line 23). Missing the explicit '3 nodes' specification required by PRD."
+      "details": "Word count of 198 (line 3) falls within the 150-250 threshold. The narrative covers container purposes, bifrost messaging, mTLS encryption, and hardware telemetry. However, it lacks explicit description of 'how the diagram supports the developer and operations journeys from the PRD' - a specific requirement. The narrative mentions 'self-learning traces' and 'configuration artifacts' but does not explain the developer experience of zero-code-change model integration or the operations engineer experience of monitoring and incident response."
     },
     {
-      "criterion": "Technology Stack Explicit Labeling",
-      "score": 9.0,
+      "criterion": "Extensibility Edge Case",
+      "score": 8.5,
       "severity": "Medium",
-      "details": "Orchestrator Service referred to as 'Real-time Routing Container' (line 13) which aligns with PRD Section 4.2 but deviates from criterion's explicit name requirement. Frontier Model Adapter (line 15) lacks explicit 'vLLM/llama.cpp' integration label—only Local Model Adapter (line 14) shows it. 'Telemetry: GPU/CPU metrics' specified as 'Hardware telemetry' (line 13), slightly different from required format."
+      "details": "Horizontal scaling is demonstrated with load balancers (Qwen LB line 18, Nemotron LB line 21) routing to pools of identical adapters (lines 19-20, 22-23). Configuration artifacts (Nomad Job line 13, Consul Config line 14) are visually separated in a boundary (line 12). However, the diagram fails to explicitly demonstrate that 'adding a new LLM model must be shown as a configuration change...without touching application containers' - this is only implied through the presence of Nomad job specs, not explicitly visualized as a workflow or relationship."
     },
     {
-      "criterion": "C4 Container Diagram Standards",
-      "score": 9.5,
-      "severity": "Low",
-      "details": "Legend present (lines 5-6). Container descriptions generally within 15-word limit. Static structure maintained. Minor deduction: Some container labels use multi-word technical terms like 'NormStat/VecStat' (line 13) which borders on exceeding the 2-words-per-line guideline for technical clarity."
+      "criterion": "Failure Handling Visibility",
+      "score": 5.5,
+      "severity": "Critical",
+      "details": "Almost entirely missing from the visual diagram. (1) No fallback paths shown: when Qwen or Nemotron fail, there are no visual arrows showing requests routing to alternate models. (2) Circuit breaker pattern only exists as text in Model Router label (line 17: 'implements...circuit breaker') but no visual indicator (e.g., dashed fallback arrows or circuit breaker symbol). (3) Dead Letter Queue (line 32) is present with 'After 3 retries' relationship (line 72), which is correct, but the intermediate retry logic and automatic rerouting are not visualized. (4) Health check bidirectional flow (line 71) exists but automatic rerouting behavior is not shown."
     },
     {
-      "criterion": "Critical Infrastructure Presence",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All infrastructure components present: Nomad labeled 'Nomad Manager/Client' (line 23), Consul labeled 'Consul Service Mesh' (line 24), Vault labeled 'Vault Secrets Store' (line 25), Prometheus labeled 'Prometheus Server' (line 26), Langfuse labeled 'Langfuse Backend' (line 27)."
-    },
-    {
-      "criterion": "Dependency Direction Validation",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Correct dependency flow: llm-switch containers initiate calls to Nomad (line 47), Consul (lines 38, 44, 45), and Vault (line 40). No arrows originate from infrastructure to containers except internal flows (lines 39, 41, 46 which are return flows). Complies with Technology Choices Section 7.2."
-    },
-    {
-      "criterion": "Security Compliance",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Vault Integration shows 'secrets' annotation (line 18: 'Docker\\nsecrets'). External connection shows 'HTTPS' (line 49). Internal mesh shows 'mTLS via\\nConsul Connect' in description (line 17). All security requirements met."
-    },
-    {
-      "criterion": "Error Handling Paths",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All required patterns present: Circuit Breaker between API Gateway and Real-time Routing Container (line 31), 'Error Response' paths from adapters to orchestrator (lines 35-36), 'Fallback to Local Model' mechanism (line 33)."
-    },
-    {
-      "criterion": "API Gateway Routing Rules",
-      "score": 9.5,
-      "severity": "Low",
-      "details": "All routes documented in container description (line 12): '/v1/* → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter'. Also present as embedded note (line 6). Could be more explicit as diagram annotations rather than description text, but meets threshold."
-    },
-    {
-      "criterion": "Nomad Job Constraints",
-      "score": 8.0,
-      "severity": "Medium",
-      "details": "Constraints visible in Nomad Job Definition (line 16) and 'GPU required' on Frontier Model Adapter (line 15). However, 'Memory: 32GB' is listed in Nomad Job Definition (line 16) but NOT on Local Model Adapter (line 14) as required by criterion. Should be explicitly labeled on the Local Model Adapter container."
+      "criterion": "Security and Cost Boundaries",
+      "score": 7.5,
+      "severity": "High",
+      "details": "Security zones partially implemented: DMZ (line 8) and Internal VPC (line 11) boundaries exist, but no firewall visualized between them. Authentication flows (mTLS) shown only in protocol labels (lines 43-72) rather than as explicit security relationship annotations. Cost differentiation exists via 'Low Cost' (lines 45-46) and 'High Cost' (line 47) labels. VRAM utilization tiers shown at lines 37 (24GB Qwen) and 38 (48GB Nemotron). However, 'VRAM utilization tiers affecting routing decisions' is not explicitly shown as a decision flow or annotated on the Model Router relationships."
     }
   ],
-  "overall_summary": "The c2-container.md architecture is production-ready with valid Mermaid syntax and complete C4 Level 2 composition. Critical gaps exist in Relationship Protocol Specification (using 'Circuit Breaker' as a protocol label instead of 'HTTP/1.1' on line 31, and 'HTTPS' instead of 'HTTP/1.1' on line 49). PRD Section 4.2 Alignment is missing explicit endpoint labels '/v1/chat/completions' and '/v1/embeddings' on the diagram and the '3 nodes' specification for Nomad. Technology Stack labeling uses PRD-correct terminology ('Real-time Routing Container') but deviates from criterion's explicit naming. Nomad Job Constraints missing 'Memory: 32GB' on Local Model Adapter (line 14). Security compliance, dependency direction, error handling paths, and critical infrastructure presence are all correctly implemented. The diagram is functionally complete but requires protocol label corrections and constraint relocations to meet all thresholds.",
-  "average_score": 9.416666666666666,
+  "overall_summary": "Round 3 shows incremental improvement over Rounds 1-2, particularly in Mermaid validity and basic container completeness. However, the diagram remains critically deficient in Failure Handling Visibility (5.5/10) and Relationship Accuracy (6.0/10). The most egregious issues are: (1) all relationships use solid lines, violating the contract requirement that asynchronous flows must be dashed; (2) no visual fallback paths or circuit breaker patterns exist, only text labels claiming their existence; (3) missing distinct 'Orchestrator Service' container; (4) lack of explicit firewall boundaries between DMZ and Internal VPC. The narrative meets word count (198) but lacks explicit developer/operations journey descriptions. To pass, the next iteration must: convert async relationships (lines 52-54, 55-58, 72) to dashed styling, add visual fallback arrows from Model Router to alternate models on failure, add explicit firewall boundary between lines 8 and 11, add distinct Orchestrator Service container, and explicitly show how new models are added via Nomad configuration.",
+  "average_score": 7.5625,
   "passed": false
 }
