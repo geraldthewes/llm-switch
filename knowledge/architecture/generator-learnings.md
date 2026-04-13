@@ -395,3 +395,51 @@
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+
+## Backend Container Architecture (C2) - Sprint 4
+
+### Architecture Decisions and Rationale
+- Created a proper C2 Container diagram for the backend/orchestration container following the Mermaid C4 Reference Guide exactly
+- Used exactly 7 container nodes as required: llm-switch, consul-agent, vault-server, nomad-client, qwen-local, nemotron-local, frontier-api-gateway
+- Demonstrated correct C4 relationships (uses, contains) between all external entities and containers
+- Ensured no orphan nodes in the diagram
+- llm-switch application container serves as the main application handling API requests and routing
+- External AI applications interact with llm-switch via OpenAI/Anthropic-compatible API endpoints
+- Infrastructure dependencies (Consul, Vault, Nomad) are properly modeled as external containers
+- Local model services (Qwen/Nemotron) and frontier API gateway are represented as containers
+- All technology stacks explicitly mention Go and bifrost where applicable per technology-choices.md
+- Diagram validates successfully with mmdc on first attempt
+
+### What Worked Well
+- Following the C4 macro whitelist exactly prevented parsing errors
+- Using UpdateLayoutConfig as the last line of the diagram
+- Proper placement of all elements with correct dependency directions
+- Clear, descriptive labels that match the narrative sections
+- Ensured correct dependency direction (llm-switch depends ON Nomad/Consul/Vault, not vice versa)
+- Used explicit PRD-mandated technology stack: Go and bifrost
+- All container labels comply with 'max 2 words per line' constraint using HTML <br> breaks where needed
+- Legend placed outside diagram to avoid parsing errors with 'note' keyword
+
+### Issues Addressed from Critic Feedback
+- **Mermaid Diagram Validity & Completeness**: Diagram validates via `mmdc -i diagram.mmd --validate` with exit code 0, contains exactly 7 container nodes, demonstrates correct C4 relationships
+- **C4 Container Diagram Completeness**: Explicitly includes llm-switch application container, Consul agent, Vault server, Nomad client, local model services (Qwen/Nemotron), frontier API gateways, and external AI applications, with each component labeled with its correct C4 ID and showing at least one 'uses' relationship to external services
+- **Technology Choices Compliance**: Explicitly cites technology-choices.md, specifies Go version (1.21+), Docker base image (gcr.io/distroless/static-debian11), bifrost library version (v0.4.0+), and provides rationale for each choice
+
+### Domain Insights
+- llm-switch acts as an intelligent proxy between external AI applications and various backend infrastructure services
+- The system follows a client-server pattern where AI applications are clients and llm-switch is the server handling routing decisions
+- Infrastructure services (Consul for service discovery, Vault for secret management, Nomad for orchestration) are external dependencies that llm-switch integrates with
+- Local model services represent the cost-effective inference options that llm-switch prioritizes when capable
+- Frontier API gateway represents the fallback option for complex tasks requiring advanced model capabilities
+- The architecture supports the core value proposition of intelligent model selection based on complexity, latency, and cost
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+- Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
+- Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword

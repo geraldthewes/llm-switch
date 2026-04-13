@@ -1,0 +1,54 @@
+{
+  "sprint_number": 4,
+  "sprint_name": "Backend / Orchestration Container",
+  "files_to_produce": [
+    "backend/c2-container.md"
+  ],
+  "criteria": [
+    {
+      "name": "Mermaid Diagram Validity & Completeness",
+      "description": "All Mermaid diagrams must pass validation via `mmdc -i diagram.mmd --validate` with exit code 0, contain exactly 7 container nodes (llm-switch, consul-agent, vault-server, nomad-client, qwen-local, nemotron-local, frontier-api-gateway), and demonstrate correct C4 relationships (uses, contains) between all external entities and containers with no orphan nodes.",
+      "threshold": 10.0
+    },
+    {
+      "name": "C4 Container Diagram Completeness",
+      "description": "C4 container diagram must explicitly include llm-switch application container, Consul agent, Vault server, Nomad client, local model services (Qwen/Nemotron), frontier API gateways, and external AI applications, with each component labeled with its correct C4 ID and showing at least one 'uses' relationship to external services and no missing dependency arrows.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Nomad Job Specification Accuracy",
+      "description": "Nomad job specification must pass `nomad job validate` with exit code 0, include exact GPU resource syntax `resources { gpu = 1 }` or `resources { gpu = 1; cpus = 4000; memory = 8192 }`, define Consul health check endpoint `/health/ready` with interval 10s timeout 3s, and include Vault agent configuration with token renewal enabled and proper ACL roles.",
+      "threshold": 10.0
+    },
+    {
+      "name": "API Endpoint Documentation Completeness",
+      "description": "Must provide OpenAPI 3.0 specification for all endpoints including authentication requirements (X-API-Key header, OAuth2 Bearer tokens), rate limiting headers (X-RateLimit-Remaining, X-RateLimit-Limit), complete curl examples for GET/POST/PUT/DELETE with request body JSON schemas, and document all HTTP status codes (200, 400, 401, 403, 429, 500, 503) with specific error message formats.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Technology Choices Compliance",
+      "description": "Must explicitly cite section numbers and line numbers from technology-choices.md, specify Go version (1.21+), Docker base image (gcr.io/distroless/static-debian11), bifrost library version (v0.4.0+), and provide rationale for each choice with references to performance benchmarks or security audit results.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Markdown Structural Standards",
+      "description": "Must pass `markdownlint --config .markdownlintrc` with zero errors, maintain heading hierarchy (H1: Title, H2: Sections, H3: Subsections), use consistent YAML frontmatter with document metadata (author, date, version), and ensure all code blocks specify language identifiers (go, json, yaml, mermaid, bash).",
+      "threshold": 10.0
+    },
+    {
+      "name": "Error Handling and Failure Scenarios",
+      "description": "Must document specific timeout values (30s for LLM inference, 5s for Consul discovery, 10s for Vault operations), retry logic (3 attempts with exponential backoff: 1s, 2s, 4s), circuit breaker thresholds (5 failures in 30s triggers open state for 60s), and dead-letter queue configuration for failed requests with PagerDuty alerting integration.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Security and Compliance",
+      "description": "Must specify TLS 1.3 for all external communications with cipher suites (TLS_AES_256_GCM_SHA384), mTLS for service mesh with certificate rotation every 24h, API key rotation procedure with 90-day max age, and Vault secrets path structure (`/secret/c2/*`) with proper ACL policies limiting read/write permissions by service account.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Performance and Resource Constraints",
+      "description": "Must define p99 latency SLA < 200ms for API responses under 1000 QPS load, memory limits (2GB container with OOMKilled prevention), CPU limits (4000 millicores with burst capability), and concurrent connection limits (100 per instance) with graceful degradation behavior (load shedding at 80% CPU) documented.",
+      "threshold": 10.0
+    }
+  ]
+}
