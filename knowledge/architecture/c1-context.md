@@ -61,3 +61,7 @@ When local models cannot satisfy a request, llm-switch falls back to Frontier AP
 Throughout this process, llm-switch emits metrics and traces to Observability Tools over HTTP/gRPC, enabling real-time monitoring and feeding data into the offline self-learning system that refines routing decisions overnight. [PRD-FR34] [PRD-FR35]
 The system implements configurable timeout values for each backend model, with circuit breaker patterns that temporarily halt requests to consistently slow or failing models (addresses API timeout scenarios; high impact: maintains system responsiveness under backend degradation). [PRD-Domain-Specific Requirements - Infrastructure Reliability & Performance]
 In the event of Consul or Vault network partitions, llm-switch utilizes cached service information and retains previously fetched secrets for a configurable grace period, ensuring continued operation during transient network issues (addresses network partition tolerance; medium impact: allows graceful degradation without data loss). [PRD-Domain-Specific Requirements - Operational Excellence & Observability]
+
+
+
+ uv run adversarial-architect   --prd _bmad-output/planning-artifacts/prd.md   --output knowledge/architecture   --model-generator opus   --model-critic sonnet --context docs/technology-choices.md --resume 

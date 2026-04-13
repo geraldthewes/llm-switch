@@ -1,93 +1,65 @@
 {
   "scores": {
-    "Mermaid Syntax Validity": 10.0,
-    "C4 Level 2 Component Inventory": 10.0,
-    "Relationship Protocol Specification": 10.0,
-    "PRD Section 4.2 Alignment": 4.0,
-    "Technology Stack Explicit Labeling": 9.0,
-    "C4 Container Diagram Standards": 6.0,
-    "Critical Infrastructure Presence": 10.0,
-    "Dependency Direction Validation": 10.0,
-    "Security Compliance": 10.0,
-    "Error Handling Paths": 10.0,
-    "API Gateway Routing Rules": 10.0,
-    "Nomad Job Constraints": 10.0
+    "Mermaid Diagram Validity": 9.0,
+    "C4 Level 2 Completeness": 8.0,
+    "Relationship Accuracy": 4.0,
+    "PRD and Technology Alignment": 9.5,
+    "Narrative Documentation Quality": 9.0,
+    "Extensibility Edge Case": 9.5,
+    "Failure Handling Visibility": 9.0,
+    "Security and Cost Boundaries": 9.5
   },
   "feedback": [
     {
-      "criterion": "Mermaid Syntax Validity",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "Diagram validates successfully with mmdc (exit code 0). No syntax errors detected."
-    },
-    {
-      "criterion": "C4 Level 2 Component Inventory",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All 10 required containers present with technology stacks: API Gateway (line 12), Orchestrator Service (line 13), Local Model Adapter (line 14), Frontier Model Adapter (line 15), Nomad Job Definition (line 16), Consul Integration (line 17), Vault Integration (line 18), Prometheus Metrics Exporter (line 19), Langfuse Trace Collector (line 20), AutoResearch Loop Agent (line 21)."
-    },
-    {
-      "criterion": "Relationship Protocol Specification",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All protocols correctly specified: HTTP/1.1 (lines 31, 35-37), gRPC (lines 32-34), Nomad SDK (line 47), Consul API (lines 38-39, 45-46), Vault API (lines 40-41), Prometheus PushGateway (line 42), Langfuse API (lines 43-44). Directionality matches PRD Section 4.3."
-    },
-    {
-      "criterion": "PRD Section 4.2 Alignment",
-      "score": 4.0,
-      "severity": "Critical",
-      "details": "CRITICAL misalignment: Diagram uses 'Orchestrator Service' (line 13) and 'AutoResearch Loop Agent' (line 21) instead of explicitly mandated 'Real-time Routing Container' and 'Offline Self-Learning Container'. Additionally, Nomad infrastructure labeled 'Nomad Manager/Client 3 nodes' (line 23) instead of required 'Nomad Cluster: 3 nodes'. This fundamentally misrepresents the two-part architecture mandated in PRD Section 4.2. This is a regression from Round 3's successful implementation."
-    },
-    {
-      "criterion": "Technology Stack Explicit Labeling",
+      "criterion": "Mermaid Diagram Validity",
       "score": 9.0,
       "severity": "Medium",
-      "details": "Line 13 Orchestrator Service shows '1B' but criterion explicitly requires '1B parameter model'. The descriptive text is missing, reducing clarity about what the '1B' specification represents."
+      "details": "mmdc validation exits 0 successfully (lines 6-78), syntax is valid. However, WCAG 2.1 AA color contrast compliance (minimum 4.5:1) is not verified - default C4Container styling uses blue (#1168BD) text which may fail contrast requirements in dark themes. Per contract: 'Must render correctly in both light and dark themes with WCAG 2.1 AA compliant color contrast ratios' [c2-container.md:1]. No explicit color customization ensures accessibility compliance."
     },
     {
-      "criterion": "C4 Container Diagram Standards",
-      "score": 6.0,
+      "criterion": "C4 Level 2 Completeness",
+      "score": 8.0,
       "severity": "High",
-      "details": "Line 13 contains 'Telemetry: GPU/CPU metrics' which is 4 words, significantly exceeding the 'max 2 words per line' constraint. Criterion also requires 'legend present explaining symbols' - while lines 5-6 describe the notes, a proper C4 legend is absent. Container label formatting does not match the 'Name: Tech1, Tech2' format specified in the criterion."
+      "details": "Critical container responsibility fields are empty. Line 14 (Nomad Job Definition) has empty responsibility: `Container(nomad_job, ..., \"\", \"nomad_config\")`. Line 15 (Consul Configuration) has empty responsibility: `Container(consul_config, ..., \"\", \"nomad_config\")`. Lines 20-24 (Qwen/Nemotron Adapters) have empty responsibility fields. Per contract: 'Each container must be labeled with technology stack, responsibility, and replication factor' [sprint_contract]. This violates the explicit completeness threshold of 10.0."
     },
     {
-      "criterion": "Critical Infrastructure Presence",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All infrastructure components present: Nomad labeled 'Nomad Manager/Client' (line 23), Consul labeled 'Consul Service Mesh' (line 24), Vault labeled 'Vault Secrets Store' (line 25), Prometheus labeled 'Prometheus Server' (line 26), Langfuse labeled 'Langfuse Backend' (line 27)."
+      "criterion": "Relationship Accuracy",
+      "score": 4.0,
+      "severity": "Critical",
+      "details": "CRITICAL FAILURE: All 40+ relationships use solid lines (Rel statements), violating the explicit requirement to 'distinguish synchronous (solid lines) from asynchronous (dashed lines)'. Asynchronous relationships incorrectly using solid lines: (1) Line 54: Model Router → Langfuse Trace Collector ('Send Traces', asynchronous). (2) Line 55: Trace Collector → Offline Self-Learning ('Provide Traces', asynchronous). (3) Line 56: Self-Learning → Model Router ('Update Routing Thresholds', asynchronous). (4) Lines 57-60: Telemetry pulls ('Pull Telemetry', asynchronous). (5) Line 74: Model Router → Dead Letter Queue (asynchronous). These must use dashed line notation (Rel-- or $style with dashed stroke) per contract."
     },
     {
-      "criterion": "Dependency Direction Validation",
-      "score": 10.0,
+      "criterion": "PRD and Technology Alignment",
+      "score": 9.5,
       "severity": "Low",
-      "details": "Correct dependency flow: llm-switch containers initiate calls to external infrastructure (Nomad line 47, Consul lines 38, 39, 45, 46, Vault lines 40, 41). No arrows originate from infrastructure to containers, satisfying Technology Choices Section 7.2."
+      "details": "Strong alignment: Nomad deployment topology (lines 14-33 with node pools, constraints), Consul/Vault integration (lines 31-32, 66-67), Golang labels throughout, bifrost usage (lines 9, 45, 47-49), hardware telemetry (vLLM/llama.cpp, lines 20-24), and network segmentation (DMZ line 8, Firewall line 11, Internal VPC line 12). Minor deduction: Firewall boundary uses generic Boundary() not explicit firewall container."
     },
     {
-      "criterion": "Security Compliance",
-      "score": 10.0,
+      "criterion": "Narrative Documentation Quality",
+      "score": 9.0,
       "severity": "Low",
-      "details": "Vault Integration shows 'secrets' annotation (line 18). External connections show 'HTTPS' (line 49). Internal mesh shows 'mTLS via Consul Connect' (line 17). All security annotations present."
+      "details": "Word count of 200 (line 3) meets 150-250 threshold. However, developer/operations journey description is vague: 'zero-code-change integration via standard API endpoints' (line 55) states mechanism but not the journey flow. Operations journey mentions 'self-learning reports' but lacks detail on diagnostic workflows. Per contract: must explain 'how the diagram supports the developer and operations journeys from the PRD' [sprint_contract]."
     },
     {
-      "criterion": "Error Handling Paths",
-      "score": 10.0,
+      "criterion": "Extensibility Edge Case",
+      "score": 9.5,
       "severity": "Low",
-      "details": "All required patterns present: Circuit Breaker (line 31), Error Response paths (lines 35, 36), Fallback to Local Model (line 33). Complete error handling coverage."
+      "details": "Strong coverage: Horizontal scaling demonstrated via Qwen Load Balancer (line 19) routing to adapter pool (lines 20-21) and Nemotron LB (line 22) to its pool (lines 23-24). Configuration artifacts separated from code via dedicated Nomad Configuration boundary (line 13). Adding new LLM model explicitly shown as configuration change: Line 70 `Rel(admin_interface, nomad_job, \"Update Job Spec (add new LLM model)\")` meets contract requirement for 'Nomad job update without touching application containers' [sprint_contract]."
     },
     {
-      "criterion": "API Gateway Routing Rules",
-      "score": 10.0,
-      "severity": "Low",
-      "details": "All routes documented in embedded note (line 6) and container description (line 12): '/v1/chat/completions → Orchestrator', '/v1/embeddings → Orchestrator', '/health → Health Check', '/metrics → Prometheus Exporter'."
+      "criterion": "Failure Handling Visibility",
+      "score": 9.0,
+      "severity": "Medium",
+      "details": "Good coverage: (1) Fallback paths explicit (lines 76-77: mutual Qwen↔Nemotron fallback with 'Fallback Request on [X] failure'). (2) Circuit breaker pattern in labels (lines 47-49, 76-77). (3) Dead letter queue path (line 74) with 'After 3 retries' label. (4) <500ms timeouts explicit. Gap: 'automatic rerouting' behavior is implicit in the fallback arrows but not explicitly labeled as automatic with timeout thresholds on the fallback paths themselves."
     },
     {
-      "criterion": "Nomad Job Constraints",
-      "score": 10.0,
+      "criterion": "Security and Cost Boundaries",
+      "score": 9.5,
       "severity": "Low",
-      "details": "All constraints visible: 'GPU required' (line 15), 'Memory: 32GB' (line 14), 'Node pool: llm-switch' (line 16)."
+      "details": "Excellent coverage: Security zones (DMZ line 8, Internal VPC line 12), firewall boundary (line 11), mTLS on internal relationships (lines 45-49, 61-67, etc.), cost differentiation ('Low Cost' vs 'High Cost', lines 47-49), VRAM tiers (24GB Qwen lines 20-21, 39 vs 48GB Nemotron lines 23-24, 40). Authentication flows for external API consumers not explicitly visualized but implied via mTLS."
     }
   ],
-  "overall_summary": "The c2-container.md architecture demonstrates strong technical implementation with valid Mermaid syntax, complete container inventory, correct protocol specifications, and comprehensive error handling. However, it contains a CRITICAL regression from Round 3: the diagram uses 'Orchestrator Service' and 'AutoResearch Loop Agent' instead of the PRD-mandated 'Real-time Routing Container' and 'Offline Self-Learning Container', fundamentally misrepresenting the two-part architecture (PRD Section 4.2). Additionally, container labels violate the C4 standard's 'max 2 words per line' rule ('Telemetry: GPU/CPU metrics' is 4 words), lacks a proper legend, and the technology stack lacks the required '1B parameter model' full labeling. This architecture fails primarily due to fundamental terminology misalignment with the PRD.",
-  "average_score": 9.083333333333334,
+  "overall_summary": "The C2 Container diagram (Round 4) represents significant improvement over Rounds 1-3 with valid Mermaid syntax, comprehensive container coverage, and strong security/failure handling visualization. However, the diagram fails critically on **Relationship Accuracy** (4.0/10, threshold 9.0) due to using solid lines for all 40+ relationships when the contract explicitly requires dashed lines for asynchronous flows (self-learning traces, telemetry pulls, dead letter queue). This is a fundamental architectural communication failure that misrepresents the system's temporal behavior. Additional significant gaps include empty responsibility fields on configuration containers (lines 14, 15) and adapter containers (lines 20-24), violating C4 Level 2 completeness (threshold 10.0). The diagram cannot be considered production-ready until asynchronous relationships are visually distinguished using dashed line notation.",
+  "average_score": 8.4375,
   "passed": false
 }
