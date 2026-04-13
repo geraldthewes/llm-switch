@@ -3,7 +3,7 @@
   "current_sprint": 2,
   "total_sprints": 7,
   "completed_sprints": 0,
-  "total_rounds": 16,
+  "total_rounds": 17,
   "started_at": "2026-04-12T12:56:31.326425Z",
   "seed": 1775998591,
   "sprint_statuses": [
@@ -13,15 +13,19 @@
       "status": "failed",
       "rounds_completed": 6,
       "consecutive_passes": 1,
-      "final_score": null
+      "final_score": null,
+      "best_round": null,
+      "best_scores": null
     },
     {
       "sprint_number": 2,
       "sprint_name": "C2 Container Overview",
       "status": "building",
-      "rounds_completed": 4,
-      "consecutive_passes": 0,
-      "final_score": null
+      "rounds_completed": 5,
+      "consecutive_passes": 1,
+      "final_score": null,
+      "best_round": null,
+      "best_scores": null
     },
     {
       "sprint_number": 3,
@@ -29,7 +33,9 @@
       "status": "pending",
       "rounds_completed": 0,
       "consecutive_passes": 0,
-      "final_score": null
+      "final_score": null,
+      "best_round": null,
+      "best_scores": null
     },
     {
       "sprint_number": 4,
@@ -37,7 +43,9 @@
       "status": "pending",
       "rounds_completed": 0,
       "consecutive_passes": 0,
-      "final_score": null
+      "final_score": null,
+      "best_round": null,
+      "best_scores": null
     },
     {
       "sprint_number": 5,
@@ -45,7 +53,9 @@
       "status": "pending",
       "rounds_completed": 0,
       "consecutive_passes": 0,
-      "final_score": null
+      "final_score": null,
+      "best_round": null,
+      "best_scores": null
     },
     {
       "sprint_number": 6,
@@ -53,7 +63,9 @@
       "status": "pending",
       "rounds_completed": 0,
       "consecutive_passes": 0,
-      "final_score": null
+      "final_score": null,
+      "best_round": null,
+      "best_scores": null
     },
     {
       "sprint_number": 7,
@@ -61,7 +73,9 @@
       "status": "pending",
       "rounds_completed": 0,
       "consecutive_passes": 0,
-      "final_score": null
+      "final_score": null,
+      "best_round": null,
+      "best_scores": null
     }
   ]
 }

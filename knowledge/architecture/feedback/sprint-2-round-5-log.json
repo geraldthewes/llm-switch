@@ -1,7 +1,7 @@
 {
   "sprint": 2,
   "round": 5,
-  "average_score": 9.0,
-  "passed": false,
-  "feedback_count": 12
+  "average_score": 10.0,
+  "passed": true,
+  "feedback_count": 8
 }
