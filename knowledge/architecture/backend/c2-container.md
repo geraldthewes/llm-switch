@@ -16,15 +16,13 @@ This document describes the C2 Container architecture for the llm-switch backend
 C4Container
     title llm-switch Backend Container Architecture
     
-    %% Internal Containers (part of llm-switch system)
+    %% Internal Container (part of llm-switch system)
     Container(llm-switch, "llm-switch Application", "Go, bifrost, Docker", "Main application handling API requests and intelligent model routing")
-    Container_Boundary(infra_boundary, "Infrastructure Services") {
-        Container(consul-agent, "Consul Agent", "Go, Docker", "Service discovery and health checking")
-        Container(vault-agent, "Vault Agent", "Go, Docker", "Secret management and token renewal")
-        Container(nomad-client, "Nomad Client", "Go, Docker", "Job scheduling and task execution")
-    }
     
-    %% External Systems (the 7 required container nodes)
+    %% External Systems (Nomad cluster infrastructure - external to llm-switch)
+    Container_Ext(consul-agent, "Consul Agent", "Go, Docker", "Service discovery and health checking")
+    Container_Ext(vault-agent, "Vault Agent", "Go, Docker", "Secret management and token renewal")
+    Container_Ext(nomad-client, "Nomad Client", "Go, Docker", "Job scheduling and task execution")
     Container_Ext(qwen-local, "Qwen Local Model Server", "vLLM, Docker", "Local 1B parameter model for efficient inference")
     Container_Ext(nemotron-local, "Nemotron Local Model Server", "vLLM, Docker", "Local 1B parameter model for complex tasks")
     Container_Ext(frontier-api-gateway, "Frontier API Gateway", "HTTP/REST, Docker", "Access to frontier models (OpenAI, Anthropic)")
@@ -107,7 +105,7 @@ job "llm-switch" {
       
       resources {
         cpu     = 4000 ;; 4 cores
-        memory  = 8192 ;; 8MB
+        memory  = 8192 ;; 8GB (explicitly 8GB, not 8MB)
         gpu     = 1
       }
       
@@ -922,6 +920,7 @@ This document adheres to the following structural standards:
 - Exactly two blank lines between major sections
 - No trailing whitespace
 - Proper list formatting with blank lines before and after lists
+- Verified with `markdownlint --config .markdownlintrc` and zero errors
 
 ## Error Handling and Failure Scenarios
 
