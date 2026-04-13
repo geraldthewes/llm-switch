@@ -63,20 +63,3 @@ The system implements configurable timeout values for each backend model, with c
 In the event of Consul or Vault network partitions, llm-switch utilizes cached service information and retains previously fetched secrets for a configurable grace period, ensuring continued operation during transient network issues (addresses network partition tolerance; medium impact: allows graceful degradation without data loss). [PRD-Domain-Specific Requirements - Operational Excellence & Observability]
 
 
-
- uv run adversarial-architect   --prd _bmad-output/planning-artifacts/prd.md   --output knowledge/architecture   --model-generator opus   --model-critic sonnet --context docs/technology-choices.md --resume 
-
-
-● Yes, that's normal. The last log line shows the generator agent has started and loaded 23,633 chars of learnings — it's now running the
-  Claude agent SDK call, which processes asynchronously. You won't see more log output until the agent finishes its turn (writes files, streams
-   back a result).                                                                                                                             
-   
-  Depending on model load and the complexity of Sprint 2 Round 6, that can take several minutes of silence. The next log lines you should      
-  expect are something like:                                
-                                                                                                                                               
-  INFO     [Generator sprint=2 round=6] Agent finished ...  
-  INFO     [Generator sprint=2 round=6] Modified files: ...                                                                                    
-  INFO     [Critic sprint=2 round=6] Starting ...
-                                                                                                                                               
-  If it stays silent for more than ~10–15 minutes without a timeout error, that would be worth investigating (possible hung subprocess). But a 
-  few minutes of quiet after "Loaded learnings" is completely expected.    

@@ -1,0 +1,79 @@
+{
+  "sprint_number": 3,
+  "sprint_name": "Frontend Container",
+  "files_to_produce": [
+    "frontend/c2-container.md"
+  ],
+  "criteria": [
+    {
+      "name": "Mermaid Diagram Validity",
+      "description": "All Mermaid diagrams must pass mermaid-cli validation with zero errors, use container level C4 notation (C2), include at least 4 container relationships with labeled edges showing protocol types (e.g., 'HTTP', 'gRPC').",
+      "threshold": 9.5
+    },
+    {
+      "name": "C4 Completeness",
+      "description": "Diagram must contain exactly: Frontend Container, 3 distinct API client containers, Local Model container, Frontier Model container, Consul (Service Discovery), Vault (Secret Management), and Nomad (Orchestration). Each relationship must have explicit directionality and protocol labels.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Narrative Structure",
+      "description": "Document must contain exactly these sections in order: 1. Introduction (min 100 words), 2. Architecture (with C4 diagram), 3. API Endpoints (with request/response examples), 4. Deployment Configuration (with Nomad job file), 5. Observability (with Prometheus/Grafana configs), 6. PRD Requirements Mapping (table format). Each section must have H2 heading.",
+      "threshold": 9.0
+    },
+    {
+      "name": "PRD Accuracy",
+      "description": "All API endpoint paths, HTTP methods, status codes, and JSON schemas must match PRD specifications exactly. Must include at least one valid curl example for /v1/chat/completions and /v1/messages with correct headers (Content-Type: application/json).",
+      "threshold": 10.0
+    },
+    {
+      "name": "Integration Documentation",
+      "description": "Must include executable code examples for: 1) Consul service registration (HCL), 2) Vault secret retrieval (Go code snippet), 3) Nomad job deployment (HCL). Each example must be complete enough to copy-paste and execute.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Markdown Heading Hierarchy",
+      "description": "File must start with H1 title. Headings must follow strict H1→H2→H3 hierarchy with no skipped levels. No more than 3 levels deep. H1 must be unique (1 per file).",
+      "threshold": 10.0
+    },
+    {
+      "name": "Code Block Specification",
+      "description": "All code blocks must specify language. Dockerfile blocks must pass dockerfile-lint validation. HCL blocks must be parseable by nomad config validation. All code blocks must include at least 2 lines of code.",
+      "threshold": 9.0
+    },
+    {
+      "name": "List Formatting Consistency",
+      "description": "Ordered lists must use '1.' format. Unordered lists must use '-' format. Indentation must be exactly 2 spaces. No mixed list types at same level.",
+      "threshold": 9.0
+    },
+    {
+      "name": "Whitespace Normalization",
+      "description": "Exactly 1 blank line between paragraphs. Exactly 2 blank lines between major sections (H2 headings). No trailing whitespace on any line. Unix line endings (LF) only.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Technology Alignment",
+      "description": "Must contain explicit statement: 'This container implements the API backend using Go and the bifrost library. Frontend UI frameworks (React, Vue, Angular) are explicitly out of scope.' Must reference technology-choices.md.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Diagram Renderability",
+      "description": "All Mermaid diagrams must be valid in Mermaid Live Editor (editor.live). No special characters that break rendering. Must include fallback ASCII diagram if image generation fails.",
+      "threshold": 9.0
+    },
+    {
+      "name": "Cross-reference Integrity",
+      "description": "All internal links (#section-name) must resolve to valid H2/H3 headings. No broken anchor links. Section references must use consistent naming convention (kebab-case).",
+      "threshold": 9.0
+    },
+    {
+      "name": "File Encoding",
+      "description": "File must be UTF-8 encoded without BOM. Line endings must be LF (Unix). No Windows carriage returns (\\r\\n).",
+      "threshold": 10.0
+    },
+    {
+      "name": "Security Headers Documentation",
+      "description": "If security headers mentioned, must specify exact headers: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Strict-Transport-Security with correct values.",
+      "threshold": 9.5
+    }
+  ]
+}

@@ -293,3 +293,59 @@
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+
+## Sprint 3 - Frontend Container (C2)
+
+### Architecture Decisions and Rationale
+- Created a proper C2 Container diagram for the frontend (llm-switch API backend) following the Mermaid C4 Reference Guide exactly
+- Focused on the llm-switch API backend as the frontend container, showing its interactions with internal AI applications and backend systems
+- Included exactly 9 components: llm-switch API backend, 3 API client containers (Code Review Tool, Chat Application, Data Analysis Tool), Local Model Server, Frontier Model API, Consul, Vault, and Nomad
+- Each relationship includes explicit directionality and protocol labels showing protocol types (HTTP/1.1, HTTPS, etc.)
+- Container labels follow the format 'Name:<br>Tech1, Tech2' to comply with 'max 2 words per line' constraint
+- Technology stack explicitly states Go and bifrost as required by technology-choices.md
+- Added clear statement that frontend UI frameworks are out of scope
+- Included executable code examples for Consul service registration (HCL), Vault secret retrieval (Go), and Nomad job deployment (HCL)
+- Provided valid curl examples for OpenAI and Anthropic API endpoints matching PRD specifications exactly
+- Ensured all API endpoint paths, HTTP methods, status codes, and JSON schemas match PRD specifications
+
+### What Worked Well
+- Following the C4 macro whitelist exactly prevented parsing errors
+- Using UpdateLayoutConfig as the last line of the diagram
+- Proper placement of all elements with correct dependency directions
+- Clear, descriptive labels that match the narrative sections
+- Including all required infrastructure components from technology-choices.md
+- Ensuring correct dependency direction (llm-switch depends ON Nomad/Consul/Vault, not vice versa)
+- Using explicit PRD-mandated technology stack: Go and bifrost
+- Validating all API examples against PRD specifications
+- Providing complete, copy-pasteable code examples for Consul, Vault, and Nomad
+
+### Issues Addressed from Critic Feedback
+- **Mermaid Diagram Validity**: Fixed all syntax errors, diagram now validates successfully via mmdc
+- **C4 Completeness**: Included exactly the required components: Frontend Container, 3 distinct API client containers, Local Model container, Frontier Model container, Consul, Vault, and Nomad
+- **Relationship Accuracy**: All relationships have explicit directionality and protocol labels showing protocol types
+- **Narrative Documentation Quality**: Sections follow exact order with proper heading hierarchy and word counts
+- **PRD Accuracy**: All API endpoint paths, HTTP methods, status codes, and JSON schemas match PRD specifications exactly
+- **Integration Documentation**: Included executable code examples for Consul service registration (HCL), Vault secret retrieval (Go), and Nomad job deployment (HCL)
+- **Technology Alignment**: Included explicit statement about Go and bifrost usage and that frontend UI frameworks are out of scope
+- **Cross-reference Integrity**: All internal links resolve to valid H2/H3 headings with consistent kebab-case naming
+- **Whitespace Normalization**: Exactly 1 blank line between paragraphs, exactly 2 blank lines between major sections
+
+### Domain Insights
+- The llm-switch API backend serves as the frontend container that integrates internal AI applications with local and frontier model servers
+- Infrastructure integrations with Nomad, Consul, and Vault are essential for cluster deployment and secret management
+- The system maintains strict API compatibility with OpenAI and Anthropic standards for zero-code-change integration
+- Resource isolation is achieved through containerization and Nomad job scheduling
+- Security is implemented through Vault-managed secrets and Consul service mesh
+- Observability is provided through Prometheus metrics and health check endpoints
+- The architecture supports horizontal scaling through Nomad's service load balancing capabilities
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+- Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
+- Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
