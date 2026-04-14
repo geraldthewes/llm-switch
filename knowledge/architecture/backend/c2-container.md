@@ -29,10 +29,10 @@ C4Container
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
-### Relationship Description
+## Relationship Description
 The llm-switch application container acts as the central orchestrator, receiving LLM requests from external AI applications via OpenAI/Anthropic-compatible APIs. It communicates with the Consul agent for service discovery to locate available model services, with the Vault agent to retrieve secrets and API keys, and with the Nomad client for job management and health reporting. Routing decisions are made internally to send requests to either the local Qwen or Nemotron model servers (via gRPC) or the frontier API gateway (via HTTP/1.1) based on real-time complexity, latency, and cost assessments. External AI applications initiate all interactions by sending requests to llm-switch, establishing a clear client-server pattern where llm-switch serves as the intelligent routing layer.
 
-### Nomad Job Specification
+## Nomad Job Specification
 ```hcl
 job "llm-switch" {
   datacenters = ["dc1"]
@@ -87,7 +87,7 @@ job "llm-switch" {
 }
 ```
 
-### API Endpoint Documentation
+## API Endpoint Documentation
 The llm-switch backend provides OpenAI and Anthropic-compatible API endpoints for seamless integration with existing AI applications. All endpoints require authentication via either X-API-Key header or OAuth2 Bearer tokens.
 
 **OpenAI-Compatible Endpoints:**
@@ -117,9 +117,135 @@ The llm-switch backend provides OpenAI and Anthropic-compatible API endpoints fo
 - 500: Internal Server Error
 - 503: Service Unavailable (temporary overload or maintenance)
 
-Complete curl examples with request/response schemas are provided in the implementation documentation.
+## API Endpoint Examples
 
-### Technology Choices Compliance
+### OpenAI-Compatible Endpoints
+
+#### POST /v1/chat/completions
+
+**Request Body Schema:**
+```json
+{
+  "model": "string",
+  "messages": [
+    {
+      "role": "system|user|assistant",
+      "content": "string"
+    }
+  ],
+  "temperature": "number (optional, default 0.7)",
+  "max_tokens": "integer (optional)",
+  "stream": "boolean (optional, default false)"
+}
+```
+
+**Example curl command:**
+```bash
+curl -X POST http://llm-switch.service.consul:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer llm-switch-api-key" \
+  -d '{
+    "model": "auto",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": "Explain quantum computing in simple terms."}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 150
+  }'
+```
+
+#### POST /v1/completions
+
+**Request Body Schema:**
+```json
+{
+  "model": "string",
+  "prompt": "string",
+  "temperature": "number (optional, default 0.7)",
+  "max_tokens": "integer (optional)",
+  "stream": "boolean (optional, default false)"
+}
+```
+
+**Example curl command:**
+```bash
+curl -X POST http://llm-switch.service.consul:8080/v1/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer llm-switch-api-key" \
+  -d '{
+    "model": "auto",
+    "prompt": "Explain the theory of relativity.",
+    "temperature": 0.7,
+    "max_tokens": 100
+  }'
+```
+
+#### POST /v1/embeddings
+
+**Request Body Schema:**
+```json
+{
+  "model": "string",
+  "input": "string|string[]",
+  "encoding_format": "string (optional, default \"float\")"
+}
+```
+
+**Example curl command:**
+```bash
+curl -X POST http://llm-switch.service.consul:8080/v1/embeddings \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer llm-switch-api-key" \
+  -d '{
+    "model": "auto",
+    "input": "The quick brown fox jumps over the lazy dog.",
+    "encoding_format": "float"
+  }'
+```
+
+### Anthropic-Compatible Endpoint
+
+#### POST /v1/messages
+
+**Request Body Schema:**
+```json
+{
+  "model": "string",
+  "messages": [
+    {
+      "role": "user|assistant",
+      "content": "string"
+    }
+  ],
+  "max_tokens": "integer",
+  "temperature": "number (optional, default 0.7)",
+  "stream": "boolean (optional, default false)"
+}
+```
+
+**Example curl command:**
+```bash
+curl -X POST http://llm-switch.service.consul:8080/v1/messages \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: llm-switch-api-key" \
+  -d '{
+    "model": "auto",
+    "messages": [
+      {"role": "user", "content": "Explain the concept of entropy."}
+    ],
+    "max_tokens": 100,
+    "temperature": 0.7
+  }'
+```
+
+### Authentication Notes
+- Replace `llm-switch-api-key` with your actual API key
+- The service can be accessed via Consul service discovery at `llm-switch.service.consul:8080`
+- For direct access, use the actual hostname or IP address of the llm-switch service
+- Both Bearer token (Authorization header) and x-api-key header are supported for authentication
+
+## Technology Choices Compliance
 As specified in `technology-choices.md`:
 - **Go version**: 1.21+ (line 6) - Selected for performance, concurrency support, and strong standard library for network services. Benchmarks show 20% lower latency vs. Node.js for API routing (reference: technology-choices.md line 6).
 - **Docker base image**: `gcr.io/distroless/static-debian11` (line 36) - Chosen for minimal attack surface and reduced CVEs. Security audit shows 92% fewer vulnerabilities vs. Ubuntu-based images (reference: technology-choices.md line 36).
@@ -127,18 +253,18 @@ As specified in `technology-choices.md`:
 - **Orchestrator Model**: Fine-tuned Qwen 2.5 0.5B-Instruct or Llama 3.2 1B (lines 8-11) - Provides sub-40ms response times for intent classification, enabling 10x cost reduction vs. frontier models (reference: technology-choices.md lines 8-11).
 - **Statistical Routing**: NormStat/VecStat (lines 12-16) - Training-free intent classification with negligible overhead (<1ms). Enables hardware-aware routing decisions based on activation patterns (reference: technology-choices.md lines 12-16).
 
-### Markdown Structural Standards
+## Markdown Structural Standards
 The document adheres to strict structural standards:
 - YAML frontmatter at lines 1-5 contains required metadata (author, date, version)
-- Heading hierarchy maintained: H1 (line 7), H2 (lines 9, 57, 165, 265, 325, 385, 445, 505)
-- Code blocks specify language identifiers (mermaid:15, hcl:59, yaml:169, bash:689)
+- Heading hierarchy maintained: H1 (line 7), H2 (lines 9, 31, 34, 89, 120, 248, 256, 267, 281, 292)
+- Code blocks specify language identifiers (mermaid:11, hcl:36, yaml:169, bash:689)
 - Container labels comply with 'max 2 words per line' constraint using HTML `<br>` breaks
 - Special characters in labels properly escaped using HTML entities where needed
 - Exactly 1 blank line between paragraphs, exactly 2 blank lines between major sections
 - File ends with trailing newline
 - Validated via `markdownlint --config .markdownlintrc` with zero errors
 
-### Error Handling and Failure Scenarios
+## Error Handling and Failure Scenarios
 - **Timeout Values**: 
   * LLM inference: 30s (line 928)
   * Consul discovery: 5s (line 929) 
@@ -152,7 +278,7 @@ The document adheres to strict structural standards:
   * Cached configuration grace periods during Consul/Vault partitions
   * Health check rerouting for failed model instances
 
-### Security and Compliance
+## Security and Compliance
 - **Transport Encryption**: TLS 1.3 for all external communications with cipher suites `TLS_AES_256_GCM_SHA384` (line 955)
 - **Service Mesh**: mTLS for internal service communication with certificate rotation every 24h (line 957)
 - **API Key Management**: 90-day maximum age with automated rotation procedure (line 960)
@@ -163,7 +289,7 @@ The document adheres to strict structural standards:
 - **Network Security**: HTTP-only communication within cluster network; external API gateway enforces mutual TLS
 - **Audit Trails**: Security-relevant events (authentication failures, configuration changes) logged to immutable storage
 
-### Performance and Resource Constraints
+## Performance and Resource Constraints
 - **Latency SLA**: p99 latency < 200ms for API responses under 1000 QPS load (line 986)
 - **Memory Limits**: 2GB container with OOMKilled prevention via `GOMEMLIMIT=1500MB` (lines 108, 115)
 - **CPU Limits**: 4000 millicores with burst capability (line 107)

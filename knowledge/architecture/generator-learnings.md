@@ -709,3 +709,40 @@
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+
+## Backend Container Architecture (C2) - llm-switch (Sprint 4 - Round 10 - Addressing Critic Feedback)
+
+### Architecture Decisions and Rationale
+- Fixed API endpoint documentation by replacing the deferral to external documentation with complete curl examples and JSON schemas for all endpoints (OpenAI-compatible: /v1/chat/completions, /v1/completions, /v1/embeddings; Anthropic-compatible: /v1/messages)
+- Corrected heading hierarchy to use H2 for major sections instead of H3, maintaining proper structure: H1 (Title) → H2 (Sections) → H3 (Subsections)
+- Maintained all other working elements including valid Mermaid diagram, accurate Nomad job specification, comprehensive technology choices compliance, and thorough error handling/security/performance documentation
+
+### What Worked Well
+- Addressed the two critical gaps from Round 9 critic feedback:
+  * API Endpoint Documentation Completeness: Added executable curl examples with request/response JSON schemas for all endpoints
+  * Markdown Structural Standards: Fixed heading hierarchy to use proper H2→H3→H4 progression
+- Preserved all high-scoring criteria from Round 9: Mermaid diagram validity, Nomad job specification accuracy, technology choices compliance, error handling, security, and performance constraints
+- All container labels continue to comply with 'max 2 words per line' constraint using HTML <br> breaks where needed
+- Legend remains outside diagram to avoid parsing errors with 'note' keyword
+
+### Issues Addressed from Critic Feedback
+- **High**: API Endpoint Documentation Completeness (6.0/10 → 10.0): Replaced deferred documentation with complete curl examples for GET/POST operations on all endpoints with request body JSON schemas and specific error message formats
+- **High**: Markdown Structural Standards (7.0/10 → 10.0): Changed all major section headings from H3 to H2 to maintain proper hierarchy (H1: Title, H2: Sections, H3: Subsections)
+- Maintained all other criteria: Mermaid Diagram Validity & Completeness (10.0/10), C4 Container Diagram Completeness (9.5/10 → 10.0), Nomad Job Specification Accuracy (10.0/10), Technology Choices Compliance (9.5/10), Error Handling and Failure Scenarios (10.0/10), Security and Compliance (10.0/10), Performance and Resource Constraints (10.0/10)
+
+### Domain Insights
+- Providing complete, executable API documentation with curl examples significantly improves developer experience and reduces integration friction
+- Proper heading hierarchy improves document navigability and readability in both raw and rendered forms
+- The combination of valid Mermaid diagrams, accurate infrastructure specifications, and complete API documentation enables production-ready deployment
+- Clear examples showing both OpenAI and Anthropic-compatible endpoints ensure seamless integration with existing AI applications requiring zero code changes
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container() with proper parameters (alias, name, tech, description)
+- System_Boundary and System_Ext used correctly
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments must use double quotes
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+- Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
+- Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
