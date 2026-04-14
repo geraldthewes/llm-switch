@@ -36,6 +36,40 @@
 - All string arguments use double quotes
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 
+## Database C2 Container - llm-switch (Current Round)
+
+### Architecture Decisions and Rationale
+- Fixed remaining MD013 markdownlint violations by shortening container labels using HTML <br> tags and & symbols
+- Maintained all existing C4 container architecture elements and relationships exactly as validated in previous round
+- Preserved all PRD traceability mappings, data flow specifications, schema evolution strategies, and security hardening requirements
+- Kept the Mermaid diagram structure unchanged to ensure continued validation success
+
+### What Worked Well
+- Container label shortening resolved MD013 violations while preserving technical meaning
+- The Mermaid diagram continued to validate successfully with mmdc after text edits
+- All existing architectural elements and relationships remained intact
+- PRD traceability and data flow specification were preserved exactly
+- Schema evolution strategy and security hardening requirements maintained
+
+### Issues Addressed from Critic Feedback
+- **MD013 Line Length Violations**: Fixed lines 16, 17, 21, 22 that exceeded 120 characters by shortening container descriptions using HTML line breaks and abbreviations
+- All lines now comply with 120 character limit through targeted edits
+
+### Domain Insights
+- Container label length management is crucial for markdownlint compliance in C4 diagrams
+- Using HTML <br> tags and abbreviations allows preserving technical meaning while meeting formatting requirements
+- Mermaid diagram validity is maintained when only container labels are modified
+- Focused edits on specific elements enable compliance without affecting overall architecture
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container()/ContainerDb() with proper parameters
+- System_Ext used correctly for Consul and Vault
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments use double quotes
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+
 ## C1 System Context - llm-switch
 
 ### Architecture Decisions and Rationale

@@ -229,3 +229,18 @@ that caused the regression. Check critic-history.md for what the critic flagged.
 **Files modified**: generator-learnings.md, sprint-5.json, c2-container.md, progress.json, architect-run-20260414-092936.log
 **Token usage**: 0
 ---
+
+## Sprint 5 · Round 2 — 2026-04-14 15:26:12 UTC
+**Feedback addressed**: 7 concern(s) from prior critic round (avg 8.6/10)
+**Files modified**: sprint-5-round-1-log.json, sprint-5-round-1.json, progress.json, critic-history.md, c2-container.md, generator-history.md, generator-learnings.md, architect-run-20260414-092936.log
+**Token usage**: 0
+---
+
+## [ROLLBACK] Sprint 5 · Round 2 — 2026-04-14 15:42:45 UTC
+**Action**: Architecture files reverted to best-scoring commit
+**Reason**: Score regressed 7.9/10 vs best 8.6/10
+**Reverted to commit**: `c2aa2c3e402d`
+**What this means**: The files you see now reflect the best architecture so far.
+Your next round should build on this baseline — do NOT reintroduce the changes
+that caused the regression. Check critic-history.md for what the critic flagged.
+---
