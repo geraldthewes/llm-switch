@@ -1,0 +1,55 @@
+{
+  "sprint_number": 6,
+  "sprint_name": "Edge Functions / Deployment / Auth / Scaling / Observability",
+  "files_to_produce": [
+    "edge-functions/c2-container.md",
+    "deployment.md"
+  ],
+  "criteria": [
+    {
+      "name": "File Existence and Location",
+      "description": "Both files 'edge-functions/c2-container.md' and 'deployment.md' exist at exact paths relative to project root with .md extension.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Nomad Job Specification Completeness",
+      "description": "deployment.md contains a complete Nomad job specification with: exact container image hash (SHA256), CPU constraint in MB, memory limit in MB, port mapping (e.g., 8080:80), Consul service registration with exact service name, Vault agent templating configuration with path, and HTTP health check with exact path and 10s interval.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Edge Function Authentication Flow",
+      "description": "edge-functions/c2-container.md documents: exact header name (X-API-Key) for API key validation, JWT token extraction algorithm with expiration validation, Vault secret path (e.g., secret/data/edge/api), exact 401/403 error JSON structure with 'error' and 'message' fields, and rate limiting (100 req/min per key).",
+      "threshold": 9.5
+    },
+    {
+      "name": "Horizontal Scaling Configuration",
+      "description": "deployment.md specifies exact count parameter (e.g., count = 3), CPU threshold 80% for autoscale trigger, and load balancing algorithm (round-robin). edge-functions/c2-container.md documents connection pooling with max_connections=100 and timeout=30s.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Observability Endpoints Documentation",
+      "description": "Files specify: /metrics endpoint returning Prometheus format with exact metric names (http_requests_total, http_request_duration_seconds), /health endpoint returning HTTP 200 with JSON {\"status\":\"healthy\"}, and structured JSON logging with fields [timestamp, level, message, trace_id, service_name] in RFC3339 format.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Markdown Syntax and Structure",
+      "description": "Files follow strict Markdown: H1 (#) to H3 (###) hierarchy with no skipping, 4-space indentation for lists, fenced code blocks with language identifiers (yaml, json, shell), exactly one blank line between paragraphs, and no trailing whitespace.",
+      "threshold": 9.0
+    },
+    {
+      "name": "PRD Alignment for Non-Functional Requirements",
+      "description": "Content cites exact PRD section numbers and specifies: P99 latency < 500ms, 99.9% availability with circuit breaker timeout=30s, API key auth with SHA-256 hashing, HTTP-only headers (Strict-Transport-Security, X-Content-Type-Options), and Vault/Consul integration with TLS.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Error Handling and Edge Cases",
+      "description": "Documents exact HTTP 500, 429, and 404 error responses with JSON structure {\"error\":\"code\",\"message\":\"text\",\"timestamp\":\"RFC3339\"}, retry logic with exponential backoff (base=100ms, max=5s, maxAttempts=3), and graceful degradation when Vault is unreachable.",
+      "threshold": 9.5
+    },
+    {
+      "name": "Security Hardening",
+      "description": "Documents handling of expired tokens (return 401), IP whitelist configuration for Consul, secret rotation mechanism with exact Vault TTL (24h), and CORS policy with exact allowed origins.",
+      "threshold": 9.5
+    }
+  ]
+}
