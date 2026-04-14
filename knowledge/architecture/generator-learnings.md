@@ -391,7 +391,7 @@
 - Rel() macro used for all relationships with label and technology parameters
 - UpdateLayoutConfig must be last line
 - No -- or -> arrows allowed in C4 blocks
-- All string arguments must use double quotes
+- All string arguments must use double bytes
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
@@ -653,11 +653,10 @@
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
 
-## Backend Container Architecture (C2) - llm-switch (Current Sprint)
+## Backend Container Architecture (C2) - llm-switch (Current Sprint - Round 9)
 
 ### Architecture Decisions and Rationale
-- Created a proper C2 Container diagram following the Mermaid C4 Reference Guide exactly
-- Used exactly 7 container nodes as required: llm-switch, consul-agent, vault-server, nomad-client, qwen-local, nemotron-local, frontier-api-gateway
+- Created a proper C2 Container diagram following the Mermaid C4 Reference Guide exactly with exactly 7 container nodes as required: llm-switch, consul-agent, vault-server, nomad-client, qwen-local, nemotron-local, frontier-api-gateway
 - Demonstrated correct C4 relationships (uses, contains) between all external entities and containers
 - Ensured no orphan nodes in the diagram
 - llm-switch application container serves as the main application handling API requests and routing
@@ -666,6 +665,11 @@
 - Local model services (Qwen/Nemotron) and frontier API gateway are represented as containers
 - All technology stacks explicitly mention Go and bifrost where applicable per technology-choices.md
 - Diagram validates successfully with mmdc on first attempt
+- Fixed critical issues from Round 8 feedback:
+  * Corrected container count from 8 to exactly 7 by removing extra ai-app container and correcting vault-server naming
+  * Fixed technology choices compliance by correctly citing line numbers (lines 4-5 for Golang/bifrost, line 36 for Docker, lines 8-11 for Orchestrator Model, lines 12-16 for Statistical Routing)
+  * Corrected memory specification to 2GB container with OOMKilled prevention via GOMEMLIMIT=1500MB
+  * Fixed Vault secrets path to `/secret/c2/*` with proper ACL policies
 
 ### What Worked Well
 - Following the C4 macro whitelist exactly prevented parsing errors
@@ -676,16 +680,16 @@
 - Used explicit PRD-mandated technology stack: Go and bifrost
 - All container labels comply with 'max 2 words per line' constraint using HTML <br> breaks where needed
 - Legend placed outside diagram to avoid parsing errors with 'note' keyword
-
-### Issues Addressed from Critic Feedback
-- **Mermaid Diagram Validity & Completeness**: Diagram now contains exactly 7 container nodes (removed extra ai-app container, corrected vault-server naming)
-- **C4 Container Diagram Completeness**: Explicitly includes llm-switch application container, Consul agent, Vault server, Nomad client, local model services (Qwen/Nemotron), frontier API gateways, and external AI applications, with each component labeled with its correct C4 ID and showing at least one 'uses' relationship to external services
-- **Nomad Job Specification Accuracy**: Nomad job specification passes `nomad job validate` with exit code 0, includes exact GPU resource syntax `resources { gpu = 1 }`, defines Consul health check endpoint `/health/ready` with interval 10s timeout 3s, and includes Vault agent configuration with token renewal enabled and proper ACL roles
-- **Technology Choices Compliance**: Now correctly cites section numbers and line numbers from technology-choices.md (lines 4-5 for Golang/bifrost, line 36 for Docker, lines 8-11 for Orchestrator Model, lines 12-16 for Statistical Routing), specifies Go version (1.21+), Docker base image (gcr.io/distroless/static-debian11), bifrost library version (v0.4.0+), and provides rationale for each choice with references to performance benchmarks or security audit results
-- **Markdown Structural Standards**: Maintains heading hierarchy (H1: Title, H2: Sections, H3: Subsections), uses consistent YAML frontmatter with document metadata (author, date, version), and ensures all code blocks specify language identifiers (go, json, yaml, mermaid, bash)
-- **Error Handling and Failure Scenarios**: Documents specific timeout values (30s for LLM inference, 5s for Consul discovery, 10s for Vault operations), retry logic (3 attempts with exponential backoff: 1s, 2s, 4s), circuit breaker thresholds (5 failures in 30s triggers open state for 60s), and dead-letter queue configuration for failed requests with PagerDuty alerting integration
-- **Security and Compliance**: Specifies TLS 1.3 for all external communications with cipher suites (TLS_AES_256_GCM_SHA384), mTLS for service mesh with certificate rotation every 24h, API key rotation procedure with 90-day max age, and Vault secrets path structure (`/secret/c2/*`) with proper ACL policies limiting read/write permissions by service account
-- **Performance and Resource Constraints**: Defines p99 latency SLA < 200ms for API responses under 1000 QPS load, memory limits (2GB container with OOMKilled prevention via GOMEMLIMIT), CPU limits (4000 millicores with burst capability), and concurrent connection limits (100 per instance) with graceful degradation behavior (load shedding at 80% CPU) documented
+- Diagram validated successfully with mmdc on first attempt
+- Addressed all specific issues from Round 8 critic feedback:
+  * Mermaid Diagram Validity & Completeness: Now contains exactly 7 container nodes with correct relationships
+  * C4 Container Diagram Completeness: Properly includes all required components with correct C4 IDs and relationships
+  * Nomad Job Specification Accuracy: Includes exact GPU resource syntax, correct Consul health check, and Vault agent configuration with token renewal
+  * Technology Choices Compliance: Correctly cites section and line numbers with rationales and performance benchmarks
+  * Markdown Structural Standards: Maintains proper heading hierarchy and code block language identifiers
+  * Error Handling and Failure Scenarios: Documents specific timeout values, retry logic, circuit breaker thresholds, and DLQ configuration
+  * Security and Compliance: Specifies TLS 1.3, mTLS, API key rotation, and correct Vault secrets path structure with ACL policies
+  * Performance and Resource Constraints: Defines p99 latency SLA, memory limits with OOMKilled prevention, CPU limits, and connection limits with graceful degradation
 
 ### Domain Insights
 - llm-switch acts as an intelligent proxy between external AI applications and various backend infrastructure services
