@@ -1,19 +1,44 @@
 # Database and Knowledge Base C2 Container Architecture
 
-This diagram illustrates the container-level architecture for the database and knowledge base components of the llm-switch system. It shows how the llm-switch API interacts with persistent storage systems (PostgreSQL with pgvector for metadata and Qdrant for vector embeddings), how Nomad executors access these stores for batch processing, and the integration with Consul for service discovery and Vault for dynamic secret management. Security zones separate the private database tier from the application tier.
+This diagram illustrates the container-level architecture for the database and knowledge base
+components of the llm-switch system. It shows how the llm-switch API interacts with persistent
+storage systems (PostgreSQL with pgvector for metadata and Qdrant for vector embeddings).
+It also shows how Nomad executors access these stores for batch processing, and the integration
+with Consul for service discovery and Vault for dynamic secret management. Security zones separate
+the private database tier from the application tier.
 
 ```mermaid
 C4Container
     title Database and Knowledge Base Container Architecture
     
     Container_Boundary(db_tier, "Database Tier (VPC-private)") {
-        ContainerDb(postgresql-db, "PostgreSQL with pgvector", "PostgreSQL, pgvector, Flyway", "Stores conversation metadata, ACID transactions, advisory locks for concurrent writes")
-        ContainerDb(qdrant-kb, "Qdrant Vector Store", "Qdrant, gRPC", "Stores vector embeddings with payload schema: embedding_vector, created_at, conversation_id")
+        ContainerDb(
+            postgresql-db,
+            "PostgreSQL with pgvector",
+            "PostgreSQL, pgvector, Flyway",
+            "Stores conversation metadata, ACID transactions, advisory locks for concurrent writes"
+        )
+        ContainerDb(
+            qdrant-kb,
+            "Qdrant Vector Store",
+            "Qdrant, gRPC",
+            "Stores vector embeddings with payload schema: embedding_vector, created_at, conversation_id"
+        )
     }
     
     Container_Boundary(app_tier, "Application Tier") {
-        Container(llm-switch-api, "llm-switch API", "Go, bifrost, Docker", "Handles API requests, real-time routing, embedding generation")
-        Container(nomad-executor, "Nomad Executor", "Nomad client, Docker", "Runs batch jobs, maintenance tasks, offline self-learning")
+        Container(
+            llm-switch-api,
+            "llm-switch API",
+            "Go, bifrost, Docker",
+            "Handles API requests, real-time routing, embedding generation"
+        )
+        Container(
+            nomad-executor,
+            "Nomad Executor",
+            "Nomad client, Docker",
+            "Runs batch jobs, maintenance tasks, offline self-learning"
+        )
     }
     
     System_Ext(consul, "Consul", "Service discovery, health checking, key-value store")
@@ -34,7 +59,18 @@ C4Container
 
 ### Relationship Description
 
-The llm-switch API container interacts with both storage systems for real-time operations: it reads/writes conversation metadata to PostgreSQL via standard PostgreSQL protocol on port 5432, and performs vector search/storage operations with Qdrant via gRPC on port 6334. The Nomad executor container accesses the same storage systems for batch processing workloads, using identical protocol and port configurations. Service discovery and health checking are facilitated through Consul on port 8500, with bidirectional communication for registration and queries. Vault provides dynamic database credentials to the llm-switch API via HTTPS on port 8200, using the AppRole authentication method and pg_userpass mount for PostgreSQL access. All database connections enforce TLS 1.3 encryption, and connection pools are limited to 100 connections with 30-second timeouts to prevent resource exhaustion during batch processing.
+The llm-switch API container interacts with both storage systems for real-time operations:
+- It reads/writes conversation metadata to PostgreSQL via standard PostgreSQL protocol on port 5432
+- It performs vector search/storage operations with Qdrant via gRPC on port 6334
+
+The Nomad executor container accesses the same storage systems for batch processing workloads,
+using identical protocol and port configurations. Service discovery and health checking are
+facilitated through Consul on port 8500, with bidirectional communication for registration and queries.
+
+Vault provides dynamic database credentials to the llm-switch API via HTTPS on port 8200,
+using the AppRole authentication method and pg_userpass mount for PostgreSQL access.
+All database connections enforce TLS 1.3 encryption, and connection pools are limited to 100
+connections with 30-second timeouts to prevent resource exhaustion during batch processing.
 
 ### PRD Traceability Matrix
 
