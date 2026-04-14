@@ -1,5 +1,41 @@
 # Generator Learnings
 
+## Database C2 Container - llm-switch (Sprint 5)
+
+### Architecture Decisions and Rationale
+- Fixed MD013 markdownlint violations by breaking long lines in the narrative section to comply with 120 character limit
+- Maintained all existing C4 container architecture elements: PostgreSQL with pgvector, Qdrant vector store, llm-switch API, Nomad executor
+- Preserved all 10+ directed relationships with explicit protocols and ports (postgresql://:5432, grpc://:6334, http://:8500, https://:8200)
+- Kept security zone annotations (Database Tier VPC-private, Application Tier) and Consul/Vault integrations
+- Maintained PRD traceability matrix mapping Sections 3.2 and 3.3 to diagram elements
+- Preserved data flow specification with all 4 required flows (Qdrant upsert, PostgreSQL transaction, Consul health check, Vault credential retrieval)
+- Updated schema evolution strategy with explicit Qdrant dimension migration steps
+
+### What Worked Well
+- Breaking long narrative lines at natural sentence boundaries resolved MD013 violations while maintaining readability
+- The Mermaid diagram continued to validate successfully with mmdc after text edits
+- All existing architectural elements and relationships remained intact
+- PRD traceability and data flow specification were preserved exactly
+
+### Issues Addressed from Critic Feedback
+- **MD013 Line Length Violations**: Fixed lines 3, 10, and 22 that exceeded 120 characters by breaking them into shorter lines at natural sentence boundaries
+- **Schema Evolution Completeness**: Enhanced Qdrant section with explicit dimension migration steps for model updates
+
+### Domain Insights
+- Proper line length management is crucial for markdownlint compliance in architectural documentation
+- Breaking lines at natural sentence boundaries maintains both readability and compliance
+- C4 container diagrams can withstand text edits in adjacent sections without affecting Mermaid syntax validity
+- Schema evolution strategies should include explicit migration procedures for vector databases when embedding dimensions change
+
+### Mermaid/C4 Syntax Rules Confirmed
+- All container macros use Container()/ContainerDb() with proper parameters
+- System_Ext used correctly for Consul and Vault
+- Rel() macro used for all relationships with label and technology parameters
+- UpdateLayoutConfig must be last line
+- No -- or -> arrows allowed in C4 blocks
+- All string arguments use double quotes
+- Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
+
 ## C1 System Context - llm-switch
 
 ### Architecture Decisions and Rationale
