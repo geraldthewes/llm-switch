@@ -1,0 +1,44 @@
+{
+  "sprint_number": 5,
+  "sprint_name": "Database + Knowledge Base",
+  "files_to_produce": [
+    "database/c2-container.md"
+  ],
+  "criteria": [
+    {
+      "name": "Mermaid Syntax Validation",
+      "description": "Diagram must pass validation via `mmdc -i c2-container.md -o output.png` without errors; must include explicit container IDs (postgresql-db, qdrant-kb, llm-switch-api) matching PRD naming conventions; must contain 6+ directed relationships with explicit protocols and ports (e.g., 'postgresql://:5432', 'grpc://:6334', 'http://:8500')",
+      "threshold": 10.0
+    },
+    {
+      "name": "C4 Architecture Completeness",
+      "description": "Must explicitly depict 4 containers (PostgreSQL with pgvector, Qdrant vector store, llm-switch API, Nomad executor) with 6+ directed relationships showing data flow direction, protocol, and ports; must include security zone annotations separating database tier (VPC-private) from application tier; must show Consul service discovery integration and Vault secret injection paths",
+      "threshold": 10.0
+    },
+    {
+      "name": "PRD Traceability Matrix",
+      "description": "Must include explicit requirement traceability table mapping PRD Section 3.2 (Vector Storage Requirements) and 3.3 (Embedding Model Management) to specific diagram elements; must document pgvector HNSW index configuration and Qdrant payload schema for metadata filtering with specific field names (embedding_vector, created_at, conversation_id)",
+      "threshold": 10.0
+    },
+    {
+      "name": "Data Flow Specification",
+      "description": "Must include sequence diagram showing: (1) LLM embedding generation → Qdrant upsert with point ID structure (conversation_id:timestamp), (2) PostgreSQL transaction for conversation metadata with explicit ACID guarantees and advisory locks for concurrent writes, (3) Consul health check registration with 30s interval, (4) Vault dynamic credential retrieval for PostgreSQL connections with 15m TTL",
+      "threshold": 10.0
+    },
+    {
+      "name": "Markdown Format Compliance",
+      "description": "Must pass `markdownlint` with strict config: MD001 (level 1 headings only), MD013 (line length <120), MD033 (no inline HTML), MD031 (no blank lines between list items); must use consistent code fence language specifiers (mermaid, yaml, sql) with no trailing whitespace; all URLs must be absolute or relative to repo root",
+      "threshold": 10.0
+    },
+    {
+      "name": "Schema Evolution Strategy",
+      "description": "Must specify Flyway migration versioning (V001__initial_schema.sql format) for PostgreSQL with explicit rollback procedures; must document Qdrant collection schema versioning strategy for vector dimension changes including catastrophic rollback procedure if dimension mismatch occurs during model updates; must include PostgreSQL advisory locks for concurrent scientific data writes to prevent race conditions",
+      "threshold": 10.0
+    },
+    {
+      "name": "Security Hardening Requirements",
+      "description": "Must document TLS 1.3 requirements for all database connections, pg_hba.conf rules restricting access to Nomad executor IPs only, Vault dynamic credential configuration (pg_userpass mount), and explicit connection pool limits (max_connections=100, pool_timeout=30s) for scientific batch processing workloads; must specify RBAC for read/write operations on vector embeddings",
+      "threshold": 10.0
+    }
+  ]
+}
