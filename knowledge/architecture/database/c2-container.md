@@ -1,12 +1,6 @@
 # Database and Knowledge Base C2 Container Architecture
 
-This diagram illustrates the container-level architecture for the database and 
-knowledge base components of the llm-switch system. It shows how the llm-switch 
-API interacts with persistent storage systems (PostgreSQL with pgvector for 
-metadata and Qdrant for vector embeddings), how Nomad executors access these 
-stores for batch processing, and the integration with Consul for service 
-discovery and Vault for dynamic secret management. Security zones separate the 
-private database tier from the application tier.
+This diagram illustrates the container-level architecture for the database and knowledge base components of the llm-switch system. It shows how the llm-switch API interacts with persistent storage systems (PostgreSQL with pgvector for metadata and Qdrant for vector embeddings), how Nomad executors access these stores for batch processing, and the integration with Consul for service discovery and Vault for dynamic secret management. Security zones separate the private database tier from the application tier.
 
 ```mermaid
 C4Container
