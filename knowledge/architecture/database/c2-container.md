@@ -1,25 +1,19 @@
 # Database and Knowledge Base C2 Container Architecture
 
-This diagram illustrates the container-level architecture for the database and 
-knowledge base components of the llm-switch system. It shows how the llm-switch 
-API interacts with persistent storage systems (PostgreSQL with pgvector for 
-metadata and Qdrant for vector embeddings), how Nomad executors access these 
-stores for batch processing, and the integration with Consul for service 
-discovery and Vault for dynamic secret management. Security zones separate the 
-private database tier from the application tier.
+This diagram illustrates the container-level architecture for the database and knowledge base components of the llm-switch system. It shows how the llm-switch API interacts with persistent storage systems (PostgreSQL with pgvector for metadata and Qdrant for vector embeddings), how Nomad executors access these stores for batch processing, and the integration with Consul for service discovery and Vault for dynamic secret management. Security zones separate the private database tier from the application tier.
 
 ```mermaid
 C4Container
     title Database and Knowledge Base Container Architecture
     
     Container_Boundary(db_tier, "Database Tier (VPC-private)") {
-        ContainerDb(postgresql-db, "PostgreSQL with pgvector", "PostgreSQL, pgvector, Flyway", "Stores metadata<br>ACID tx & locks")
-        ContainerDb(qdrant-kb, "Qdrant Vector Store", "Qdrant, gRPC", "Stores vectors<br>payload: emb_vector, created_at, conv_id")
+        ContainerDb(postgresql-db, "PostgreSQL with pgvector", "PostgreSQL, pgvector, Flyway", "Stores conversation metadata, ACID transactions, advisory locks for concurrent writes")
+        ContainerDb(qdrant-kb, "Qdrant Vector Store", "Qdrant, gRPC", "Stores vector embeddings with payload schema: embedding_vector, created_at, conversation_id")
     }
     
     Container_Boundary(app_tier, "Application Tier") {
-        Container(llm-switch-api, "llm-switch API", "Go, bifrost, Docker", "Handles API requests & routing")
-        Container(nomad-executor, "Nomad Executor", "Nomad client, Docker", "Runs batch jobs & tasks")
+        Container(llm-switch-api, "llm-switch API", "Go, bifrost, Docker", "Handles API requests, real-time routing, embedding generation")
+        Container(nomad-executor, "Nomad Executor", "Nomad client, Docker", "Runs batch jobs, maintenance tasks, offline self-learning")
     }
     
     System_Ext(consul, "Consul", "Service discovery, health checking, key-value store")
@@ -40,29 +34,19 @@ C4Container
 
 ### Relationship Description
 
-The llm-switch API container interacts with both storage systems for real-time operations: 
-it reads/writes conversation metadata to PostgreSQL via standard PostgreSQL protocol on port 5432, 
-and performs vector search/storage operations with Qdrant via gRPC on port 6334. 
-The Nomad executor container accesses the same storage systems for batch processing workloads, 
-using identical protocol and port configurations. 
-Service discovery and health checking are facilitated through Consul on port 8500, 
-with bidirectional communication for registration and queries. 
-Vault provides dynamic database credentials to the llm-switch API via HTTPS on port 8200, 
-using the AppRole authentication method and pg_userpass mount for PostgreSQL access. 
-All database connections enforce TLS 1.3 encryption, and connection pools are limited to 
-100 connections with 30-second timeouts to prevent resource exhaustion during batch processing.
+The llm-switch API container interacts with both storage systems for real-time operations: it reads/writes conversation metadata to PostgreSQL via standard PostgreSQL protocol on port 5432, and performs vector search/storage operations with Qdrant via gRPC on port 6334. The Nomad executor container accesses the same storage systems for batch processing workloads, using identical protocol and port configurations. Service discovery and health checking are facilitated through Consul on port 8500, with bidirectional communication for registration and queries. Vault provides dynamic database credentials to the llm-switch API via HTTPS on port 8200, using the AppRole authentication method and pg_userpass mount for PostgreSQL access. All database connections enforce TLS 1.3 encryption, and connection pools are limited to 100 connections with 30-second timeouts to prevent resource exhaustion during batch processing.
 
 ### PRD Traceability Matrix
 
 | PRD Section | Requirement | Diagram Element | Description |
 |-------------|-------------|-----------------|-------------|
-| 3.2 | Vector Storage Requirements | qdrant-kb | Qdrant vector store with HNSW index; payload: embedding_vector (float array), created_at, conversation_id (UUID) |
-| 3.2 | Vector Storage Requirements | postgresql-db | PostgreSQL with pgvector for vector storage; supports HNSW and IVFFLAT indexes |
-| 3.3 | Embedding Model Management | llm-switch-api | Generates embeddings via local/frontier models; stores in Qdrant with point ID {conversation_id:timestamp} |
-| 3.3 | Embedding Model Management | postgresql-db | Stores conversation metadata: model used, token counts, latency for audit |
-| 3.2 | ACID Guarantees | postgresql-db | ACID transactions for metadata writes; advisory locks prevent race conditions during concurrent writes |
-| 3.2 | Schema Evolution | postgresql-db | Flyway migration versioning (V001__initial_schema.sql); rollback via U001__undo.sql |
-| 3.2 | Schema Evolution | qdrant-kb | Collection versioning via alias; dimension mismatch: traffic to old version while new collection builds from snapshot |
+| 3.2 | Vector Storage Requirements | qdrant-kb | Qdrant vector store implements vector storage with HNSW indexing for efficient similarity search, payload schema includes embedding_vector (float array), created_at (timestamp), conversation_id (UUID) for metadata filtering |
+| 3.2 | Vector Storage Requirements | postgresql-db | PostgreSQL with pgvector extension provides backup vector storage capability, supports HNSW and IVFFLAT index types for vector similarity search |
+| 3.3 | Embedding Model Management | llm-switch-api | Generates embeddings via local models (Qwen/Nemotron) or frontier APIs, stores vector embeddings in Qdrant with conversation_id:timestamp point ID structure |
+| 3.3 | Embedding Model Management | postgresql-db | Stores conversation metadata including model used, token counts, latency metrics for embedding generation audit trails |
+| 3.2 | ACID Guarantees | postgresql-db | Implements ACID transactions for conversation metadata writes, uses advisory locks to prevent race conditions during concurrent scientific data writes |
+| 3.2 | Schema Evolution | postgresql-db | Uses Flyway migration versioning (V001__initial_schema.sql) with explicit rollback procedures via undo migrations |
+| 3.2 | Schema Evolution | qdrant-kb | Implements collection schema versioning strategy; catastrophic rollback procedure involves rebuilding collection with new vector dimension using snapshot restore |
 
 ### Data Flow Specification
 

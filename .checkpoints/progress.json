@@ -3,7 +3,7 @@
   "current_sprint": 5,
   "total_sprints": 7,
   "completed_sprints": 3,
-  "total_rounds": 33,
+  "total_rounds": 31,
   "started_at": "2026-04-12T12:56:31.326425Z",
   "seed": 1775998591,
   "sprint_statuses": [
@@ -76,19 +76,11 @@
       "sprint_number": 5,
       "sprint_name": "Database + Knowledge Base",
       "status": "building",
-      "rounds_completed": 2,
+      "rounds_completed": 0,
       "consecutive_passes": 0,
       "final_score": null,
-      "best_round": 1,
-      "best_scores": {
-        "Mermaid Syntax Validation": 10.0,
-        "C4 Architecture Completeness": 9.5,
-        "PRD Traceability Matrix": 9.5,
-        "Data Flow Specification": 9.5,
-        "Markdown Format Compliance": 5.0,
-        "Schema Evolution Strategy": 8.0,
-        "Security Hardening Requirements": 9.0
-      }
+      "best_round": null,
+      "best_scores": null
     },
     {
       "sprint_number": 6,
