@@ -1,6 +1,0 @@
-C4Context
-    title Test
-    Person_Ext(Person, "Person", "Description")
-    System_Ext(System, "System", "Description")
-    Person_Ext --> System : Label
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

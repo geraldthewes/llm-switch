@@ -1,9 +1,0 @@
-C4Context
-    title Test
-    Person_Ext(Person, "Person", "Description")
-    System_Ext(System, "System", "Description")
-    System_Boundary(b0, "llm-switch") {
-        System(dummy, " ", " ")
-    }
-    Person_Ext --> b0 : Label
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
