@@ -217,3 +217,9 @@ that caused the regression. Check critic-history.md for what the critic flagged.
 **Files modified**: architect-run-20260414-092936.log, c2-container.md, generator-history.md, architect-run-20260413-214626.log
 **Token usage**: 0
 ---
+
+## Sprint 4 · Round 10 — 2026-04-14 15:00:08 UTC
+**Feedback addressed**: 9 concern(s) from prior critic round (avg 9.1/10)
+**Files modified**: sprint-4-round-9-log.json, sprint-4-round-9.json, progress.json, c2-container.md, critic-history.md, generator-history.md, generator-learnings.md, architect-run-20260414-092936.log
+**Token usage**: 0
+---
