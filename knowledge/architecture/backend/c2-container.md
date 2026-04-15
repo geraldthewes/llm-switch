@@ -9,24 +9,32 @@ version: 1.0.0
 The llm-switch backend container serves as the orchestration layer for the intelligent LLM proxy system. It integrates with infrastructure services (Consul for service discovery, Vault for secret management, Nomad for job orchestration) and routes requests to local model services (Qwen, Nemotron) or frontier API gateways based on real-time decisions. The container is designed for deployment in a Nomad cluster with minimal external dependencies, leveraging Go and the bifrost library for high-performance message routing. This architecture supports the core value proposition of intelligent model selection based on complexity, latency, and cost, while ensuring reliability, scalability, and operational excellence.
 
 ```mermaid
-C4Container
-    title Backend Container Architecture for llm-switch
-    Container(llm_switch, "llm-switch<br>Go bifrost<br>Docker", "Go and bifrost", "Main application handling API requests and routing")
-    Container_Ext(consul_agent, "consul-agent<br>Consul", "Consul", "Consul agent for service discovery")
-    Container_Ext(vault_server, "vault-server<br>Vault", "Vault", "Vault agent for secret retrieval")
-    Container_Ext(nomad_client, "nomad-client<br>Nomad", "Nomad", "Nomad client agent for job management")
-    Container_Ext(qwen_local, "qwen-local<br>vLLM/Qwen", "vLLM or llama.cpp", "Local Qwen 1B parameter model server")
-    Container_Ext(nemotron_local, "nemotron-local<br>vLLM/Nemotron", "vLLM or llama.cpp", "Local Nemotron 22B parameter model server")
-    Container_Ext(frontier_api_gateway, "frontier-api-gateway<br>NGINX/Envoy", "NGINX or Envoy", "Gateway to frontier model APIs (OpenAI/Anthropic)")
-    System_Ext(ai_app, "External AI Applications", "AI applications using llm-switch for model routing")
-    Rel(ai_app, llm_switch, "Send LLM requests", "HTTP/1.1")
-    Rel(llm_switch, consul_agent, "Service discovery", "Consul API")
-    Rel(llm_switch, vault_server, "Secret retrieval", "Vault API")
-    Rel(llm_switch, nomad_client, "Job management", "Nomad API")
-    Rel(llm_switch, qwen_local, "Local model inference (Qwen)", "gRPC")
-    Rel(llm_switch, nemotron_local, "Local model inference (Nemotron)", "gRPC")
-    Rel(llm_switch, frontier_api_gateway, "Frontier model inference", "HTTP/1.1")
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+flowchart LR
+    ai_app["External AI Applications\nAI applications using llm-switch for model routing"]
+
+    subgraph internal["llm-switch"]
+        llm_switch["llm-switch\nGo, bifrost, Docker\nMain application handling API requests and routing"]
+    end
+
+    subgraph infra["Infrastructure"]
+        consul_agent["consul-agent\nConsul\nConsul agent for service discovery"]
+        vault_server["vault-server\nVault\nVault agent for secret retrieval"]
+        nomad_client["nomad-client\nNomad\nNomad client agent for job management"]
+    end
+
+    subgraph models["Model Backends"]
+        qwen_local["qwen-local\nvLLM/Qwen\nLocal Qwen 1B parameter model server"]
+        nemotron_local["nemotron-local\nvLLM/Nemotron\nLocal Nemotron 22B parameter model server"]
+        frontier_api_gateway["frontier-api-gateway\nNGINX/Envoy\nGateway to frontier model APIs (OpenAI/Anthropic)"]
+    end
+
+    ai_app -->|"Send LLM requests | HTTP/1.1"| llm_switch
+    llm_switch -->|"Service discovery | Consul API"| consul_agent
+    llm_switch -->|"Secret retrieval | Vault API"| vault_server
+    llm_switch -->|"Job management | Nomad API"| nomad_client
+    llm_switch -->|"Local model inference (Qwen) | gRPC"| qwen_local
+    llm_switch -->|"Local model inference (Nemotron) | gRPC"| nemotron_local
+    llm_switch -->|"Frontier model inference | HTTP/1.1"| frontier_api_gateway
 ```
 
 ## Relationship Description
