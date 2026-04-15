@@ -267,6 +267,8 @@ EOH
 - **HTTP 500 Response**: `{"error":"internal_error","message":"Internal server error","timestamp":"RFC3339"}`
 - **HTTP 429 Response**: `{"error":"rate_limit_exceeded","message":"Rate limit exceeded","timestamp":"RFC3339"}`
 - **HTTP 404 Response**: `{"error":"not_found","message":"Resource not found","timestamp":"RFC3339"}`
+- **HTTP 401 Response**: `{"error":"unauthorized","message":"Invalid or expired token","timestamp":"RFC3339"}`
+- **HTTP 403 Response**: `{"error":"forbidden","message":"Insufficient permissions","timestamp":"RFC3339"}`
 - **Retry Logic**: Exponential backoff with base=100ms, max=5s, maxAttempts=3
 - **Circuit Breaker**: 30-second timeout with graceful degradation
 - **Fallback Mechanism**: Route to alternative models when primary selection fails

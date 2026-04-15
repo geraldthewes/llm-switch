@@ -21,7 +21,7 @@ C4Container
     System_Ext(langfuse, "Langfuse", "Trace collection", "Async trace accumulation for observability")
     
     Rel(api_gateway, auth_container, "Forwards request for validation", "HTTP/1.1 TLS")
-    Rel(auth_container, vault, "Retrieves API key validation data", "Vault API TLS")
+    Rel(auth_container, vault, "Retrieves API key validation data from secret/data/edge/api", "Vault API TLS")
     Rel(auth_container, consul, "Checks IP whitelist", "Consul API")
     Rel(api_gateway, rate_limiter, "Checks rate limit after auth", "HTTP/1.1")
     Rel(rate_limiter, cache, "Reads/writes rate limit counters", "Redis protocol")
@@ -59,11 +59,16 @@ C4Container
 
 ## Key Architectural Decisions
 
-1. **Authentication Flow**: Uses X-API-Key header validation against Vault-stored keys with JWT token extraction and expiration validation
+1. **Authentication Flow**: Uses X-API-Key header validation against Vault-stored keys at exact path `secret/data/edge/api` with JWT token extraction and expiration validation (returns 401 for expired/invalid tokens)
 2. **Rate Limiting**: Implements token bucket algorithm with 100 requests/minute per API key using Redis backend
 3. **Observability**: Provides Prometheus metrics endpoint (/metrics) and health check endpoint (/health) with structured JSON logging
 4. **Security**: Implements mutual TLS for service-to-service communication, IP whitelisting, and CORS restrictions
-5. **Error Handling**: Returns standardized error responses with exponential backoff retry logic for transient failures
+5. **Error Handling**: Returns standardized error responses:
+    - HTTP 401: `{"error":"unauthorized","message":"Invalid or expired token","timestamp":"RFC3339"}`
+    - HTTP 403: `{"error":"forbidden","message":"Insufficient permissions","timestamp":"RFC3339"}`
+    - HTTP 429: `{"error":"rate_limit_exceeded","message":"Rate limit exceeded","timestamp":"RFC3339"}`
+    - HTTP 500: `{"error":"internal_error","message":"Internal server error","timestamp":"RFC3339"}`
+    With exponential backoff retry logic (base=100ms, max=5s, maxAttempts=3)
 6. **Performance**: Maintains <500ms P99 latency through connection pooling (max_connections=100, timeout=30s) and caching
 7. **Scalability**: Designed for horizontal scaling with round-robin load balancing and autoscaling at 80% CPU threshold
 8. **Resilience**: Implements circuit breaker pattern with 30s timeout and graceful degradation when dependencies are unavailable

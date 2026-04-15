@@ -1,0 +1,25 @@
+2026-04-14 20:56:01,328 INFO     Log file: knowledge/architecture/logs/architect-run-20260414-205601.log
+2026-04-14 20:56:01,331 INFO       ANTHROPIC_BASE_URL=http://litellm.cluster:9999
+2026-04-14 20:56:01,331 INFO       ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-standard
+2026-04-14 20:56:01,332 INFO       ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-standard
+2026-04-14 20:56:01,333 INFO       ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-standard
+2026-04-14 20:56:01,334 INFO       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+2026-04-14 20:56:01,335 INFO       ANTHROPIC_AUTH_TOKEN=(not set)
+2026-04-14 20:56:01,337 INFO       ANTHROPIC_API_KEY=(not set)
+2026-04-14 20:56:01,337 DEBUG    sys.platform='linux', git_executable='git'
+2026-04-14 20:56:01,339 INFO     Supplementary context: 1 file(s), 2753 chars
+2026-04-14 20:56:01,340 INFO     Running preflight check...
+2026-04-14 20:56:02,397 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-14 20:56:02,410 WARNING  [Preflight Generator] turn=1 API error: unknown
+2026-04-14 20:56:02,411 WARNING  [Preflight Generator] turn=1 text (107 chars): API Error: 400 {"error":{"message":"No connected db.","type":"no_db_connection","param":null,"code":"400"}}
+2026-04-14 20:56:02,434 ERROR    Fatal error in message reader: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-14 20:56:02,686 ERROR      Generator (opus): FAIL — Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-14 20:56:03,431 DEBUG    [Preflight Critic] unhandled SDK message type: SystemMessage
+2026-04-14 20:56:03,446 WARNING  [Preflight Critic] turn=1 API error: unknown
+2026-04-14 20:56:03,448 WARNING  [Preflight Critic] turn=1 text (107 chars): API Error: 400 {"error":{"message":"No connected db.","type":"no_db_connection","param":null,"code":"400"}}
+2026-04-14 20:56:03,471 ERROR    Fatal error in message reader: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-14 20:56:03,725 ERROR      Critic (sonnet): FAIL — Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
