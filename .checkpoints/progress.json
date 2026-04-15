@@ -3,7 +3,7 @@
   "current_sprint": 6,
   "total_sprints": 7,
   "completed_sprints": 4,
-  "total_rounds": 38,
+  "total_rounds": 37,
   "started_at": "2026-04-12T12:56:31.326425Z",
   "seed": 1775998591,
   "sprint_statuses": [
@@ -94,20 +94,20 @@
       "sprint_number": 6,
       "sprint_name": "Edge Functions / Deployment / Auth / Scaling / Observability",
       "status": "building",
-      "rounds_completed": 4,
-      "consecutive_passes": 1,
+      "rounds_completed": 3,
+      "consecutive_passes": 0,
       "final_score": null,
-      "best_round": 4,
+      "best_round": 3,
       "best_scores": {
         "File Existence and Location": 10.0,
-        "Nomad Job Specification Completeness": 9.5,
-        "Edge Function Authentication Flow": 9.5,
-        "Horizontal Scaling Configuration": 9.5,
-        "Observability Endpoints Documentation": 9.5,
-        "Markdown Syntax and Structure": 9.0,
-        "PRD Alignment for Non-Functional Requirements": 9.5,
-        "Error Handling and Edge Cases": 9.5,
-        "Security Hardening": 9.5
+        "Nomad Job Specification Completeness": 10.0,
+        "Edge Function Authentication Flow": 8.0,
+        "Horizontal Scaling Configuration": 10.0,
+        "Observability Endpoints Documentation": 10.0,
+        "Markdown Syntax and Structure": 6.0,
+        "PRD Alignment for Non-Functional Requirements": 10.0,
+        "Error Handling and Edge Cases": 10.0,
+        "Security Hardening": 10.0
       }
     },
     {
