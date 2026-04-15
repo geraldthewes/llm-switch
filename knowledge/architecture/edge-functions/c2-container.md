@@ -1,3 +1,6 @@
+---
+title: C2 Container Diagram for llm-switch Edge Functions
+---
 # Edge Functions Container Architecture (C2)
 
 This diagram shows the container-level architecture for the llm-switch edge functions component, which handles API requests at the network edge with authentication, rate limiting, and request routing to the core llm-switch service.
@@ -58,7 +61,7 @@ flowchart LR
 
 ## Key Architectural Decisions
 
-1. **Authentication Flow**: Uses X-API-Key header validation against Vault-stored keys at exact path `secret/data/edge/api` with JWT token extraction and expiration validation (returns 401 for expired/invalid tokens)
+1. **Authentication Flow**: Uses X-API-Key header validation against Vault-stored keys at exact path `secret/data/edge/api` with JWT token extraction and expiration validation using HS256 algorithm (returns 401 for expired/invalid tokens)
 2. **Rate Limiting**: Implements token bucket algorithm with 100 requests/minute per API key using Redis backend
 3. **Observability**: Provides Prometheus metrics endpoint (/metrics) and health check endpoint (/health) with structured JSON logging
 4. **Security**: Implements mutual TLS for service-to-service communication, IP whitelisting, and CORS restrictions

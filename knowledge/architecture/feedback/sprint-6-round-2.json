@@ -1,0 +1,36 @@
+{
+  "scores": {
+    "File Existence and Location": 10.0,
+    "Nomad Job Specification Completeness": 9.5,
+    "Edge Function Authentication Flow": 8.5,
+    "Horizontal Scaling Configuration": 9.5,
+    "Observability Endpoints Documentation": 9.5,
+    "Markdown Syntax and Structure": 8.0,
+    "PRD Alignment for Non-Functional Requirements": 9.5,
+    "Error Handling and Edge Cases": 9.5,
+    "Security Hardening": 9.5
+  },
+  "feedback": [
+    {
+      "criterion": "Edge Function Authentication Flow",
+      "score": 8.5,
+      "severity": "High",
+      "details": "JWT token extraction algorithm (e.g., RS256, HS256) not specified. File mentions 'JWT token extraction and expiration validation' (edge-functions/c2-container.md:61) but does not document the specific cryptographic algorithm used for token verification."
+    },
+    {
+      "criterion": "Markdown Syntax and Structure",
+      "score": 8.0,
+      "severity": "Medium",
+      "details": "Nested list in edge-functions/c2-container.md:66 not properly indented. Line 66 starts with '- HTTP 401' at column 1 instead of being indented 4 spaces under parent item 5 (line 65). This causes improper markdown nesting. Additionally, diagram lacks YAML frontmatter 'title:' line (C4 Medium severity)."
+    },
+    {
+      "criterion": "Nomad Job Specification Completeness",
+      "score": 9.5,
+      "severity": "Low",
+      "details": "Criterion specifies 'CPU constraint in MB' but file correctly uses 'MHz' (megahertz) which is the proper unit for CPU in Nomad (deployment.md:59). If 'MB' is literal, this is a unit mismatch; if typo for 'MHz', specification is complete with exact SHA256 hash (line 47), memory in MB (line 60), port mapping 8080:8080 (lines 48-49, 176-178), Consul registration (line 76), Vault templating path (line 122), and HTTP health check with /health path and 10s interval (lines 82-83)."
+    }
+  ],
+  "overall_summary": "Architecture files are substantial and mostly complete. Two criteria fell below threshold: Edge Function Authentication Flow lacks the specific JWT cryptographic algorithm (e.g., RS256) and Markdown Syntax has improper nested list indentation at edge-functions/c2-container.md:66. The Nomad job specification is comprehensive with exact container hash, resource constraints, Vault integration, and health checks. Observability endpoints (/metrics, /health) and PRD alignment with section citations are well documented. Error handling covers HTTP 500, 429, 404 with correct JSON structure and retry logic. Security hardening includes IP whitelisting, 24h Vault TTL, and explicit CORS origins. The mermaid diagram validates successfully and follows C4 conventions. Fix the JWT algorithm specification and markdown indentation to achieve full compliance.",
+  "average_score": 8.666666666666666,
+  "passed": false
+}
