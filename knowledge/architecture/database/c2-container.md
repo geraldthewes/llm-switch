@@ -8,53 +8,29 @@ with Consul for service discovery and Vault for dynamic secret management. Secur
 the private database tier from the application tier.
 
 ```mermaid
-C4Container
-    title Database and Knowledge Base Container Architecture
-    
-    Container_Boundary(db_tier, "Database Tier (VPC-private)") {
-        ContainerDb(
-            postgresql-db,
-            "PostgreSQL with pgvector",
-            "PostgreSQL, pgvector, Flyway",
-            "Stores conversation metadata, ACID transactions, advisory locks for concurrent writes"
-        )
-        ContainerDb(
-            qdrant-kb,
-            "Qdrant Vector Store",
-            "Qdrant, gRPC",
-            "Stores vector embeddings with payload schema: embedding_vector, created_at, conversation_id"
-        )
-    }
-    
-    Container_Boundary(app_tier, "Application Tier") {
-        Container(
-            llm-switch-api,
-            "llm-switch API",
-            "Go, bifrost, Docker",
-            "Handles API requests, real-time routing, embedding generation"
-        )
-        Container(
-            nomad-executor,
-            "Nomad Executor",
-            "Nomad client, Docker",
-            "Runs batch jobs, maintenance tasks, offline self-learning"
-        )
-    }
-    
-    System_Ext(consul, "Consul", "Service discovery, health checking, key-value store")
-    System_Ext(vault, "Vault", "Dynamic secret management, AppRole authentication, pg_userpass mount")
-    
-    Rel(llm-switch-api, postgresql-db, "Reads/Writes conversation metadata", "postgresql://:5432")
-    Rel(llm-switch-api, qdrant-kb, "Vector search/storage", "grpc://:6334")
-    Rel(llm-switch-api, nomad-executor, "Job submission/health checks", "http://:8500")
-    Rel(nomad-executor, postgresql-db, "Direct DB access for batch jobs", "postgresql://:5432")
-    Rel(nomad-executor, qdrant-kb, "Direct vector access for batch jobs", "grpc://:6334")
-    Rel(llm-switch-api, consul, "Service registration/health checks", "http://:8500")
-    Rel(llm-switch-api, vault, "Dynamic secret retrieval (DB credentials)", "https://:8200")
-    Rel(consul, llm-switch-api, "Service discovery queries", "http://:8500")
-    Rel(vault, llm-switch-api, "Secret delivery (DB credentials)", "https://:8200")
-    
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+flowchart LR
+    subgraph db_tier["Database Tier (VPC-private)"]
+        postgresql_db[("PostgreSQL with pgvector\nPostgreSQL, pgvector, Flyway\nStores conversation metadata, ACID transactions,\nadvisory locks for concurrent writes")]
+        qdrant_kb[("Qdrant Vector Store\nQdrant, gRPC\nStores vector embeddings with payload schema:\nembedding_vector, created_at, conversation_id")]
+    end
+
+    subgraph app_tier["Application Tier"]
+        llm_switch_api["llm-switch API\nGo, bifrost, Docker\nHandles API requests, real-time routing, embedding generation"]
+        nomad_executor["Nomad Executor\nNomad client, Docker\nRuns batch jobs, maintenance tasks, offline self-learning"]
+    end
+
+    consul["Consul\nService discovery, health checking, key-value store"]
+    vault["Vault\nDynamic secret management, AppRole authentication, pg_userpass mount"]
+
+    llm_switch_api -->|"Reads/Writes conversation metadata | postgresql://:5432"| postgresql_db
+    llm_switch_api -->|"Vector search/storage | grpc://:6334"| qdrant_kb
+    llm_switch_api -->|"Job submission/health checks | http://:8500"| nomad_executor
+    nomad_executor -->|"Direct DB access for batch jobs | postgresql://:5432"| postgresql_db
+    nomad_executor -->|"Direct vector access for batch jobs | grpc://:6334"| qdrant_kb
+    llm_switch_api -->|"Service registration/health checks | http://:8500"| consul
+    llm_switch_api -->|"Dynamic secret retrieval (DB credentials) | https://:8200"| vault
+    consul -->|"Service discovery queries | http://:8500"| llm_switch_api
+    vault -->|"Secret delivery (DB credentials) | https://:8200"| llm_switch_api
 ```
 
 ### Relationship Description
