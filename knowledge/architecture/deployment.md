@@ -56,8 +56,8 @@ job "llm-switch" {
       
       # Resource constraints
       resources {
-        cpu    = 2000 # 2000 MHz = 2 CPU cores
-        memory = 4096 # 4096 MB = 4 GB RAM
+        cpu    = 2000 # 2000 MHz (2 CPU cores)
+        memory = 4096 # 4096 MB (4 GB RAM)
         # GPU allocation for frontier model adapter
         network {
           mbits = 1000
@@ -257,7 +257,7 @@ EOH
 ### Security Hardening
 - **Authentication**: X-API-Key header validation and JWT token verification
 - **Rate Limiting**: 100 requests/minute per API key with burst of 20
-- **CORS Policy**: Restricted to approved origins only
+- **CORS Policy**: Restricted to approved origins only (https://llm-switch.service.consul, https://api.internal.example.com)
 - **IP Whitelist**: Configured via Consul KV for Consul integration checks
 - **Secret Rotation**: Vault TTL of 24 hours for automatic rotation
 - **TLS Enforcement**: Mutual TLS for service-to-service communication
