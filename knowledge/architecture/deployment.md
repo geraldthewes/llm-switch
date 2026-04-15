@@ -239,8 +239,8 @@ EOH
 
 ### Observability Endpoints
 - **Metrics Endpoint**: `/metrics` exposing Prometheus format
-  - Metrics: `http_requests_total`, `http_request_duration_seconds`
-  - Format: Prometheus exposition format
+    - Metrics: `http_requests_total`, `http_request_duration_seconds`
+    - Format: Prometheus exposition format
 - **Health Endpoint**: `/health` returning HTTP 200 with `{"status":"healthy"}`
 - **Logging**: Structured JSON with fields `[timestamp, level, message, trace_id, service_name]` in RFC3339 format
 
