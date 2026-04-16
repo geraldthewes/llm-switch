@@ -1,0 +1,41 @@
+{
+  "scores": {
+    "Mermaid Diagram Syntax Validity": 10.0,
+    "C4 Model Completeness": 2.0,
+    "PRD Requirement Traceability": 9.5,
+    "ADR File Naming Convention": 10.0,
+    "Markdown Structural Consistency": 9.0,
+    "Cross-Reference Accuracy": 6.0,
+    "Decision Status Field Validity": 10.0,
+    "Architectural Decision Completeness": 10.0
+  },
+  "feedback": [
+    {
+      "criterion": "C4 Model Completeness",
+      "score": 2.0,
+      "severity": "Critical",
+      "details": "ALL THREE ADRs fail catastrophically. The contract requires 'at least one valid C4 Container diagram including exactly 4 container nodes (Nomad, Consul, Vault, vLLM) with explicit versioned technology labels and responsibility descriptions of 10-50 words per container'. Actual findings: (1) ADR-001 (line 31): Uses 'flowchart LR' instead of C4Container, labels have only short descriptions like 'Nomad\\n(Orchestrator 1.9.x)' - NO responsibility descriptions of 10-50 words. (2) ADR-002 (line 39): Wrong containers entirely - shows llm-switch, Langfuse, Vault, Prometheus instead of required Nomad/Consul/Vault/vLLM. (3) ADR-003 (line 32): Has 5 nodes (including llm-switch) not exactly 4, uses flowchart not C4Container. None of the diagrams contain responsibility descriptions meeting the 10-50 word requirement per container."
+    },
+    {
+      "criterion": "Cross-Reference Accuracy",
+      "score": 6.0,
+      "severity": "High",
+      "details": "Contract requires 'All references to other ADRs, PRD sections, or external documents must use relative links (./)'. All three files reference 'technology-choices.md' (ADR-001:line 14, ADR-002:line 19, ADR-003:line 15) as plain text without using relative link syntax like '[technology-choices.md](./technology-choices.md)'. This violates the explicit requirement for relative links."
+    },
+    {
+      "criterion": "C4 Architectural Quality - Missing technology in label",
+      "score": 7.0,
+      "severity": "Medium",
+      "details": "ADR-002:lines 42-45 - Container nodes 'llm_switch', 'Langfuse', 'Vault', and 'Prometheus' have no version numbers or technology annotations in their labels. ADR-003:line 38 - 'llm_switch' node has no version number. Contract requires 'every container must show a specific technology choice'."
+    },
+    {
+      "criterion": "PRD Requirement Traceability",
+      "score": 9.5,
+      "severity": "Medium",
+      "details": "All ADRs correctly reference PRD sections in 'PRD-FR-XXX' format within Decision Drivers sections. ADR-001:lines 11-13 reference PRD-FR-12, PRD-FR-45, PRD-FR-46. ADR-002:lines 11-18 reference PRD-FR-34 through PRD-FR-41. ADR-003:lines 11-14 reference PRD-FR-12, PRD-FR-44 through PRD-FR-46. Minor deduction because some references could be more specific about line numbers."
+    }
+  ],
+  "overall_summary": "Sprint 7 ADRs suffer from a catastrophic failure in C4 Model Completeness (2.0/10) — none of the three files contain valid C4 Container diagrams as required. All use 'flowchart LR' syntax instead of C4Container notation, and critically lack the mandatory 10-50 word responsibility descriptions for each container node. Additionally, Cross-Reference Accuracy fails (6.0/10) because technology-choices.md is referenced as plain text without the required relative link syntax (./). ADR-002 uses completely wrong container nodes (Langfuse, Prometheus, llm-switch) instead of the required Nomad, Consul, Vault, vLLM set. While Mermaid syntax validation, ADR naming conventions, PRD traceability, and structural completeness score well (9.0-10.0), the fundamental absence of proper C4 Container diagrams with responsibility descriptions makes these documents production-unready and fails the core architectural documentation requirements.",
+  "average_score": 6.125,
+  "passed": false
+}
