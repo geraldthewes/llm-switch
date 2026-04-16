@@ -1,0 +1,51 @@
+{
+  "sprint_number": 7,
+  "sprint_name": "ADRs + Cross-Cutting Concerns",
+  "files_to_produce": [
+    "decisions/ADR-001-vllm-deployment-architecture.md",
+    "decisions/ADR-002-langfuse-observability.md",
+    "decisions/ADR-003-consul-vault-service-discovery.md"
+  ],
+  "criteria": [
+    {
+      "name": "Mermaid Diagram Syntax Validity",
+      "description": "All Mermaid diagrams in ADR files must pass 'mermaid-cli --validate' with exit code 0, with no warnings or errors in the output, validated via pre-commit hook.",
+      "threshold": 10.0
+    },
+    {
+      "name": "C4 Model Completeness",
+      "description": "Each ADR with architecture diagrams must contain at least one valid C4 Container diagram including exactly 4 container nodes (Nomad, Consul, Vault, vLLM) with explicit versioned technology labels (e.g., 'Nomad 1.9.x') and responsibility descriptions of 10-50 words per container, validated via automated C4 parser.",
+      "threshold": 9.5
+    },
+    {
+      "name": "PRD Requirement Traceability",
+      "description": "Every ADR must explicitly reference at least one PRD section using the format 'PRD-FR-XXX' or 'PRD-NFR-XXX' in the 'Context' or 'Decision Drivers' sections, with traceability IDs matching PRD numbering scheme (FR-001 to FR-100, NFR-001 to NFR-100), validated via regex pattern matching.",
+      "threshold": 9.5
+    },
+    {
+      "name": "ADR File Naming Convention",
+      "description": "All ADR files must follow 'ADR-NNN-descriptive-title.md' format with three-digit sequential numbering (001-999), kebab-case descriptive titles (10-60 characters, no spaces), and reside exclusively in the decisions/ directory, validated via pre-commit hook.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Markdown Structural Consistency",
+      "description": "ADR files must use proper heading hierarchy (H1 for title, H2 for sections including Context, Decision, Consequences, Status), consistent list formatting (hyphens), fenced code blocks with language specifiers, no trailing whitespace, and must include mandatory 'Consequences' section with at least 3 bullet points covering positive, negative, and neutral impacts.",
+      "threshold": 9.0
+    },
+    {
+      "name": "Cross-Reference Accuracy",
+      "description": "All references to other ADRs, PRD sections, or external documents must use relative links (./) that resolve correctly within the repository, with link text describing the target resource, validated via link-checker tool with 100% success rate.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Decision Status Field Validity",
+      "description": "The 'Status' field in each ADR must be exactly one of: 'Proposed', 'Accepted', 'Deprecated', or 'Superseded' (case-sensitive), must match the actual decision state in the repository, and must be accompanied by a 'Date' field in ISO 8601 format (YYYY-MM-DD) and an 'Author' field containing the engineer's name or ID.",
+      "threshold": 10.0
+    },
+    {
+      "name": "Architectural Decision Completeness",
+      "description": "Every ADR must contain the standard sections: Title, Status, Context, Decision Drivers, Decision, Consequences (minimum 3 bullet points covering positive, negative, and neutral impacts), and Date. Missing any required section results in automatic rejection.",
+      "threshold": 10.0
+    }
+  ]
+}

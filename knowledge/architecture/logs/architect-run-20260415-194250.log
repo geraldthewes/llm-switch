@@ -1,0 +1,14 @@
+2026-04-15 19:42:50,806 INFO     Log file: knowledge/architecture/logs/architect-run-20260415-194250.log
+2026-04-15 19:42:50,809 INFO       ANTHROPIC_BASE_URL=http://litellm.cluster:9999
+2026-04-15 19:42:50,810 INFO       ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-standard
+2026-04-15 19:42:50,811 INFO       ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-standard
+2026-04-15 19:42:50,811 INFO       ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-standard
+2026-04-15 19:42:50,812 INFO       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+2026-04-15 19:42:50,813 INFO       ANTHROPIC_AUTH_TOKEN=(set)
+2026-04-15 19:42:50,814 INFO       ANTHROPIC_API_KEY=(not set)
+2026-04-15 19:42:50,815 DEBUG    sys.platform='linux', git_executable='git'
+2026-04-15 19:42:50,816 INFO     Supplementary context: 1 file(s), 2753 chars
+2026-04-15 19:42:50,817 INFO     Running preflight check...
+2026-04-15 19:42:51,550 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 19:43:04,248 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 19:43:09,976 DEBUG    Read task cancelled

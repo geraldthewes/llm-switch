@@ -1,0 +1,35 @@
+2026-04-15 13:52:20,204 INFO     Log file: knowledge/architecture/logs/architect-run-20260415-135220.log
+2026-04-15 13:52:20,206 INFO       ANTHROPIC_BASE_URL=http://litellm.cluster:9999
+2026-04-15 13:52:20,207 INFO       ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-standard
+2026-04-15 13:52:20,208 INFO       ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-standard
+2026-04-15 13:52:20,209 INFO       ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-standard
+2026-04-15 13:52:20,209 INFO       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+2026-04-15 13:52:20,210 INFO       ANTHROPIC_AUTH_TOKEN=(set)
+2026-04-15 13:52:20,211 INFO       ANTHROPIC_API_KEY=(not set)
+2026-04-15 13:52:20,211 DEBUG    sys.platform='linux', git_executable='git'
+2026-04-15 13:52:20,213 INFO     Supplementary context: 1 file(s), 2753 chars
+2026-04-15 13:52:20,214 INFO     Running preflight check...
+2026-04-15 13:52:21,647 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:52:39,683 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:52:59,035 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:53:19,289 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:53:39,871 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:54:03,005 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:54:30,190 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:55:05,158 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:55:54,922 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:56:49,534 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:57:43,202 DEBUG    [Preflight Generator] unhandled SDK message type: SystemMessage
+2026-04-15 13:58:41,489 WARNING  [Preflight Generator] turn=1 API error: server_error
+2026-04-15 13:58:41,490 WARNING  [Preflight Generator] turn=1 text (269 chars): API Error: 500 {"error":{"message":"litellm.InternalServerError: InternalServerError: OpenAIException - Connection error.. Received Model Group=claude-opus-standard\nAvailable Model Group Fallbacks=No...
+2026-04-15 13:58:41,512 ERROR    Fatal error in message reader: Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-15 13:58:41,765 ERROR      Generator (opus): FAIL — Command failed with exit code 1 (exit code: 1)
+Error output: Check stderr output for details
+2026-04-15 13:58:42,771 DEBUG    [Preflight Critic] unhandled SDK message type: SystemMessage
+2026-04-15 13:58:48,242 DEBUG    [Preflight Critic] turn=2 text (2 chars): OK
+2026-04-15 13:58:48,270 INFO     [Preflight Critic] summary: turns=2 (sdk=1) tool_calls=0 text_blocks=1
+2026-04-15 13:58:48,271 INFO     [Preflight Critic] done: duration=5.5s cost=$0.0137
+2026-04-15 13:58:48,272 INFO     [Preflight Critic]   model=claude-haiku-standard input=? output=? cache_read=0 cache_write=0
+2026-04-15 13:58:48,273 INFO     [Preflight Critic]   model=claude-sonnet-standard input=? output=? cache_read=0 cache_write=0
+2026-04-15 13:58:48,275 INFO       Critic (sonnet): OK — responded: OK

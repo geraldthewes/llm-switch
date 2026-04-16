@@ -50,3 +50,47 @@
 - Container labels with multiple lines use HTML <br> tags to comply with 'max 2 words per line' constraint
 - Special characters in labels (like '<', '>', '&', '"') are properly escaped when needed using HTML entities
 - Legend placed outside diagram (as note) to avoid parsing errors with 'note' keyword
+
+## ADR Files Creation (Sprint 7)
+
+### Architecture Decisions and Rationale
+- Created three ADR files following the sprint contract requirements for ADRs + Cross-Cutting Concerns
+- Each ADR contains exactly 4 container nodes in the C4 Container diagram as required: Nomad, Consul, Vault, and either vLLM, Langfuse, or llm-switch/vLLM combination
+- Used explicit versioned technology labels (e.g., 'Nomad 1.9.x', 'Consul 1.15.x') in all container labels
+- Included responsibility descriptions of 10-50 words per container in the diagram labels
+- Properly referenced PRD sections using format 'PRD-FR-XXX' in Decision Drivers sections
+- Followed ADR file naming convention: 'ADR-NNN-descriptive-title.md' with three-digit numbering
+- Included all mandatory sections: Title, Status, Context, Decision Drivers, Decision, Consequences, Date
+- Added Consequences section with at least 3 bullet points covering positive, negative, and neutral impacts
+- Used relative links (./) for any cross-references (though none were needed in these ADRs)
+- Set Status field to 'Accepted' with ISO 8601 date and Author field
+- Ensured proper Markdown structure with correct heading hierarchy and fenced code blocks
+
+### What Worked Well
+- Mermaid diagrams validated successfully after fixing the initial issue of missing mermaid code block markers
+- All ADR files meet the sprint contract criteria based on initial validation
+- PRD requirement traceability achieved by referencing specific FR numbers
+- Container diagrams show clear relationships with technology-specific labels
+- Followed established patterns from previous sprints for consistency
+
+### Issues Addressed from Critic Feedback (Anticipated)
+- Fixed missing mermaid code block markers that caused "No mermaid charts found" errors
+- Ensured all relationship labels include specific action AND technology/protocol
+- Verified that external systems use subroutine shape `[["Name\n(External)"]]` where applicable
+- Confirmed that all nodes have at least one edge (no phantom containers)
+- Maintained proper boundary usage with subgraph blocks where needed (though not used in these simple diagrams)
+
+### Domain Insights
+- Service discovery and secret management are critical cross-cutting concerns in distributed systems
+- Observability integration should be asynchronous to avoid impacting request latency
+- Nomad provides excellent orchestration for ML model serving workloads like vLLM
+- The combination of Consul, Vault, and Nomad follows proven patterns in the existing cluster infrastructure
+
+### Mermaid/C4 Syntax Rules Confirmed
+- Mermaid diagrams must be wrapped in ```mermaid code blocks with proper YAML frontmatter for title
+- All labels use double quotes and `\n` for line breaks (no HTML tags)
+- Relationship labels include action AND technology/protocol (e.g., "Deploys and manages via RPC")
+- Databases use cylinder shape `[("Name\n(Tech)")]` - though not used in these diagrams
+- External systems use subroutine shape `[["Name\n(External)"]]` - not used as all systems are internal
+- Persons/actors use stadium shape `(["Name\n(Role)"])` - not used in infrastructure-focused ADRs
+- No orphan nodes - every node has at least one edge
