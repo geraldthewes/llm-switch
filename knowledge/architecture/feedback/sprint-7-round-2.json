@@ -1,0 +1,23 @@
+{
+  "scores": {
+    "Mermaid Diagram Syntax Validity": 10.0,
+    "C4 Model Completeness": 10.0,
+    "PRD Requirement Traceability": 10.0,
+    "ADR File Naming Convention": 10.0,
+    "Markdown Structural Consistency": 10.0,
+    "Cross-Reference Accuracy": 6.0,
+    "Decision Status Field Validity": 10.0,
+    "Architectural Decision Completeness": 10.0
+  },
+  "feedback": [
+    {
+      "criterion": "Cross-Reference Accuracy",
+      "score": 6.0,
+      "severity": "High",
+      "details": "Broken relative links to technology-choices.md in two files. ADR-002:line 21 and ADR-003:line 16 use './technology-choices.md' but since these files are in the 'decisions/' subdirectory, the path should be '../technology-choices.md'. These links fail to resolve. Contract requires '100% success rate' on link-checker validation."
+    }
+  ],
+  "overall_summary": "The Sprint 7 ADR files are architecturally comprehensive, meeting 7 of 8 criteria perfectly. All files use valid Mermaid syntax (mmdc exit 0), contain proper C4 Container diagrams with exactly 4 versioned nodes (Nomad 1.9.x, Consul 1.15.x, Vault 1.16.x, plus subject technology), complete PRD traceability (PRD-FR-XXX format), correct naming conventions, and full structural sections including Consequences with 3 bullet points. However, the sprint fails the contract due to Cross-Reference Accuracy scoring 6.0/10 (threshold 10.0): ADR-002 and ADR-003 contain broken relative paths to technology-choices.md, preventing valid cross-referencing within the repository structure.",
+  "average_score": 6.0,
+  "passed": false
+}
